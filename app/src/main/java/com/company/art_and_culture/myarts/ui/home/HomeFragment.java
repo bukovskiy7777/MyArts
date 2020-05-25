@@ -207,7 +207,10 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onArtLikeClick(Art art, int position) {
-                HomeFragment.this.homeViewModel.likeArt (art, position, userUniqueId);
+                boolean networkState = HomeFragment.this.homeViewModel.likeArt (art, position, userUniqueId);
+                if (!networkState) {
+                    Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override

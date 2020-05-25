@@ -1,7 +1,6 @@
 package com.company.art_and_culture.myarts.ui.home;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
@@ -58,8 +57,12 @@ class HomeRepository {
         return art;
     }
 
-    public void likeArt(Art art, int position, String userUniqueId) {
-        homeDataSource.likeArt(art, position, userUniqueId);
+    public boolean likeArt(Art art, int position, String userUniqueId) {
+        boolean isConnected = homeDataSource.isNetworkAvailable();
+        if (isConnected){
+            homeDataSource.likeArt(art, position, userUniqueId);
+        }
+        return isConnected;
     }
 
     public boolean refresh() {

@@ -1,7 +1,6 @@
 package com.company.art_and_culture.myarts.ui.home;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -46,8 +45,8 @@ public class HomeViewModel extends AndroidViewModel {
         return art;
     }
 
-    public void likeArt(Art art, int position, String userUniqueId) {
-        homeRepository.likeArt (art, position, userUniqueId);
+    public boolean likeArt(Art art, int position, String userUniqueId) {
+        return homeRepository.likeArt (art, position, userUniqueId);
     }
 
     public boolean refresh() {
