@@ -121,7 +121,6 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
     }
 
     private void updateIsListEmptyState(Boolean state) {
-        Log.i("updateIsListEmptyState", state+" HomeDataSource");
         isListEmpty.postValue(state);
     }
 

@@ -27,7 +27,6 @@ public class HomeViewModel extends AndroidViewModel {
         artList = homeRepository.getArtList();
         isLoading = homeRepository.getIsLoading();
         isListEmpty = homeRepository.getIsListEmpty();
-        Log.i("updateIsListEmptyState", isListEmpty.getValue()+" HomeViewModel constructor");
         art = homeRepository.getArt();
     }
 
@@ -40,7 +39,6 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public LiveData<Boolean> getIsListEmpty() {
-        Log.i("updateIsListEmptyState", isListEmpty.getValue()+" HomeViewModel getIsListEmpty");
         return isListEmpty;
     }
 
@@ -53,7 +51,6 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public boolean refresh() {
-
         return homeRepository.refresh();
     }
 }

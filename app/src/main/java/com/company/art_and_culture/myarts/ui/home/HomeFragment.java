@@ -181,7 +181,6 @@ public class HomeFragment extends Fragment {
         homeViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                Log.i("updateIsListEmptyState", aBoolean+" "+ "homeFragment");
                 if (aBoolean) { showText(); } else { hideText(); }
             }
         });

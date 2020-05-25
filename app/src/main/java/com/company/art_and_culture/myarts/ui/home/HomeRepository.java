@@ -51,7 +51,6 @@ class HomeRepository {
     }
 
     public LiveData<Boolean> getIsListEmpty() {
-        Log.i("updateIsListEmptyState", isListEmpty.getValue()+" HomeRepository getIsListEmpty");
         return isListEmpty;
     }
 
@@ -75,7 +74,6 @@ class HomeRepository {
         homeDataSource = homeDataSourceFactory.getHomeDataSource();
         isLoading = homeDataSource.getIsLoading();
         isListEmpty = homeDataSource.getIsListEmpty();
-        Log.i("updateIsListEmptyState", isListEmpty.getValue()+" HomeRepository initDataSource");
         art = homeDataSource.getArt();
     }
 }
