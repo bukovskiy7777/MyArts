@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="font_sans_serif_light">sans-serif-light</string>
+    <string name="font_sans_serif_medium">sans-serif-medium</string>
+    <string name="font_sans_serif">sans-serif</string>
+    <string name="font_sans_serif_condensed">sans-serif-condensed</string>
+    <string name="font_sans_serif_black">sans-serif-black</string>
+    <string name="font_sans_serif_thin">sans-serif-thin</string>
+    <string name="font_serif_monospace">serif-monospace</string>
+</resources>
