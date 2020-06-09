@@ -16,11 +16,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,9 +51,9 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 
 import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
-import static com.company.art_and_culture.myarts.ui.home.DownloadAnimations.fadeIn;
-import static com.company.art_and_culture.myarts.ui.home.DownloadAnimations.fadeOut;
-import static com.company.art_and_culture.myarts.ui.home.DownloadAnimations.translation;
+import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.downloadFadeIn;
+import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.downloadFadeOut;
+import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.downloadTranslation;
 
 public class HomeFragment extends Fragment {
 
@@ -169,6 +169,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(PagedList<Art> arts) {
                 homeAdapter.submitList(arts);
+                hideText();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -209,7 +210,7 @@ public class HomeFragment extends Fragment {
             public void onArtLikeClick(Art art, int position) {
                 boolean networkState = HomeFragment.this.homeViewModel.likeArt (art, position, userUniqueId);
                 if (!networkState) {
-                    Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -275,6 +276,11 @@ public class HomeFragment extends Fragment {
                 } else {
                     requestPermissions (arrPerm);
                 }
+            }
+
+            @Override
+            public void onLogoClick(Art art) {
+
             }
         };
 
@@ -348,7 +354,7 @@ public class HomeFragment extends Fragment {
 
         AnimatorSet set = new AnimatorSet();
         set.playSequentially(
-                fadeOut(download_linear, done_view)
+                downloadFadeOut(download_linear, done_view)
         );
         set.start();
     }
@@ -363,8 +369,8 @@ public class HomeFragment extends Fragment {
 
         AnimatorSet set = new AnimatorSet();
         set.playSequentially(
-                fadeIn(download_linear, add_view, download_view),
-                translation(add_view, download_view, download_progress)
+                downloadFadeIn(download_linear, add_view, download_view),
+                downloadTranslation(add_view, download_view, download_progress)
         );
 
         return set;
@@ -522,7 +528,7 @@ public class HomeFragment extends Fragment {
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(getContext(), R.string.sorry__the_application_does_not_have_permission_to_download_the_file, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.application_does_not_have_permission_to_download_the_file, Toast.LENGTH_LONG).show();
                 }
                 break;
             }

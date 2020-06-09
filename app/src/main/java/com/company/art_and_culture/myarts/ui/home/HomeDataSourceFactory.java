@@ -25,6 +25,7 @@ public class HomeDataSourceFactory extends DataSource.Factory<Integer, Art> {
     @NonNull
     @Override
     public DataSource<Integer, Art> create() {
+
         if (homeDataSource.isInvalid()) homeDataSource = new HomeDataSource(application);
         homeDataSourceMutableLiveData.postValue(homeDataSource);
 

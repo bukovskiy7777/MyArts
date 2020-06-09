@@ -1,6 +1,7 @@
 package com.company.art_and_culture.myarts.ui.home;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;

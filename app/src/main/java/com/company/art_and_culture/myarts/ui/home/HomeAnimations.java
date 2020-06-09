@@ -4,16 +4,16 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-public class DownloadAnimations {
+public class HomeAnimations {
 
 
-    public static AnimatorSet fadeIn(ConstraintLayout download_linear, View add_view, View download_view) {
+    public static AnimatorSet downloadFadeIn(ConstraintLayout download_linear, View add_view, View download_view) {
         AnimatorSet set = new AnimatorSet();
         float startValue = 0.2f;
         float endValue = 1f;
@@ -30,11 +30,11 @@ public class DownloadAnimations {
                 ObjectAnimator.ofFloat(download_view, View.SCALE_X, startValue, endValue),
                 ObjectAnimator.ofFloat(download_view, View.SCALE_Y, startValue, endValue)
         );
-        set.addListener(getFadeInFirstListener(download_linear, add_view, download_view));
+        set.addListener(getDownloadFadeInListener(download_linear, add_view, download_view));
         return set;
     }
 
-    private static AnimatorListenerAdapter getFadeInFirstListener(final ConstraintLayout download_linear, final View add_view, final View download_view) {
+    private static AnimatorListenerAdapter getDownloadFadeInListener(final ConstraintLayout download_linear, final View add_view, final View download_view) {
         return new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -54,7 +54,7 @@ public class DownloadAnimations {
         };
     }
 
-    public static AnimatorSet translation(View add_view, View download_view, ProgressBar download_progress) {
+    public static AnimatorSet downloadTranslation(View add_view, View download_view, ProgressBar download_progress) {
         AnimatorSet set = new AnimatorSet();
 
         int[] location = new int[2];
@@ -72,11 +72,11 @@ public class DownloadAnimations {
                 ObjectAnimator.ofFloat(add_view, View.TRANSLATION_X, deltaX),
                 ObjectAnimator.ofFloat(add_view, View.TRANSLATION_Y, deltaY)
         );
-        set.addListener(getTranslationListener(download_progress));
+        set.addListener(getDownloadTranslationListener(download_progress));
         return set;
     }
 
-    private static AnimatorListenerAdapter getTranslationListener(final ProgressBar download_progress) {
+    private static AnimatorListenerAdapter getDownloadTranslationListener(final ProgressBar download_progress) {
         return new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -90,7 +90,7 @@ public class DownloadAnimations {
         };
     }
 
-    public static AnimatorSet fadeOut(ConstraintLayout download_linear, View done_view) {
+    public static AnimatorSet downloadFadeOut(ConstraintLayout download_linear, View done_view) {
         AnimatorSet set = new AnimatorSet();
         float startValue = 1f;
         float endValue = 0.0f;
@@ -104,11 +104,11 @@ public class DownloadAnimations {
                 ObjectAnimator.ofFloat(done_view, View.SCALE_Y, startValue, endValue)
 
         );
-        set.addListener(getFadeOutListener(download_linear, done_view));
+        set.addListener(getDownloadFadeOutListener(download_linear, done_view));
         return set;
     }
 
-    private static AnimatorListenerAdapter getFadeOutListener(final ConstraintLayout download_linear, final View done_view) {
+    private static AnimatorListenerAdapter getDownloadFadeOutListener(final ConstraintLayout download_linear, final View done_view) {
         return new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -124,6 +124,60 @@ public class DownloadAnimations {
             }
         };
     }
+
+    public static AnimatorSet likeFadeIn(ImageButton art_like) {
+        AnimatorSet set = new AnimatorSet();
+        float startValue = 0.2f;
+        float endValue = 1.3f;
+        set.setDuration(400).playTogether(
+                ObjectAnimator.ofFloat(art_like, View.SCALE_X, startValue, endValue),
+                ObjectAnimator.ofFloat(art_like, View.SCALE_Y, startValue, endValue)
+
+        );
+        return set;
+    }
+
+    public static AnimatorSet likeScaleDown(ImageButton art_like) {
+        AnimatorSet set = new AnimatorSet();
+        float startValue = 1.3f;
+        float endValue = 1.0f;
+        set.setDuration(300).playTogether(
+                ObjectAnimator.ofFloat(art_like, View.SCALE_X, startValue, endValue),
+                ObjectAnimator.ofFloat(art_like, View.SCALE_Y, startValue, endValue)
+
+        );
+        return set;
+    }
+
+    public static AnimatorSet shareScaleUp(ImageButton art_share) {
+        AnimatorSet set = new AnimatorSet();
+        float startValue = 1.0f;
+        float endValue = 1.3f;
+        set.setDuration(200).playTogether(
+                ObjectAnimator.ofFloat(art_share, View.SCALE_X, startValue, endValue),
+                ObjectAnimator.ofFloat(art_share, View.SCALE_Y, startValue, endValue)
+
+        );
+        return set;
+    }
+
+    public static AnimatorSet shareScaleDown(ImageButton art_share) {
+        AnimatorSet set = new AnimatorSet();
+        float startValue = 1.3f;
+        float endValue = 1.0f;
+        set.setDuration(200).playTogether(
+                ObjectAnimator.ofFloat(art_share, View.SCALE_X, startValue, endValue),
+                ObjectAnimator.ofFloat(art_share, View.SCALE_Y, startValue, endValue)
+
+        );
+        return set;
+    }
+
+
+
+
+
+
 
 
 }

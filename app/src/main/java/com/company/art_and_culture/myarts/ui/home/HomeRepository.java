@@ -1,6 +1,7 @@
 package com.company.art_and_culture.myarts.ui.home;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
@@ -13,8 +14,6 @@ import androidx.paging.PagedList;
 class HomeRepository {
 
     private static HomeRepository instance;
-    private LiveData<Boolean> isLoading;
-    private LiveData<Boolean> isListEmpty;
     private LiveData<PagedList<Art>> artList;
     private LiveData<Art> art;
     private HomeDataSource homeDataSource;
@@ -38,7 +37,8 @@ class HomeRepository {
         homeDataSourceFactory = new HomeDataSourceFactory(application);
         artList = new LivePagedListBuilder<>(homeDataSourceFactory, config).build();
 
-        initDataSource();
+        homeDataSource = (HomeDataSource) homeDataSourceFactory.create();
+        art = homeDataSource.getArt();
     }
 
     public LiveData<PagedList<Art>> getArtList(){
@@ -46,11 +46,11 @@ class HomeRepository {
     }
 
     public LiveData<Boolean> getIsLoading() {
-        return isLoading;
+        return homeDataSourceFactory.getHomeDataSource().getIsLoading();
     }
 
     public LiveData<Boolean> getIsListEmpty() {
-        return isListEmpty;
+        return homeDataSourceFactory.getHomeDataSource().getIsListEmpty();
     }
 
     public LiveData<Art> getArt() {
@@ -58,7 +58,8 @@ class HomeRepository {
     }
 
     public boolean likeArt(Art art, int position, String userUniqueId) {
-        boolean isConnected = homeDataSource.isNetworkAvailable();
+
+        boolean isConnected = homeDataSourceFactory.getHomeDataSource().isNetworkAvailable();
         if (isConnected){
             homeDataSource.likeArt(art, position, userUniqueId);
         }
@@ -66,17 +67,7 @@ class HomeRepository {
     }
 
     public boolean refresh() {
-        boolean networkState = homeDataSourceFactory.refresh();
-
-        initDataSource();
-
-        return networkState;
+        return homeDataSourceFactory.refresh();
     }
 
-    private void initDataSource() {
-        homeDataSource = homeDataSourceFactory.getHomeDataSource();
-        isLoading = homeDataSource.getIsLoading();
-        isListEmpty = homeDataSource.getIsListEmpty();
-        art = homeDataSource.getArt();
-    }
 }

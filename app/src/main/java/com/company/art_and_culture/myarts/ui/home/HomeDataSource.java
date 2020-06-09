@@ -59,7 +59,6 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
 
                         updateIsListEmptyState(false);
                         callback.onResult((List<Art>) resp.getListArts(),null, 2);
-
                     } else {
                         updateIsListEmptyState(true);
                     }
@@ -74,7 +73,6 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
                 updateIsListEmptyState(true);
             }
         });
-
 
     }
 
@@ -98,7 +96,6 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
 
                         updateIsListEmptyState(false);
                         callback.onResult((List<Art>) resp.getListArts(), params.key + 1);
-
                     } else {
                         updateIsListEmptyState(false);
                     }
@@ -186,7 +183,5 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
         }
         return isAvailable;
     }
-
-
 
 }
