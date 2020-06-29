@@ -16,5 +16,9 @@ public class Constants {
 
     public static final String GET_ARTS_LIST_OPERATION = "getArtsList";
     public static final String ART_LIKE_OPERATION = "artLike";
+    public static final String GET_MY_FAVORITES_OPERATION = "getMyFavorites";
+    public static final String ART_WRITE_DIMENS_OPERATION = "artWriteDimens";
+    public static final String GET_SUGGEST_OPERATION = "getSuggest";
+    public static final String GET_ARTS_LIST_SEARCH_OPERATION = "getArtsListSearch";
 }
 

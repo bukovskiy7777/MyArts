@@ -5,6 +5,8 @@ public class ServerRequest {
     private int pageNumber;
     private String userUniqueId;
     private Art art;
+    private String searchString;
+    private String searchQuery;
 
     public void setOperation(String operation) {
         this.operation = operation;
@@ -20,5 +22,13 @@ public class ServerRequest {
 
     public void setArt(Art art) {
         this.art = art;
+    }
+
+    public void setSearchString(String searchString) {
+        this.searchString = searchString;
+    }
+
+    public void setSearchQuery(String searchQuery) {
+        this.searchQuery = searchQuery;
     }
 }

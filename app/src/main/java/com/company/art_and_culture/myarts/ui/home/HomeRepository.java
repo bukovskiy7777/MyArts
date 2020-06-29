@@ -11,7 +11,7 @@ import com.company.art_and_culture.myarts.pojo.Art;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
-class HomeRepository {
+public class HomeRepository {
 
     private static HomeRepository instance;
     private LiveData<PagedList<Art>> artList;
@@ -37,7 +37,7 @@ class HomeRepository {
         homeDataSourceFactory = new HomeDataSourceFactory(application);
         artList = new LivePagedListBuilder<>(homeDataSourceFactory, config).build();
 
-        homeDataSource = (HomeDataSource) homeDataSourceFactory.create();
+        homeDataSource = (HomeDataSource) homeDataSourceFactory.create();//if remove this line artLike will not working after refresh
         art = homeDataSource.getArt();
     }
 
@@ -46,11 +46,11 @@ class HomeRepository {
     }
 
     public LiveData<Boolean> getIsLoading() {
-        return homeDataSourceFactory.getHomeDataSource().getIsLoading();
+        return homeDataSource.getIsLoading();
     }
 
     public LiveData<Boolean> getIsListEmpty() {
-        return homeDataSourceFactory.getHomeDataSource().getIsListEmpty();
+        return homeDataSource.getIsListEmpty();
     }
 
     public LiveData<Art> getArt() {
@@ -59,7 +59,7 @@ class HomeRepository {
 
     public boolean likeArt(Art art, int position, String userUniqueId) {
 
-        boolean isConnected = homeDataSourceFactory.getHomeDataSource().isNetworkAvailable();
+        boolean isConnected = homeDataSource.isNetworkAvailable();
         if (isConnected){
             homeDataSource.likeArt(art, position, userUniqueId);
         }
@@ -70,4 +70,11 @@ class HomeRepository {
         return homeDataSourceFactory.refresh();
     }
 
+    public HomeDataSource getHomeDataSource() {
+        return homeDataSource;
+    }
+
+    public void writeDimentionsOnServer(Art art) {
+        homeDataSource.writeDimentionsOnServer(art);
+    }
 }

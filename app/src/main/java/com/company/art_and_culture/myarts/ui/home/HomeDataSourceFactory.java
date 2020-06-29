@@ -40,7 +40,4 @@ public class HomeDataSourceFactory extends DataSource.Factory<Integer, Art> {
         return isConnected;
     }
 
-    public HomeDataSource getHomeDataSource() {
-        return homeDataSource;
-    }
 }

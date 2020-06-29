@@ -16,11 +16,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +49,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
 import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.downloadFadeIn;
@@ -62,11 +63,9 @@ public class HomeFragment extends Fragment {
     private HomeAdapter homeAdapter;
     private ProgressBar homeProgressBar, download_progress;
     private TextView textView;
-    private android.content.res.Resources res;
     private int scrollPosition = 0;
-    private OnScrollEventListener scrollEventListener;
+    private HomeEventListener homeEventListener;
     private SharedPreferences preferences;
-    private String userUniqueId;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View download_view, done_view;
     private CircleImageView add_view;
@@ -85,18 +84,18 @@ public class HomeFragment extends Fragment {
 
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
-        res = getResources();
+        android.content.res.Resources res = getResources();
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
         initRecyclerView(homeViewModel, displayWidth, displayHeight);
 
         activity = (MainActivity) getActivity();
-        if (activity != null) scrollPosition = activity.getPosition();
+        if (activity != null) scrollPosition = activity.getHomePosition();
         if (scrollPosition >= 0) homeRecyclerView.scrollToPosition(scrollPosition);
 
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
-        userUniqueId = getUserUniqueId();
+        getUserUniqueId();
 
         initSwipeRefreshLayout();
         subscribeObservers();
@@ -121,16 +120,15 @@ public class HomeFragment extends Fragment {
 
     }
 
-    private void setOnBackPressedListener(View root) {
+    private void setOnBackPressedListener(final View root) {
         //You need to add the following line for this solution to work; thanks skayred
         root.setFocusableInTouchMode(true);
         root.requestFocus();
         root.setOnKeyListener( new View.OnKeyListener() {
-
             @Override
             public boolean onKey( View v, int keyCode, KeyEvent event ) {
 
-                if( keyCode == KeyEvent.KEYCODE_BACK ) {
+                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getArtShowFragment() == null && !activity.isSearchLayoutOpen()) {
                     if (homeAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
                     if (scrollPosition > 4) {
                         homeRecyclerView.smoothScrollToPosition(0);
@@ -187,13 +185,16 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void initRecyclerView(HomeViewModel homeViewModel, int displayWidth, int displayHeight){
+    private void initRecyclerView(final HomeViewModel homeViewModel, int displayWidth, int displayHeight){
 
         HomeAdapter.OnArtClickListener onArtClickListener = new HomeAdapter.OnArtClickListener() {
 
             @Override
-            public void onArtImageClick(Art art, int viewWidth, int viewHeight) {
-
+            public void onArtImageClick(Art art, int position, int viewWidth, int viewHeight) {
+                Collection<Art> listArts = new ArrayList<>();
+                Art artInMemory = HomeDataInMemory.getInstance().getSingleItem(position);
+                listArts.add(artInMemory);
+                homeEventListener.homeArtClickEvent(listArts, 0);
             }
 
             @Override
@@ -208,7 +209,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onArtLikeClick(Art art, int position) {
-                boolean networkState = HomeFragment.this.homeViewModel.likeArt (art, position, userUniqueId);
+                boolean networkState = HomeFragment.this.homeViewModel.likeArt (art, position, preferences.getString(Constants.USER_UNIQUE_ID,""));
                 if (!networkState) {
                     Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_SHORT).show();
                 }
@@ -219,7 +220,7 @@ public class HomeFragment extends Fragment {
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 String text = art.getArtMaker()+" - "+art.getArtTitle()
-                        + System.getProperty ("line.separator") + art.getArtImgUrlSmall();
+                        + System.getProperty ("line.separator") + art.getArtImgUrl();
                 //String text = art.getArtLink();
                 sendIntent.putExtra(Intent.EXTRA_TEXT, text);
                 sendIntent.setType("text/plain");
@@ -362,15 +363,21 @@ public class HomeFragment extends Fragment {
     private AnimatorSet startDownloadAnimation(int x, int y) {
 
         int actionBarHeight = 0;
-        if (activity != null) actionBarHeight = activity.getSupportActionBar().getHeight();
-
+        if (activity != null) actionBarHeight = activity.getToolbarHeight();
         add_view.setX(x);
         add_view.setY(y - actionBarHeight);
+
+        int[] location = new int[2];
+        download_view.getLocationOnScreen(location);
+        int x1 = location[0];
+        int y1 = location[1];
+        int targetX = x1 + download_view.getWidth()/2;
+        int targetY = y1 - download_view.getHeight()/2;
 
         AnimatorSet set = new AnimatorSet();
         set.playSequentially(
                 downloadFadeIn(download_linear, add_view, download_view),
-                downloadTranslation(add_view, download_view, download_progress)
+                downloadTranslation(add_view, targetX, targetY, download_progress)
         );
 
         return set;
@@ -409,15 +416,16 @@ public class HomeFragment extends Fragment {
         textView.setVisibility(View.GONE);
     }
 
-    public interface OnScrollEventListener {
-        void scrollEvent(int position);
+    public interface HomeEventListener {
+        void homeScrollEvent(int position);
+        void homeArtClickEvent(Collection<Art> arts, int position);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            scrollEventListener = (OnScrollEventListener) context;
+            homeEventListener = (HomeEventListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement onSomeEventListener");
         }
@@ -427,7 +435,7 @@ public class HomeFragment extends Fragment {
     public void onPause() {
         super.onPause();
         if (homeAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
-        scrollEventListener.scrollEvent(scrollPosition);
+        homeEventListener.homeScrollEvent(scrollPosition);
     }
 
     private int getTargetScrollPosition () {
@@ -464,15 +472,14 @@ public class HomeFragment extends Fragment {
         return targetPosition;
     }
 
-    private String getUserUniqueId() {
+    private void getUserUniqueId() {
 
         if (preferences.getString(Constants.USER_UNIQUE_ID,"").length()==0) {
-            userUniqueId = randomString(23);
+            String userUniqueId = randomString(23);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(Constants.USER_UNIQUE_ID, userUniqueId);
             editor.apply();
         }
-        return preferences.getString(Constants.USER_UNIQUE_ID,"");
     }
 
     private String randomString(int len){

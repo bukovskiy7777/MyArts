@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "442192859953",
+    "firebase_url": "https://artworks-c8370.firebaseio.com",
+    "project_id": "artworks-c8370",
+    "storage_bucket": "artworks-c8370.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:442192859953:android:92a63af68057d561f8d610",
+        "android_client_info": {
+          "package_name": "com.company.art_and_culture.myarts"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "442192859953-2qkf4v9uv1kckqcm8oeno9kt3rdu3jr7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzwD00vgx5aMO2CoAoMVd7vK2RNk2evCc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "442192859953-2qkf4v9uv1kckqcm8oeno9kt3rdu3jr7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

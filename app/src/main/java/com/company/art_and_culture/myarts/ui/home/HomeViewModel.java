@@ -19,9 +19,11 @@ public class HomeViewModel extends AndroidViewModel {
     private LiveData<Art> art;
     private HomeRepository homeRepository;
     private android.content.res.Resources res;
+    private Application application;
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
+        this.application = application;
 
         homeRepository = HomeRepository.getInstance(application);
         artList = homeRepository.getArtList();
@@ -52,5 +54,9 @@ public class HomeViewModel extends AndroidViewModel {
 
     public boolean refresh() {
         return homeRepository.refresh();
+    }
+
+    public void writeDimentionsOnServer(Art art) {
+        homeRepository.writeDimentionsOnServer(art);
     }
 }

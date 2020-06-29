@@ -54,17 +54,10 @@ public class HomeAnimations {
         };
     }
 
-    public static AnimatorSet downloadTranslation(View add_view, View download_view, ProgressBar download_progress) {
+    public static AnimatorSet downloadTranslation(View add_view, int targetX, int targetY, ProgressBar download_progress) {
         AnimatorSet set = new AnimatorSet();
 
-        int[] location = new int[2];
-        download_view.getLocationOnScreen(location);
-        int x = location[0];
-        int y = location[1];
-        //int targetX = download_view.getLeft() + download_view.getWidth()/2;
-        int targetX = x + download_view.getWidth()/2;
-        //int targetY = download_view.getBottom() - download_view.getHeight()/2;
-        int targetY = y - download_view.getHeight()/2;
+
 
         int deltaX = targetX - add_view.getLeft() - add_view.getWidth()/2;
         int deltaY = targetY - add_view.getBottom() - add_view.getHeight()/2;

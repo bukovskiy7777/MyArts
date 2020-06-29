@@ -9,6 +9,7 @@ public class Art {
     private String artLongTitle;
     private String artImgUrl;
     private String artImgUrlSmall;
+    private String artProviderId;
     private String artProvider;
     private String artProviderCountry;
     private int artWidth;
@@ -17,6 +18,15 @@ public class Art {
     private String artClassification;
     private boolean isLiked;
     //private String serverTableName;
+
+
+    public void setArtWidth(int artWidth) {
+        this.artWidth = artWidth;
+    }
+
+    public void setArtHeight(int artHeight) {
+        this.artHeight = artHeight;
+    }
 
     public String getArtLink() {
         return artLink;
@@ -74,4 +84,7 @@ public class Art {
         return isLiked;
     }
 
+    public String getArtProviderId() {
+        return artProviderId;
+    }
 }

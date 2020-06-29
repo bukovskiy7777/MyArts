@@ -11,6 +11,7 @@ import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
+import com.company.art_and_culture.myarts.ui.favorites.FavoritesRepository;
 
 import java.util.List;
 
@@ -58,7 +59,8 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsListEmptyState(false);
-                        callback.onResult((List<Art>) resp.getListArts(),null, 2);
+                        HomeDataInMemory.getInstance().addData(resp.getListArts());
+                        callback.onResult(HomeDataInMemory.getInstance().getInitialData(),null, 2);
                     } else {
                         updateIsListEmptyState(true);
                     }
@@ -95,7 +97,8 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsListEmptyState(false);
-                        callback.onResult((List<Art>) resp.getListArts(), params.key + 1);
+                        HomeDataInMemory.getInstance().addData(resp.getListArts());
+                        callback.onResult(HomeDataInMemory.getInstance().getAfterData(params.key), params.key + 1);
                     } else {
                         updateIsListEmptyState(false);
                     }
@@ -121,7 +124,7 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
         isListEmpty.postValue(state);
     }
 
-    private void updateArt(Art newArt) {
+    public void updateArt(Art newArt) {
         art.postValue(newArt);
     }
 
@@ -152,6 +155,9 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateArt(resp.getArt());
+                        HomeDataInMemory.getInstance().updateSingleItem(resp.getArt());
+                        FavoritesRepository favoritesRepository = FavoritesRepository.getInstance(application);
+                        favoritesRepository.refresh();
 
                     } else {
 
@@ -169,6 +175,7 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
     }
 
     public void refresh() {
+        HomeDataInMemory.getInstance().refresh();
         invalidate();
     }
 
@@ -184,4 +191,17 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
         return isAvailable;
     }
 
+    public void writeDimentionsOnServer(Art art) {
+
+        ServerRequest request = new ServerRequest();
+        request.setOperation(Constants.ART_WRITE_DIMENS_OPERATION);
+        request.setArt(art);
+        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
+        response.enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) { }
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) { }
+        });
+    }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Arts</string>
+    <string name="app_name">ArtWorks</string>
     <string name="title_home">Home</string>
     <string name="title_explore">Explore</string>
     <string name="title_favorites">Favorites</string>
@@ -12,4 +12,7 @@
     <string name="folger_my_arts_pictures">My Arts Pictures</string>
     <string name="thanks_for_the_permissions_download_file_please">Thanks for the permissions. Download file please</string>
     <string name="application_does_not_have_permission_to_download_the_file">Sorry. The application does not have permission to download the file</string>
+    <string name="search_artworks">Search ArtWorks in english</string>
+    <string name="more_then">More then</string>
+    <string name="items">items</string>
 </resources>

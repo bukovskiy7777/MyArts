@@ -1,15 +1,16 @@
 package com.company.art_and_culture.myarts.pojo;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class ServerResponse {
     private String result;
     private String message;
-    private Collection<Art> listArts;
+    private ArrayList<Art> listArts;
     private Art art;
+    private ArrayList<Suggest> listSuggests;
 
-
-    public Collection<Art> getListArts() {
+    public ArrayList<Art> getListArts() {
         return listArts;
     }
 
@@ -23,5 +24,9 @@ public class ServerResponse {
 
     public Art getArt() {
         return art;
+    }
+
+    public ArrayList<Suggest> getListSuggests() {
+        return listSuggests;
     }
 }

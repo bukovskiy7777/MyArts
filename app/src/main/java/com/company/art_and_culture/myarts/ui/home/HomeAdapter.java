@@ -4,7 +4,6 @@ import android.animation.AnimatorSet;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import androidx.recyclerview.widget.DiffUtil;
 
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -58,7 +56,7 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
     }
 
     public interface OnArtClickListener {
-        void onArtImageClick(Art art, int viewWidth, int viewHeight);
+        void onArtImageClick(Art art, int position, int viewWidth, int viewHeight);
         void onArtMakerClick(Art art);
         void onArtClassificationClick(Art art);
         void onArtLikeClick(Art art, int position);
@@ -70,7 +68,7 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
     @NonNull
     @Override
     public HomeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_home, parent, false);
         return new HomeViewHolder(view);
     }
 
@@ -104,14 +102,16 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
                 } else {
                     art_image.getLayoutParams().height = art_image.getMaxHeight();
                 }
-                Log.i ("PicassoLoaded", "onBitmapLoaded "+position);
+                art.setArtWidth(bitmap.getWidth());
+                art.setArtHeight(bitmap.getHeight());
+                homeViewModel.writeDimentionsOnServer(art);
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(art_image);
             }
             @Override
             public void onBitmapFailed(Exception e, Drawable errorDrawable) { }
             @Override
             public void onPrepareLoad(Drawable placeHolderDrawable) { }
-        };;
+        };
 
         HomeViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -148,7 +148,7 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
             Picasso.get().load(art.getArtLogoUrl()).into(logo_image);
 
             if(art.getIsLiked()){
-                art_like.setImageResource(R.drawable.ic_favorite_black_100dp);
+                art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
                 art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
             } else {
                 art_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
@@ -179,7 +179,7 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
                 public void onChanged(Art newArt) {
                     if (newArt.getArtId().equals(art.getArtId()) && newArt.getArtProvider().equals(art.getArtProvider())) {
                         if(newArt.getIsLiked()){
-                            art_like.setImageResource(R.drawable.ic_favorite_black_100dp);
+                            art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
                             art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
                             AnimatorSet set = new AnimatorSet();
                             set.playSequentially(likeFadeIn(art_like), likeScaleDown(art_like));
@@ -200,7 +200,7 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
         public void onClick(View v) {
 
             if (v.getId() == art_image.getId()) {
-                onArtClickListener.onArtImageClick(art, v.getWidth(), v.getHeight());
+                onArtClickListener.onArtImageClick(art, position, v.getWidth(), v.getHeight());
 
             } else if (v.getId() == art_maker.getId()) {
                 onArtClickListener.onArtMakerClick(art);

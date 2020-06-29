@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:clickable="true"
+    android:focusable="true"
+    tools:context=".arts_show.ArtShowFragment">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:src="@color/colorYellow"
+        android:elevation="7dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/add_view"
+        android:layout_width="26dp"
+        android:layout_height="26dp">
+    </de.hdodenhof.circleimageview.CircleImageView>
+
+    <View
+        android:elevation="8dp"
+        app:layout_constraintRight_toRightOf="@+id/download_linear"
+        app:layout_constraintLeft_toLeftOf="@+id/download_linear"
+        app:layout_constraintTop_toTopOf="@+id/download_linear"
+        app:layout_constraintBottom_toBottomOf="@+id/download_linear"
+        android:background="@drawable/ic_archive_black_100dp"
+        android:id="@+id/download_view"
+        android:layout_margin="20dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp">
+    </View>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:orientation="vertical"
+        android:background="@drawable/download_round_corner"
+        android:elevation="6dp"
+        android:id="@+id/download_linear"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/download_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="10dp"
+            android:minHeight="10dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/done_view"
+            android:indeterminate="true"
+            />
+
+        <View
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/ic_check_circle_black_100dp"
+            android:id="@+id/done_view"
+            android:layout_margin="20dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp">
+        </View>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/show_art_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
