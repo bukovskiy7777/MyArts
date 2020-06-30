@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.arts_show;
+package com.company.art_and_culture.myarts.arts_show_fragment;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -64,14 +64,6 @@ public class ArtShowFragment extends Fragment {
     private ConstraintLayout download_linear;
     private ProgressBar download_progress;
     private MainActivity activity;
-    private static ArtShowFragment instance;
-
-    public static ArtShowFragment getInstance() {
-        if(instance == null){
-            instance = new ArtShowFragment();
-        }
-        return instance;
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -383,7 +375,6 @@ public class ArtShowFragment extends Fragment {
 
     public ArtShowFragment finish() {
         artShowViewModel.finish ();
-        instance = null;
-        return instance;
+        return null;
     }
 }

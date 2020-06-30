@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.search;
+package com.company.art_and_culture.myarts.arts_show_fragment;
 
 import android.animation.AnimatorSet;
 import android.content.Context;
@@ -17,95 +17,112 @@ import com.company.art_and_culture.myarts.ui.home.LifecycleViewHolder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
-import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 
 import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.likeFadeIn;
 import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.likeScaleDown;
 import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.shareScaleDown;
 import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.shareScaleUp;
 
-public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchViewHolder> {
+public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowViewHolder> {
 
     private Context context;
     private OnArtClickListener onArtClickListener;
     private int displayWidth, displayHeight;
-    private SearchViewModel searchViewModel;
+    private ArtShowViewModel artShowViewModel;
+    private List<Art> artList=new ArrayList<>();
 
 
-    public SearchAdapter(SearchViewModel searchViewModel, Context context, OnArtClickListener onArtClickListener, int displayWidth, int displayHeight) {
-        super(itemDiffUtilCallback);
+    public ArtShowAdapter(ArtShowViewModel artShowViewModel, Context context, OnArtClickListener onArtClickListener, int displayWidth, int displayHeight) {
         this.context = context;
-        this.searchViewModel = searchViewModel;
+        this.artShowViewModel = artShowViewModel;
         this.onArtClickListener = onArtClickListener;
         this.displayWidth = displayWidth;
         this.displayHeight = displayHeight;
     }
 
     @Override
-    public void onViewAttachedToWindow(@NonNull SearchViewHolder holder) {
+    public void onViewAttachedToWindow(@NonNull ArtShowViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         holder.onAttached();
     }
 
     @Override
-    public void onViewDetachedFromWindow(@NonNull SearchViewHolder holder) {
+    public void onViewDetachedFromWindow(@NonNull ArtShowViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
         holder.onDetached();
     }
 
     public interface OnArtClickListener {
-        void onArtImageClick(Art art, int position, int viewWidth, int viewHeight);
-        void onArtMakerClick(Art art);
-        void onArtClassificationClick(Art art);
         void onArtLikeClick(Art art, int position);
         void onArtShareClick(Art art);
-        void onArtDownloadClick(Art art, int x, int y, int viewWidth, int viewHeight);
+        void onArtDownloadClick(Art art, int x, int y, int artWidth, int artHeight);
         void onLogoClick(Art art);
+    }
+
+    public void setItems(Collection<Art> arts){
+        artList.addAll(arts);
+        notifyDataSetChanged();
+    }
+
+    public List<Art> getItems() {
+        return artList;
+    }
+
+    public void clearItems(){
+        artList.clear();
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
-    public SearchViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_search, parent, false);
-        return new SearchViewHolder(view);
+    public ArtShowViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_art_show, parent, false);
+        return new ArtShowViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
-        Art art = getItem(position);
+    public void onBindViewHolder(@NonNull ArtShowViewHolder holder, int position) {
+        Art art = artList.get(position);
         if (art != null) {
             holder.bind(art, position);
         } else {
             // Null defines a placeholder item - PagedListAdapter will automatically invalidate
             // this row when the actual object is loaded from the database
-            //holder.clear();
+            // holder.clear();
         }
     }
 
-    class SearchViewHolder extends LifecycleViewHolder implements View.OnClickListener {
+    @Override
+    public int getItemCount() {
+        return artList.size();
+    }
+
+    class ArtShowViewHolder extends LifecycleViewHolder implements View.OnClickListener {
 
         private Art art;
         private int position;
         private ImageView art_image, logo_image;
-        private TextView art_maker, art_title, art_classification, logo_text;
-        private ImageButton art_share, art_download, art_like;
+        private TextView art_maker, art_title, art_description;
+        private ImageButton art_share, art_download, art_like, button_go_to_museum;
         private String artImgUrl;
+        private ConstraintLayout art_header, art_footer;
+        private int artWidth, artHeight;
+        int imgWidth, imgHeight;
         private final Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                int imgWidth = displayWidth;
-                int imgHeight = (bitmap.getHeight() * imgWidth) / bitmap.getWidth();
-                if (imgHeight <= art_image.getMaxHeight()) {
-                    art_image.getLayoutParams().height = imgHeight;
-                } else {
-                    art_image.getLayoutParams().height = art_image.getMaxHeight();
-                }
-                art.setArtWidth(bitmap.getWidth());
-                art.setArtHeight(bitmap.getHeight());
-                searchViewModel.writeDimentionsOnServer(art);
+                artWidth = bitmap.getWidth();
+                artHeight = bitmap.getHeight();
+
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(art_image);
             }
             @Override
@@ -114,37 +131,40 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
             public void onPrepareLoad(Drawable placeHolderDrawable) { }
         };
 
-        SearchViewHolder(@NonNull View itemView) {
+        ArtShowViewHolder(@NonNull View itemView) {
             super(itemView);
             art_image = itemView.findViewById(R.id.art_image);
-            art_maker = itemView.findViewById(R.id.art_maker);
+
+            art_header = itemView.findViewById(R.id.art_header);
+            logo_image = itemView.findViewById(R.id.logo_image);
+            button_go_to_museum = itemView.findViewById(R.id.button_go_to_museum);
             art_title = itemView.findViewById(R.id.art_title);
-            art_classification = itemView.findViewById(R.id.art_classification);
+
+            art_footer = itemView.findViewById(R.id.art_footer);
+            art_maker = itemView.findViewById(R.id.art_maker);
+            art_description = itemView.findViewById(R.id.art_description);
             art_share = itemView.findViewById(R.id.art_share);
             art_download = itemView.findViewById(R.id.art_download);
             art_like = itemView.findViewById(R.id.art_like);
-            logo_image = itemView.findViewById(R.id.logo_image);
-            logo_text = itemView.findViewById(R.id.logo_text);
 
             art_image.setOnClickListener(this);
-            art_maker.setOnClickListener(this);
-            art_classification.setOnClickListener(this);
             art_share.setOnClickListener(this);
             art_download.setOnClickListener(this);
             art_like.setOnClickListener(this);
             logo_image.setOnClickListener(this);
-            logo_text.setOnClickListener(this);
-
+            button_go_to_museum.setOnClickListener(this);
         }
 
         void bind(final Art art, final int position) {
             this.art = art;
             this.position = position;
 
-            art_title.setText(art.getArtLongTitle());
+            art_header.setVisibility(View.VISIBLE);
+            art_footer.setVisibility(View.VISIBLE);
+
+            art_title.setText(art.getArtTitle());
             art_maker.setText(art.getArtMaker());
-            art_classification.setText(art.getArtClassification());
-            logo_text.setText(art.getArtProvider());
+            art_description.setText(art.getArtLongTitle());
 
             Picasso.get().load(art.getArtLogoUrl()).into(logo_image);
 
@@ -157,25 +177,30 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
             }
 
             if (art.getArtWidth() > 0) {
+                art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
                 artImgUrl= art.getArtImgUrl();
-                int imgWidth = displayWidth;
-                int imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
-                if (imgHeight <= art_image.getMaxHeight()) {
-                    art_image.getLayoutParams().height = imgHeight;
+
+                artWidth = art.getArtWidth();
+                artHeight = art.getArtHeight();
+
+                //int imgWidth, imgHeight;
+                if (art.getArtWidth() > art.getArtHeight()) {
+                    imgWidth = 1600;
+                    imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
                 } else {
-                    art_image.getLayoutParams().height = art_image.getMaxHeight();
+                    imgHeight = 1600;
+                    imgWidth = (art.getArtWidth() * imgHeight) / art.getArtHeight();
                 }
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image);
             } else {
                 art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
-                art_image.getLayoutParams().height = displayWidth;
                 artImgUrl = art.getArtImgUrlSmall();
                 if (!artImgUrl.equals(" ")) {
                     Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);
                 }
             }
 
-            searchViewModel.getArt().observe(this, new Observer<Art>() {
+            artShowViewModel.getArt().observe(this, new Observer<Art>() {
                 @Override
                 public void onChanged(Art newArt) {
                     if (newArt.getArtId().equals(art.getArtId()) && newArt.getArtProvider().equals(art.getArtProvider())) {
@@ -200,16 +225,7 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
         @Override
         public void onClick(View v) {
 
-            if (v.getId() == art_image.getId()) {
-                onArtClickListener.onArtImageClick(art, position, v.getWidth(), v.getHeight());
-
-            } else if (v.getId() == art_maker.getId()) {
-                onArtClickListener.onArtMakerClick(art);
-
-            } else if (v.getId() == art_classification.getId()) {
-                onArtClickListener.onArtClassificationClick(art);
-
-            } else if (v.getId() == art_share.getId()) {
+            if (v.getId() == art_share.getId()) {
                 onArtClickListener.onArtShareClick(art);
                 AnimatorSet set = new AnimatorSet();
                 set.playSequentially(shareScaleUp(art_share), shareScaleDown(art_share));
@@ -220,29 +236,59 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
                 art_download.getLocationOnScreen(location);
                 int x = location[0];
                 int y = location[1];
-                onArtClickListener.onArtDownloadClick(art, x, y, art_image.getWidth(), art_image.getHeight());
+                onArtClickListener.onArtDownloadClick(art, x, y, artWidth, artHeight);
 
             } else if (v.getId() == art_like.getId()) {
                 onArtClickListener.onArtLikeClick(art, position);
 
-            } else if (v.getId() == logo_image.getId() || v.getId() == logo_text.getId()) {
+            } else if (v.getId() == logo_image.getId() || v.getId() == button_go_to_museum.getId()) {
                 onArtClickListener.onLogoClick(art);
+
+            } else if (v.getId() == art_image.getId()) {
+                if (art_header.isShown()) {
+                    art_header.setVisibility(View.GONE);
+                    art_footer.setVisibility(View.GONE);
+                } else {
+                    art_header.setVisibility(View.VISIBLE);
+                    art_footer.setVisibility(View.VISIBLE);
+                }
             }
         }
-
     }
 
-    private static DiffUtil.ItemCallback<Art> itemDiffUtilCallback = new DiffUtil.ItemCallback<Art>() {
+    public static class ItemDiffUtilCallback extends DiffUtil.Callback {
+        private final List<Art> oldList;
+        private final List<Art> newList;
 
-        @Override
-        public boolean areItemsTheSame(@NonNull Art oldItem, @NonNull Art newItem) {
-            return oldItem.getArtId().equals(newItem.getArtId());
+        public ItemDiffUtilCallback(List<Art> oldList, List<Art> newList) {
+            this.oldList = oldList;
+            this.newList = newList;
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull Art oldItem, @NonNull Art newItem) {
-            return oldItem.getArtId().equals(newItem.getArtId()) && oldItem.getIsLiked() == newItem.getIsLiked();
+        public int getOldListSize() {
+            return oldList.size();
         }
-    };
+
+        @Override
+        public int getNewListSize() {
+            return newList.size();
+        }
+
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            Art oldArt = oldList.get(oldItemPosition);
+            Art newArt = newList.get(newItemPosition);
+            return oldArt.getArtId().equals(newArt.getArtId());
+        }
+
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            Art oldArt = oldList.get(oldItemPosition);
+            Art newArt = newList.get(newItemPosition);
+
+            return oldArt.getArtId().equals(newArt.getArtId()) && oldArt.getIsLiked() == newArt.getIsLiked();
+        }
+    }
 
 }

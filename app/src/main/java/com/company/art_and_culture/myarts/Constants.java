@@ -20,5 +20,7 @@ public class Constants {
     public static final String ART_WRITE_DIMENS_OPERATION = "artWriteDimens";
     public static final String GET_SUGGEST_OPERATION = "getSuggest";
     public static final String GET_ARTS_LIST_SEARCH_OPERATION = "getArtsListSearch";
+    public static final String GET_ARTS_LIST_MAKER_OPERATION = "getArtsListMaker";
+
 }
 

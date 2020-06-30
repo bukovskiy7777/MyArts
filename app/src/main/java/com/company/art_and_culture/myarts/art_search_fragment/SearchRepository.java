@@ -1,12 +1,9 @@
-package com.company.art_and_culture.myarts.search;
+package com.company.art_and_culture.myarts.art_search_fragment;
 
 import android.app.Application;
 
 import com.company.art_and_culture.myarts.Constants;
-import com.company.art_and_culture.myarts.arts_show.ArtShowRepository;
 import com.company.art_and_culture.myarts.pojo.Art;
-import com.company.art_and_culture.myarts.ui.home.HomeDataSource;
-import com.company.art_and_culture.myarts.ui.home.HomeDataSourceFactory;
 
 import androidx.lifecycle.LiveData;
 import androidx.paging.LivePagedListBuilder;

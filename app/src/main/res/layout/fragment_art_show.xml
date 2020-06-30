@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".arts_show.ArtShowFragment">
+    tools:context=".arts_show_fragment.ArtShowFragment">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:src="@color/colorYellow"

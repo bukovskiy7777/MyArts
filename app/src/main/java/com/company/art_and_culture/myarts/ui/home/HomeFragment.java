@@ -199,7 +199,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onArtMakerClick(Art art) {
-
+                homeEventListener.homeMakerClickEvent(art.getArtMaker());
             }
 
             @Override
@@ -419,6 +419,7 @@ public class HomeFragment extends Fragment {
     public interface HomeEventListener {
         void homeScrollEvent(int position);
         void homeArtClickEvent(Collection<Art> arts, int position);
+        void homeMakerClickEvent(String artMaker);
     }
 
     @Override

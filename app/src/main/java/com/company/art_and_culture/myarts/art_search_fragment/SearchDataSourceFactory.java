@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.search;
+package com.company.art_and_culture.myarts.art_search_fragment;
 
 import android.app.Application;
 

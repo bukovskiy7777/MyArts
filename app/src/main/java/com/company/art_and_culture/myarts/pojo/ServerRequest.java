@@ -7,6 +7,7 @@ public class ServerRequest {
     private Art art;
     private String searchString;
     private String searchQuery;
+    private String artMaker;
 
     public void setOperation(String operation) {
         this.operation = operation;
@@ -31,4 +32,9 @@ public class ServerRequest {
     public void setSearchQuery(String searchQuery) {
         this.searchQuery = searchQuery;
     }
+
+    public void setArtMaker(String artMaker) {
+        this.artMaker = artMaker;
+    }
+
 }

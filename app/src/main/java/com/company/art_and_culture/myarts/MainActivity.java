@@ -17,13 +17,14 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.company.art_and_culture.myarts.arts_show.ArtShowFragment;
+import com.company.art_and_culture.myarts.art_maker_fragment.MakerFragment;
+import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
 import com.company.art_and_culture.myarts.pojo.Suggest;
-import com.company.art_and_culture.myarts.search.SearchFragment;
+import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
 import com.company.art_and_culture.myarts.ui.favorites.FavoritesFragment;
 import com.company.art_and_culture.myarts.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -45,7 +46,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements
-        HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener, View.OnClickListener {
+        HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
+        MakerFragment.MakerEventListener, View.OnClickListener {
 
     private int homePosition = 0;
     private int favoritesPosition = 0;
@@ -62,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements
     private SuggestAdapter suggestAdapter;
     private ProgressBar suggestions_progress;
     private SearchFragment searchFragment;
+    private MakerFragment makerFragment;
+    private String artMaker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,6 +207,14 @@ public class MainActivity extends AppCompatActivity implements
             search_layout.setVisibility(View.GONE);
             suggestions_recycler_view.setVisibility(View.GONE);
 
+            if (searchFragment != null) {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
+                fragmentTransaction.remove(searchFragment).commit();
+                searchFragment = searchFragment.finish();
+            }
+
         }
     }
 
@@ -234,6 +246,11 @@ public class MainActivity extends AppCompatActivity implements
         this.clickPosition = position;
 
         showArtFragment();
+    }
+    @Override
+    public void homeMakerClickEvent(String artMaker) {
+        this.artMaker = artMaker;
+        showMakerFragment();
     }
     public int getHomePosition() {
         return homePosition;
@@ -268,6 +285,16 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
+    @Override
+    public void makerArtClickEvent(Collection<Art> arts, int position) {
+        this.listArts = arts;
+        this.clickPosition = position;
+
+        showArtFragment();
+    }
+
+
+
     public Collection<Art> getListArts() {
         return listArts;
     }
@@ -291,12 +318,21 @@ public class MainActivity extends AppCompatActivity implements
             artShowFragment = artShowFragment.finish();
             //FavoritesRepository favoritesRepository = FavoritesRepository.getInstance(getApplication());
             //favoritesRepository.refresh();
+
         } else if (searchFragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
             fragmentTransaction.remove(searchFragment).commit();
             searchFragment = searchFragment.finish();
+
+        } else if (makerFragment != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
+            fragmentTransaction.remove(makerFragment).commit();
+            makerFragment = makerFragment.finish();
+
         } else {
             if (isSearchLayoutOpen()) {
 
@@ -312,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void showArtFragment() {
 
-        artShowFragment = ArtShowFragment.getInstance();
+        artShowFragment = new ArtShowFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
@@ -322,7 +358,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void showSearchFragment() {
 
-        searchFragment = searchFragment.getInstance();
+        searchFragment = SearchFragment.getInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
@@ -330,8 +366,22 @@ public class MainActivity extends AppCompatActivity implements
         fragmentTransaction.add(R.id.frame_container_search, searchFragment, "searchFragment").commit();
     }
 
+    private void showMakerFragment() {
+
+        makerFragment = MakerFragment.getInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
+        //fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.add(R.id.frame_container_maker, makerFragment, "makerFragment").commit();
+    }
+
     public String getSearchQuery() {
         return search_edit_text.getText().toString();
+    }
+
+    public String getArtMaker() {
+        return artMaker;
     }
 
 }

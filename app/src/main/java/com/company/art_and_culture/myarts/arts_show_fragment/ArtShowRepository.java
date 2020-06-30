@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.arts_show;
+package com.company.art_and_culture.myarts.arts_show_fragment;
 
 import android.app.Application;
 

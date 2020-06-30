@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.search;
+package com.company.art_and_culture.myarts.art_search_fragment;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -34,7 +34,6 @@ import com.squareup.picasso.Target;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -83,7 +82,7 @@ public class SearchFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_search, container, false);
+        View root = inflater.inflate(R.layout.fragment_art_search, container, false);
         textView = root.findViewById(R.id.text_search);
         searchRecyclerView = root.findViewById(R.id.recycler_view_search);
         searchProgressBar = root.findViewById(R.id.progress_bar_search);

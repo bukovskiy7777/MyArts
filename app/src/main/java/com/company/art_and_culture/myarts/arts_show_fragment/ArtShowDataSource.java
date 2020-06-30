@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.arts_show;
+package com.company.art_and_culture.myarts.arts_show_fragment;
 
 import android.app.Application;
 import android.content.Context;
@@ -6,12 +6,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.art_maker_fragment.MakerDataInMemory;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
-import com.company.art_and_culture.myarts.search.SearchDataInMemory;
-import com.company.art_and_culture.myarts.search.SearchRepository;
+import com.company.art_and_culture.myarts.art_search_fragment.SearchDataInMemory;
+import com.company.art_and_culture.myarts.art_search_fragment.SearchRepository;
 import com.company.art_and_culture.myarts.ui.favorites.FavoritesRepository;
 import com.company.art_and_culture.myarts.ui.home.HomeDataInMemory;
 import com.company.art_and_culture.myarts.ui.home.HomeRepository;
@@ -57,6 +58,8 @@ class ArtShowDataSource {
                         HomeDataInMemory.getInstance().updateSingleItem(resp.getArt());
 
                         SearchDataInMemory.getInstance().updateSingleItem(resp.getArt());
+
+                        MakerDataInMemory.getInstance().updateSingleItem(resp.getArt());
 
                         FavoritesRepository favoritesRepository = FavoritesRepository.getInstance(application);
                         favoritesRepository.refresh();

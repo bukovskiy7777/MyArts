@@ -1,18 +1,18 @@
-package com.company.art_and_culture.myarts.search;
+package com.company.art_and_culture.myarts.art_maker_fragment;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import java.util.ArrayList;
 
-public class SearchDataInMemory {
+public class MakerDataInMemory {
 
-    private static SearchDataInMemory instance;
+    private static MakerDataInMemory instance;
     private ArrayList<Art> listArts = new ArrayList<>();
 
-    public static SearchDataInMemory getInstance(){
+    public static MakerDataInMemory getInstance(){
         if(instance == null){
-            instance = new SearchDataInMemory();
+            instance = new MakerDataInMemory();
         }
         return instance;
     }
