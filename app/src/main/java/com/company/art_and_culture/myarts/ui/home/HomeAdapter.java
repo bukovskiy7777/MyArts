@@ -1,10 +1,13 @@
 package com.company.art_and_culture.myarts.ui.home;
 
 import android.animation.AnimatorSet;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -12,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
@@ -20,6 +25,8 @@ import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import java.util.ArrayList;
 
 import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.likeFadeIn;
 import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.likeScaleDown;
@@ -84,9 +91,9 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
         }
     }
 
-    class HomeViewHolder extends LifecycleViewHolder implements View.OnClickListener {
+    class HomeViewHolder extends LifecycleViewHolder implements View.OnClickListener, View.OnTouchListener {
 
-        private Art art;
+        private Art art = new Art();
         private int position;
         private ImageView art_image, logo_image;
         private TextView art_maker, art_title, art_classification, logo_text;
@@ -113,6 +120,7 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
             public void onPrepareLoad(Drawable placeHolderDrawable) { }
         };
 
+        @SuppressLint("ClickableViewAccessibility")
         HomeViewHolder(@NonNull View itemView) {
             super(itemView);
             art_image = itemView.findViewById(R.id.art_image);
@@ -134,6 +142,9 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
             logo_image.setOnClickListener(this);
             logo_text.setOnClickListener(this);
 
+            art_maker.setOnTouchListener(this);
+            art_classification.setOnTouchListener(this);
+
         }
 
         void bind(final Art art, final int position) {
@@ -147,7 +158,7 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
 
             Picasso.get().load(art.getArtLogoUrl()).into(logo_image);
 
-            if(art.getIsLiked()){
+            if(HomeDataInMemory.getInstance().getSingleItem(position).getIsLiked()){
                 art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
                 art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
             } else {
@@ -194,6 +205,7 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
                     }
                 }
             });
+
         }
 
         @Override
@@ -228,6 +240,35 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
                 onArtClickListener.onLogoClick(art);
             }
         }
+
+        @SuppressLint("ClickableViewAccessibility")
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (v.getId() == art_maker.getId()) {
+                switch(event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        ((TextView)v).setTextColor(context.getResources().getColor(R.color.colorBlack));
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_UP:
+                        ((TextView)v).setTextColor(context.getResources().getColor(R.color.colorBlueLight));
+                        break;
+                }
+            } else if (v.getId() == art_classification.getId()) {
+                switch(event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        ((TextView)v).setTextColor(context.getResources().getColor(R.color.colorBlack));
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_UP:
+                        ((TextView)v).setTextColor(context.getResources().getColor(R.color.colorBlueLight));
+                        break;
+                }
+            }
+
+            return false;
+        }
+
     }
 
     private static DiffUtil.ItemCallback<Art> itemDiffUtilCallback = new DiffUtil.ItemCallback<Art>() {

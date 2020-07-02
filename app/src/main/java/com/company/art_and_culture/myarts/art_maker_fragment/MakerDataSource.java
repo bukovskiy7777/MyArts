@@ -148,4 +148,18 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
         return isAvailable;
     }
 
+    public void writeDimentionsOnServer(Art art) {
+
+        ServerRequest request = new ServerRequest();
+        request.setOperation(Constants.ART_WRITE_DIMENS_OPERATION);
+        request.setArt(art);
+        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
+        response.enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) { }
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) { }
+        });
+    }
+
 }

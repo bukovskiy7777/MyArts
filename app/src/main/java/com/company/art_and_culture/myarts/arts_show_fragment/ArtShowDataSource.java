@@ -28,6 +28,15 @@ class ArtShowDataSource {
     private Application application;
     private MutableLiveData<Art> art = new MutableLiveData<>();
 
+    private static ArtShowDataSource instance;
+
+    public static ArtShowDataSource getInstance(Application application){
+        if(instance == null){
+            instance = new ArtShowDataSource(application);
+        }
+        return instance;
+    }
+
 
     public ArtShowDataSource(Application application) {
         this.application = application;
@@ -48,16 +57,13 @@ class ArtShowDataSource {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateArt(resp.getArt());
+                        ArtShowDataInMemory.getInstance().updateSingleItem(resp.getArt());
 
-                        HomeRepository homeRepository = HomeRepository.getInstance(application);
-                        homeRepository.getHomeDataSource().updateArt(resp.getArt());
-
-                        SearchRepository searchRepository = SearchRepository.getInstance(application);
-                        searchRepository.getSearchDataSource().updateArt(resp.getArt());
-
-                        HomeDataInMemory.getInstance().updateSingleItem(resp.getArt());
-
+                        SearchRepository.getInstance(application).getSearchDataSource().updateArt(resp.getArt());
                         SearchDataInMemory.getInstance().updateSingleItem(resp.getArt());
+
+                        HomeRepository.getInstance(application).getHomeDataSource().updateArt(resp.getArt());
+                        HomeDataInMemory.getInstance().updateSingleItem(resp.getArt());
 
                         MakerDataInMemory.getInstance().updateSingleItem(resp.getArt());
 
@@ -97,6 +103,11 @@ class ArtShowDataSource {
             isAvailable = true;
         }
         return isAvailable;
+    }
+
+    public void finish() {
+        ArtShowDataInMemory.getInstance().finish();
+        instance = null;
     }
 
 }

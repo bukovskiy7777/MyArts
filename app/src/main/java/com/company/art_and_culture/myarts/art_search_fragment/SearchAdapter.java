@@ -17,6 +17,8 @@ import com.company.art_and_culture.myarts.ui.home.LifecycleViewHolder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.paging.PagedListAdapter;
@@ -148,7 +150,7 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
 
             Picasso.get().load(art.getArtLogoUrl()).into(logo_image);
 
-            if(art.getIsLiked()){
+            if(SearchDataInMemory.getInstance().getSingleItem(position).getIsLiked()){
                 art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
                 art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
             } else {

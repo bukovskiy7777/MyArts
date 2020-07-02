@@ -8,6 +8,8 @@ import androidx.lifecycle.LiveData;
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.pojo.Art;
 
+import java.util.ArrayList;
+
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 

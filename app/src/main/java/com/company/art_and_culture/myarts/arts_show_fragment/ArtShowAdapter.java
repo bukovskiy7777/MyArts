@@ -168,7 +168,7 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
 
             Picasso.get().load(art.getArtLogoUrl()).into(logo_image);
 
-            if(art.getIsLiked()){
+            if(ArtShowDataInMemory.getInstance().getSingleItem(position).getIsLiked()){
                 art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
                 art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
             } else {

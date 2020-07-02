@@ -46,6 +46,10 @@ public class MakerViewModel extends AndroidViewModel {
         return makerRepository.refresh();
     }
 
+    public void writeDimentionsOnServer(Art art) {
+        makerRepository.writeDimentionsOnServer(art);
+    }
+
     public void finish() {
         makerRepository = makerRepository.finish (application);
     }

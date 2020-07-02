@@ -55,6 +55,10 @@ public class MakerRepository {
         return makerDataSourceFactory.refresh();
     }
 
+    public void writeDimentionsOnServer(Art art) {
+        makerDataSource.writeDimentionsOnServer(art);
+    }
+
     public MakerRepository finish(Application application) {
         makerDataSource.refresh();
         instance = new MakerRepository(application);

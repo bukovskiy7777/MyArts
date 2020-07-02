@@ -13,7 +13,7 @@ import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
 import com.company.art_and_culture.myarts.ui.favorites.FavoritesRepository;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -156,6 +156,7 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
 
                         updateArt(resp.getArt());
                         HomeDataInMemory.getInstance().updateSingleItem(resp.getArt());
+
                         FavoritesRepository favoritesRepository = FavoritesRepository.getInstance(application);
                         favoritesRepository.refresh();
 

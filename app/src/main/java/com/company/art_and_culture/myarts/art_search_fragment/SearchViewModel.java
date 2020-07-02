@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.company.art_and_culture.myarts.pojo.Art;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;

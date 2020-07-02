@@ -90,7 +90,16 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
         private final Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-
+                int imgWidth = displayWidth/spanCount;
+                int imgHeight = (bitmap.getHeight() * imgWidth) / bitmap.getWidth();
+                if (imgHeight <= art_image.getMaxHeight()) {
+                    art_image.getLayoutParams().height = imgHeight;
+                } else {
+                    art_image.getLayoutParams().height = art_image.getMaxHeight();
+                }
+                art.setArtWidth(bitmap.getWidth());
+                art.setArtHeight(bitmap.getHeight());
+                makerViewModel.writeDimentionsOnServer(art);
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(art_image);
             }
             @Override

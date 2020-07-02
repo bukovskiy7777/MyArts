@@ -15,6 +15,8 @@ import com.company.art_and_culture.myarts.ui.favorites.FavoritesRepository;
 import com.company.art_and_culture.myarts.ui.home.HomeDataInMemory;
 import com.company.art_and_culture.myarts.ui.home.HomeRepository;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

@@ -90,6 +90,7 @@ public class ArtShowFragment extends Fragment {
             if (listArts == null) {
                 artShowAdapter.clearItems();
             } else {
+                ArtShowDataInMemory.getInstance().addData((ArrayList<Art>) listArts);
                 artShowAdapter.clearItems();
                 artShowAdapter.setItems(listArts);
                 artRecyclerView.scrollToPosition(artClickPosition);
@@ -377,4 +378,5 @@ public class ArtShowFragment extends Fragment {
         artShowViewModel.finish ();
         return null;
     }
+
 }

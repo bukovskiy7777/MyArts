@@ -21,7 +21,7 @@ public class ArtShowRepository {
 
     public ArtShowRepository(Application application) {
 
-        artShowDataSource = new ArtShowDataSource(application);
+        artShowDataSource = ArtShowDataSource.getInstance(application);
     }
 
     public LiveData<Art> getArt() {
@@ -40,6 +40,7 @@ public class ArtShowRepository {
 
     public ArtShowRepository finish(Application application) {
 
+        ArtShowDataSource.getInstance(application).finish();
         instance = new ArtShowRepository(application);
         return instance;
     }

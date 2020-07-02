@@ -10,6 +10,8 @@ import androidx.paging.PagedList;
 
 import com.company.art_and_culture.myarts.pojo.Art;
 
+import java.util.ArrayList;
+
 
 public class HomeViewModel extends AndroidViewModel {
 
