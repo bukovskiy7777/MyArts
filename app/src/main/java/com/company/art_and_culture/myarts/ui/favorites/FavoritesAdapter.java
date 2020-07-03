@@ -109,20 +109,19 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
             this.art = art;
             this.position = position;
 
-            if (art.getArtWidth() > 0) {
-
-                art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
+            if (!art.getArtImgUrlSmall().equals(" ") && art.getArtImgUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
+                artImgUrl = art.getArtImgUrlSmall();
+            } else {
                 artImgUrl= art.getArtImgUrl();
+            }
+
+            art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
+            if (art.getArtWidth() > 0) {
                 int imgWidth = displayWidth/spanCount;
-                //int imgWidth = displayWidth;
                 int imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image);
             } else {
-                art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
-                artImgUrl = art.getArtImgUrlSmall();
-                if (!artImgUrl.equals(" ")) {
-                    Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);
-                }
+                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);
             }
         }
 

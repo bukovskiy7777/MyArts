@@ -166,8 +166,14 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
                 art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
             }
 
-            if (art.getArtWidth() > 0) {
+            if (!art.getArtImgUrlSmall().equals(" ") && art.getArtImgUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
+                artImgUrl = art.getArtImgUrlSmall();
+            } else {
                 artImgUrl= art.getArtImgUrl();
+            }
+
+            art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
+            if (art.getArtWidth() > 0) {
                 int imgWidth = displayWidth;
                 int imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
                 if (imgHeight <= art_image.getMaxHeight()) {
@@ -177,12 +183,8 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
                 }
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image);
             } else {
-                art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
                 art_image.getLayoutParams().height = displayWidth;
-                artImgUrl = art.getArtImgUrlSmall();
-                if (!artImgUrl.equals(" ")) {
-                    Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);
-                }
+                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);
             }
 
             homeViewModel.getArt().observe(this, new Observer<Art>() {

@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -203,7 +204,7 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onArtMakerClick(Art art) {
-
+                searchEventListener.searchMakerClickEvent(art.getArtMaker());
             }
 
             @Override
@@ -422,6 +423,7 @@ public class SearchFragment extends Fragment {
 
     public interface SearchEventListener {
         void searchArtClickEvent(Collection<Art> arts, int position);
+        void searchMakerClickEvent(String artMaker);
     }
 
     @Override

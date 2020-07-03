@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -87,7 +88,7 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
         }
     }
 
-    class SearchViewHolder extends LifecycleViewHolder implements View.OnClickListener {
+    class SearchViewHolder extends LifecycleViewHolder implements View.OnClickListener, View.OnTouchListener {
 
         private Art art;
         private int position;
@@ -137,6 +138,9 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
             logo_image.setOnClickListener(this);
             logo_text.setOnClickListener(this);
 
+            art_maker.setOnTouchListener(this);
+            art_classification.setOnTouchListener(this);
+
         }
 
         void bind(final Art art, final int position) {
@@ -158,8 +162,14 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
                 art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
             }
 
-            if (art.getArtWidth() > 0) {
+            if (!art.getArtImgUrlSmall().equals(" ") && art.getArtImgUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
+                artImgUrl = art.getArtImgUrlSmall();
+            } else {
                 artImgUrl= art.getArtImgUrl();
+            }
+
+            art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
+            if (art.getArtWidth() > 0) {
                 int imgWidth = displayWidth;
                 int imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
                 if (imgHeight <= art_image.getMaxHeight()) {
@@ -169,12 +179,8 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
                 }
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image);
             } else {
-                art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
                 art_image.getLayoutParams().height = displayWidth;
-                artImgUrl = art.getArtImgUrlSmall();
-                if (!artImgUrl.equals(" ")) {
-                    Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);
-                }
+                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);
             }
 
             searchViewModel.getArt().observe(this, new Observer<Art>() {
@@ -232,6 +238,32 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
             }
         }
 
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (v.getId() == art_maker.getId()) {
+                switch(event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        ((TextView)v).setTextColor(context.getResources().getColor(R.color.colorBlack));
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_UP:
+                        ((TextView)v).setTextColor(context.getResources().getColor(R.color.colorBlueLight));
+                        break;
+                }
+            } else if (v.getId() == art_classification.getId()) {
+                switch(event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        ((TextView)v).setTextColor(context.getResources().getColor(R.color.colorBlack));
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_UP:
+                        ((TextView)v).setTextColor(context.getResources().getColor(R.color.colorBlueLight));
+                        break;
+                }
+            }
+
+            return false;
+        }
     }
 
     private static DiffUtil.ItemCallback<Art> itemDiffUtilCallback = new DiffUtil.ItemCallback<Art>() {

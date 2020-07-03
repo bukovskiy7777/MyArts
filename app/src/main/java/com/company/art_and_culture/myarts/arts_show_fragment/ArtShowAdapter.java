@@ -176,14 +176,13 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
                 art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
             }
 
+            art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
+
             if (art.getArtWidth() > 0) {
-                art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
                 artImgUrl= art.getArtImgUrl();
 
                 artWidth = art.getArtWidth();
                 artHeight = art.getArtHeight();
-
-                //int imgWidth, imgHeight;
                 if (art.getArtWidth() > art.getArtHeight()) {
                     imgWidth = 1600;
                     imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
@@ -193,7 +192,6 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
                 }
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image);
             } else {
-                art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
                 artImgUrl = art.getArtImgUrlSmall();
                 if (!artImgUrl.equals(" ")) {
                     Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);

@@ -6,7 +6,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
@@ -117,10 +119,10 @@ public class MainActivity extends AppCompatActivity implements
                 return false;
             }
         });
-        search_edit_text.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        search_edit_text.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     if (searchFragment != null) {
                         FragmentManager fragmentManager = getSupportFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements
                         searchFragment = searchFragment.finish();
                     }
                 }
+                return false;
             }
         });
 
@@ -282,6 +285,11 @@ public class MainActivity extends AppCompatActivity implements
 
         showArtFragment();
     }
+    @Override
+    public void searchMakerClickEvent(String artMaker) {
+        this.artMaker = artMaker;
+        showMakerFragment();
+    }
 
 
 
@@ -316,22 +324,22 @@ public class MainActivity extends AppCompatActivity implements
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
             fragmentTransaction.remove(artShowFragment).commit();
             artShowFragment = artShowFragment.finish();
-            //FavoritesRepository favoritesRepository = FavoritesRepository.getInstance(getApplication());
-            //favoritesRepository.refresh();
-
-        } else if (searchFragment != null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-            fragmentTransaction.remove(searchFragment).commit();
-            searchFragment = searchFragment.finish();
 
         } else if (makerFragment != null) {
+
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
             fragmentTransaction.remove(makerFragment).commit();
             makerFragment = makerFragment.finish();
+
+        } else if (searchFragment != null) {
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
+            fragmentTransaction.remove(searchFragment).commit();
+            searchFragment = searchFragment.finish();
 
         } else {
             if (isSearchLayoutOpen()) {
