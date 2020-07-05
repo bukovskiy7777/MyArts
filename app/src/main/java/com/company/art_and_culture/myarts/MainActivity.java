@@ -2,7 +2,9 @@ package com.company.art_and_culture.myarts;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,6 +33,7 @@ import com.company.art_and_culture.myarts.ui.favorites.FavoritesFragment;
 import com.company.art_and_culture.myarts.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -68,7 +71,10 @@ public class MainActivity extends AppCompatActivity implements
     private SearchFragment searchFragment;
     private MakerFragment makerFragment;
     private String artMaker;
+    private SharedPreferences preferences;
+    private ArrayList<Suggest> listDefaultSuggests = new ArrayList<>();
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,7 +111,11 @@ public class MainActivity extends AppCompatActivity implements
             public void onTextChanged(CharSequence s, int start, int before, int count) { }
             @Override
             public void afterTextChanged(Editable s) {
-                getSuggests(s.toString());
+                if (s.toString().length() == 0) {
+                    getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,""));
+                } else {
+                    getSuggests(s.toString(), preferences.getString(Constants.USER_UNIQUE_ID,""));
+                }
             }
         });
         search_edit_text.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -135,31 +145,65 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+        preferences = getSharedPreferences(Constants.TAG, 0);
+        getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,""));
     }
 
-    private void getSuggests(String searchString) {
+    private void getInitialSuggests(String userUniqueId) {
+
+        ServerRequest request = new ServerRequest();
+        request.setOperation(Constants.GET_INITIAL_SUGGEST_OPERATION);
+        request.setUserUniqueId(userUniqueId);
+
+        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
+        response.enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                if (response.body() != null) {
+                    if (response.body().getListSuggests() == null) {
+                        suggestAdapter.clearItems();
+                        //showText();
+                    } else {
+                        setAnimationSuggestsRecyclerView ();
+                        suggestAdapter.clearItems();
+                        suggestAdapter.setItems(response.body().getListSuggests());
+                        //hideText();
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) { }
+        });
+
+    }
+
+    private void getSuggests(String searchString, String userUniqueId) {
 
         suggestions_progress.setVisibility(View.VISIBLE);
 
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.GET_SUGGEST_OPERATION);
         request.setSearchString(searchString);
+        request.setUserUniqueId(userUniqueId);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
         response.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
                 suggestions_progress.setVisibility(View.GONE);
-                if (response.body().getListSuggests() == null) {
-                    suggestAdapter.clearItems();
-                    //showText();
-                } else {
-                    setAnimationSuggestsRecyclerView ();
-                    suggestAdapter.clearItems();
-                    suggestAdapter.setItems(response.body().getListSuggests());
-                    //hideText();
+                if (response.body() != null) {
+                    if (response.body().getListSuggests() == null) {
+                        suggestAdapter.clearItems();
+                        //showText();
+                    } else {
+                        if (search_edit_text.getText().toString().length() > 0) {
+                            setAnimationSuggestsRecyclerView ();
+                            suggestAdapter.clearItems();
+                            suggestAdapter.setItems(response.body().getListSuggests());
+                            //hideText();
+                        }
+                    }
                 }
-
             }
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {

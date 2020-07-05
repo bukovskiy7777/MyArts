@@ -147,7 +147,7 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
 
         }
 
-        void bind(final Art art, final int position) {
+        void bind(final Art art, int position) {
             this.art = art;
             this.position = position;
 

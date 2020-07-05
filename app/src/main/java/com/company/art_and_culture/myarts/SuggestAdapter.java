@@ -1,9 +1,11 @@
 package com.company.art_and_culture.myarts;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -75,21 +77,33 @@ public class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.SuggestV
         return suggestList.size();
     }
 
-    class SuggestViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class SuggestViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
 
         private Suggest suggest;
         private int position;
         private TextView tv_suggest, art_count;
-        private ImageView imageView;
+        private ImageView imageView, image_is_used_earlie;
+        private View parentView;
 
+        @SuppressLint("ClickableViewAccessibility")
         SuggestViewHolder(@NonNull View itemView) {
             super(itemView);
+            parentView = itemView;
+
             tv_suggest = itemView.findViewById(R.id.tv_suggest);
             art_count = itemView.findViewById(R.id.art_count);
             imageView = itemView.findViewById(R.id.image);
+            image_is_used_earlie = itemView.findViewById(R.id.image_is_used_earlie);
+
             tv_suggest.setOnClickListener(this);
             art_count.setOnClickListener(this);
             imageView.setOnClickListener(this);
+            image_is_used_earlie.setOnClickListener(this);
+
+            tv_suggest.setOnTouchListener(this);
+            art_count.setOnTouchListener(this);
+            imageView.setOnTouchListener(this);
+            image_is_used_earlie.setOnTouchListener(this);
         }
 
         void bind(Suggest suggest, int position) {
@@ -97,15 +111,44 @@ public class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.SuggestV
             this.position = position;
 
             tv_suggest.setText(suggest.getSuggestStr());
+
             String text = context.getResources().getString(R.string.more_then)+" "+suggest.getCountArts()+" "+context.getResources().getString(R.string.items);
             art_count.setText(text);
+            if(suggest.getCountArts() > 0) {
+                art_count.setVisibility(View.VISIBLE);
+            } else {
+                art_count.setVisibility(View.GONE);
+            }
+
+            if (suggest.isUsedEarlie()) {
+                image_is_used_earlie.setVisibility(View.VISIBLE);
+            } else {
+                image_is_used_earlie.setVisibility(View.INVISIBLE);
+            }
         }
 
         @Override
         public void onClick(View v) {
-            if (v.getId() == tv_suggest.getId() || v.getId() == art_count.getId() || v.getId() == imageView.getId()) {
+            if (v.getId() == tv_suggest.getId() || v.getId() == art_count.getId() || v.getId() == imageView.getId()|| v.getId() == image_is_used_earlie.getId()) {
                 onSuggestsClickListener.onSuggestClick(suggest, position);
             }
+        }
+
+        @SuppressLint("ClickableViewAccessibility")
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (v.getId() == tv_suggest.getId() || v.getId() == art_count.getId() || v.getId() == imageView.getId()|| v.getId() == image_is_used_earlie.getId()) {
+                switch(event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        parentView.setBackgroundColor(context.getResources().getColor(R.color.colorSilver));
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_UP:
+                        parentView.setBackgroundColor(0);
+                        break;
+                }
+            }
+            return false;
         }
     }
 
