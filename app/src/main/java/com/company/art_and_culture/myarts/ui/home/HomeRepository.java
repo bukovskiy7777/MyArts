@@ -18,6 +18,8 @@ public class HomeRepository {
     private static HomeRepository instance;
     private LiveData<PagedList<Art>> artList;
     private LiveData<Art> art;
+    private LiveData<Boolean> isLoading;
+    private LiveData<Boolean> isListEmpty;
     private HomeDataSource homeDataSource;
     private HomeDataSourceFactory homeDataSourceFactory;
 
@@ -40,7 +42,10 @@ public class HomeRepository {
         artList = new LivePagedListBuilder<>(homeDataSourceFactory, config).build();
 
         homeDataSource = (HomeDataSource) homeDataSourceFactory.create();//if remove this line artLike will not working after refresh
+
         art = homeDataSource.getArt();
+        isLoading = homeDataSource.getIsLoading();
+        isListEmpty = homeDataSource.getIsListEmpty();
     }
 
     public LiveData<PagedList<Art>> getArtList(){
@@ -48,11 +53,11 @@ public class HomeRepository {
     }
 
     public LiveData<Boolean> getIsLoading() {
-        return homeDataSource.getIsLoading();
+        return isLoading;
     }
 
     public LiveData<Boolean> getIsListEmpty() {
-        return homeDataSource.getIsListEmpty();
+        return isListEmpty;
     }
 
     public LiveData<Art> getArt() {

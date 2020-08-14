@@ -1,6 +1,7 @@
 package com.company.art_and_culture.myarts.art_search_fragment;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.pojo.Art;
@@ -18,6 +19,7 @@ public class SearchRepository {
     private LiveData<Art> art;
     private SearchDataSource searchDataSource;
     private SearchDataSourceFactory searchDataSourceFactory;
+    private String searchQuery;
 
 
     public static SearchRepository getInstance(Application application){
@@ -84,4 +86,11 @@ public class SearchRepository {
         return searchDataSource;
     }
 
+    public void setSearchQuery(String searchQuery) {
+        this.searchQuery = searchQuery;
+    }
+
+    public String getSearchQuery() {
+        return searchQuery;
+    }
 }

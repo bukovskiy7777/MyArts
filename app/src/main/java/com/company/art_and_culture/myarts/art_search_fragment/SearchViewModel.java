@@ -65,4 +65,7 @@ public class SearchViewModel extends AndroidViewModel {
         searchRepository = searchRepository.finish (application);
     }
 
+    public void setSearchQuery(String searchQuery) {
+        searchRepository.setSearchQuery(searchQuery);
+    }
 }

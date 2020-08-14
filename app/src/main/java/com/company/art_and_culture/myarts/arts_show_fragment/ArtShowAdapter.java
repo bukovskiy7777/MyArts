@@ -66,6 +66,7 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
         void onArtShareClick(Art art);
         void onArtDownloadClick(Art art, int x, int y, int artWidth, int artHeight);
         void onLogoClick(Art art);
+        void onMakerClick(Art art, View view);
     }
 
     public void setItems(Collection<Art> arts){
@@ -111,7 +112,7 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
         private Art art;
         private int position;
         private ImageView art_image, logo_image;
-        private TextView art_maker, art_title, art_description;
+        private TextView art_maker, art_title, art_description, art_classification;
         private ImageButton art_share, art_download, art_like, button_go_to_museum;
         private String artImgUrl;
         private ConstraintLayout art_header, art_footer;
@@ -141,12 +142,14 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
             art_title = itemView.findViewById(R.id.art_title);
 
             art_footer = itemView.findViewById(R.id.art_footer);
+            art_classification = itemView.findViewById(R.id.art_classification);
             art_maker = itemView.findViewById(R.id.art_maker);
             art_description = itemView.findViewById(R.id.art_description);
             art_share = itemView.findViewById(R.id.art_share);
             art_download = itemView.findViewById(R.id.art_download);
             art_like = itemView.findViewById(R.id.art_like);
 
+            art_maker.setOnClickListener(this);
             art_image.setOnClickListener(this);
             art_share.setOnClickListener(this);
             art_download.setOnClickListener(this);
@@ -163,6 +166,7 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
             art_footer.setVisibility(View.VISIBLE);
 
             art_title.setText(art.getArtTitle());
+            art_classification.setText(art.getArtClassification());
             art_maker.setText(art.getArtMaker());
             art_description.setText(art.getArtLongTitle());
 
@@ -250,6 +254,9 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
                     art_header.setVisibility(View.VISIBLE);
                     art_footer.setVisibility(View.VISIBLE);
                 }
+
+            } else if (v.getId() == art_maker.getId()) {
+                onArtClickListener.onMakerClick(art, v);
             }
         }
     }

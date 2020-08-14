@@ -18,6 +18,8 @@ public class MakerRepository {
     private MakerDataSource makerDataSource;
     private MakerDataSourceFactory makerDataSourceFactory;
 
+    private String artQuery, queryType;
+
 
     public static MakerRepository getInstance(Application application){
         if(instance == null){
@@ -65,4 +67,16 @@ public class MakerRepository {
         return instance;
     }
 
+    public void setArtQueryAndType(String artQuery, String queryType) {
+        this.artQuery = artQuery;
+        this.queryType = queryType;
+    }
+
+    public String getArtQuery() {
+        return artQuery;
+    }
+
+    public String getQueryType() {
+        return queryType;
+    }
 }

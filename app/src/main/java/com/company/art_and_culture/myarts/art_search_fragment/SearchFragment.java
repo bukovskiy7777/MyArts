@@ -71,15 +71,7 @@ public class SearchFragment extends Fragment {
     private ConstraintLayout download_linear;
     private MainActivity activity;
     private Target target;
-    private static SearchFragment instance;
     private String searchQuery;
-
-    public static SearchFragment getInstance() {
-        if(instance == null){
-            instance = new SearchFragment();
-        }
-        return instance;
-    }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -101,6 +93,8 @@ public class SearchFragment extends Fragment {
 
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
         if (activity != null) searchQuery = activity.getSearchQuery();
+
+        searchViewModel.setSearchQuery(searchQuery);
 
         initSwipeRefreshLayout();
         subscribeObservers();
@@ -204,12 +198,12 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onArtMakerClick(Art art) {
-                searchEventListener.searchMakerClickEvent(art.getArtMaker());
+                searchEventListener.searchMakerClickEvent(art.getArtMaker(), Constants.ART_MAKER);
             }
 
             @Override
             public void onArtClassificationClick(Art art) {
-
+                searchEventListener.searchClassificationClickEvent(art.getArtClassification(), Constants.ART_CLASSIFICATION);
             }
 
             @Override
@@ -423,7 +417,8 @@ public class SearchFragment extends Fragment {
 
     public interface SearchEventListener {
         void searchArtClickEvent(Collection<Art> arts, int position);
-        void searchMakerClickEvent(String artMaker);
+        void searchMakerClickEvent(String artMaker, String queryType);
+        void searchClassificationClickEvent(String artClassification, String queryType);
     }
 
     @Override
@@ -521,14 +516,8 @@ public class SearchFragment extends Fragment {
 
     }
 
-    public String getSearchQuery() {
-        return searchQuery;
-    }
-
-    public SearchFragment finish() {
+    public void finish() {
         searchViewModel.finish ();
-        instance = null;
-        return instance;
     }
 
 

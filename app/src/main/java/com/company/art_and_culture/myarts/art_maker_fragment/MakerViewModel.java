@@ -54,4 +54,7 @@ public class MakerViewModel extends AndroidViewModel {
         makerRepository = makerRepository.finish (application);
     }
 
+    public void setArtQueryAndType(String artQuery, String queryType) {
+        makerRepository.setArtQueryAndType(artQuery, queryType);
+    }
 }

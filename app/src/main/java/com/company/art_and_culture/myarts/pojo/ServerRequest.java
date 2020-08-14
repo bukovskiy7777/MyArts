@@ -1,13 +1,16 @@
 package com.company.art_and_culture.myarts.pojo;
 
+import java.util.ArrayList;
+
 public class ServerRequest {
     private String operation;
     private int pageNumber;
     private String userUniqueId;
     private Art art;
-    private String searchString;
+    private String suggestQuery;
     private String searchQuery;
-    private String artMaker;
+    private String artQuery;
+    private ArrayList<Art> oldList;
 
     public void setOperation(String operation) {
         this.operation = operation;
@@ -25,16 +28,20 @@ public class ServerRequest {
         this.art = art;
     }
 
-    public void setSearchString(String searchString) {
-        this.searchString = searchString;
+    public void setSuggestQuery(String suggestQuery) {
+        this.suggestQuery = suggestQuery;
     }
 
     public void setSearchQuery(String searchQuery) {
         this.searchQuery = searchQuery;
     }
 
-    public void setArtMaker(String artMaker) {
-        this.artMaker = artMaker;
+    public void setArtQuery(String artQuery) {
+        this.artQuery = artQuery;
+    }
+
+    public void setOldList(ArrayList<Art> oldList) {
+        this.oldList = oldList;
     }
 
 }

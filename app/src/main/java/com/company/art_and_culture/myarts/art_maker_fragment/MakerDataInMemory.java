@@ -79,4 +79,7 @@ public class MakerDataInMemory {
         return listArts.get(position);
     }
 
+    public ArrayList<Art> getAllData() {
+        return listArts;
+    }
 }

@@ -57,6 +57,7 @@ class FavoritesDataSource {
                         updateArtList(resp.getListArts());
                     } else {
                         updateIsListEmptyState(true);
+                        updateArtList(null);
                     }
                 } else {
                     updateIsListEmptyState(true);

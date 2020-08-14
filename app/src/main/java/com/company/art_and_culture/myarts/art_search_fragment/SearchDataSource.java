@@ -6,7 +6,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.company.art_and_culture.myarts.Constants;
-import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
@@ -14,8 +13,6 @@ import com.company.art_and_culture.myarts.pojo.ServerResponse;
 import com.company.art_and_culture.myarts.ui.favorites.FavoritesRepository;
 import com.company.art_and_culture.myarts.ui.home.HomeDataInMemory;
 import com.company.art_and_culture.myarts.ui.home.HomeRepository;
-
-import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -46,7 +43,7 @@ public class SearchDataSource extends PageKeyedDataSource<Integer, Art> {
         updateIsListEmptyState(false);
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        String searchQuery = SearchFragment.getInstance().getSearchQuery();
+        String searchQuery = SearchRepository.getInstance(application).getSearchQuery();
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.GET_ARTS_LIST_SEARCH_OPERATION);
         request.setSearchQuery(searchQuery);
@@ -86,7 +83,7 @@ public class SearchDataSource extends PageKeyedDataSource<Integer, Art> {
     public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Art> callback) {
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        String searchQuery = SearchFragment.getInstance().getSearchQuery();
+        String searchQuery = SearchRepository.getInstance(application).getSearchQuery();
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.GET_ARTS_LIST_SEARCH_OPERATION);
         request.setSearchQuery(searchQuery);

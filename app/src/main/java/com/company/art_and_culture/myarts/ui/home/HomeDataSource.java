@@ -13,8 +13,6 @@ import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
 import com.company.art_and_culture.myarts.ui.favorites.FavoritesRepository;
 
-import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -178,6 +176,8 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
     public void refresh() {
         HomeDataInMemory.getInstance().refresh();
         invalidate();
+        //updateIsLoadingState(true);
+        updateIsListEmptyState(false);
     }
 
     public boolean isNetworkAvailable() {

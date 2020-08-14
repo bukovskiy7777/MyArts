@@ -9,7 +9,7 @@ android {
         applicationId "com.company.art_and_culture.myarts"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 1
+        versionCode 3
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

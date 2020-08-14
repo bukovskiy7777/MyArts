@@ -149,6 +149,8 @@ public class HomeFragment extends Fragment {
                 if (!networkState) {
                     Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
                     swipeRefreshLayout.setRefreshing(false);
+                } else {
+                    activity.refreshSuggests();
                 }
             }
         });
@@ -167,7 +169,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(PagedList<Art> arts) {
                 homeAdapter.submitList(arts);
-                hideText();
+                //hideText();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -199,12 +201,12 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onArtMakerClick(Art art) {
-                homeEventListener.homeMakerClickEvent(art.getArtMaker());
+                homeEventListener.homeMakerClickEvent(art.getArtMaker(), Constants.ART_MAKER);
             }
 
             @Override
             public void onArtClassificationClick(Art art) {
-
+                homeEventListener.homeClassificationClickEvent(art.getArtClassification(), Constants.ART_CLASSIFICATION);
             }
 
             @Override
@@ -419,7 +421,8 @@ public class HomeFragment extends Fragment {
     public interface HomeEventListener {
         void homeScrollEvent(int position);
         void homeArtClickEvent(Collection<Art> arts, int position);
-        void homeMakerClickEvent(String artMaker);
+        void homeMakerClickEvent(String artMaker, String queryType);
+        void homeClassificationClickEvent(String artClassification, String queryType);
     }
 
     @Override

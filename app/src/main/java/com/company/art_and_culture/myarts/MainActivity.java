@@ -33,7 +33,6 @@ import com.company.art_and_culture.myarts.ui.favorites.FavoritesFragment;
 import com.company.art_and_culture.myarts.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -70,9 +69,8 @@ public class MainActivity extends AppCompatActivity implements
     private ProgressBar suggestions_progress;
     private SearchFragment searchFragment;
     private MakerFragment makerFragment;
-    private String artMaker;
+    private String artQuery, queryType;
     private SharedPreferences preferences;
-    private ArrayList<Suggest> listDefaultSuggests = new ArrayList<>();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -138,7 +136,8 @@ public class MainActivity extends AppCompatActivity implements
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
                         fragmentTransaction.remove(searchFragment).commit();
-                        searchFragment = searchFragment.finish();
+                        searchFragment.finish();
+                        searchFragment = null;
                     }
                 }
                 return false;
@@ -177,13 +176,17 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    private void getSuggests(String searchString, String userUniqueId) {
+    public void refreshSuggests () {
+        getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,""));
+    }
+
+    private void getSuggests(String suggestQuery, String userUniqueId) {
 
         suggestions_progress.setVisibility(View.VISIBLE);
 
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.GET_SUGGEST_OPERATION);
-        request.setSearchString(searchString);
+        request.setSuggestQuery(suggestQuery);
         request.setUserUniqueId(userUniqueId);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
@@ -259,7 +262,8 @@ public class MainActivity extends AppCompatActivity implements
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
                 fragmentTransaction.remove(searchFragment).commit();
-                searchFragment = searchFragment.finish();
+                searchFragment.finish();
+                searchFragment = null;
             }
 
         }
@@ -295,10 +299,18 @@ public class MainActivity extends AppCompatActivity implements
         showArtFragment();
     }
     @Override
-    public void homeMakerClickEvent(String artMaker) {
-        this.artMaker = artMaker;
+    public void homeMakerClickEvent(String artMaker, String queryType) {
+        this.artQuery = artMaker;
+        this.queryType = queryType;
         showMakerFragment();
     }
+    @Override
+    public void homeClassificationClickEvent(String artClassification, String queryType) {
+        this.artQuery = artClassification;
+        this.queryType = queryType;
+        showMakerFragment();
+    }
+
     public int getHomePosition() {
         return homePosition;
     }
@@ -330,11 +342,17 @@ public class MainActivity extends AppCompatActivity implements
         showArtFragment();
     }
     @Override
-    public void searchMakerClickEvent(String artMaker) {
-        this.artMaker = artMaker;
+    public void searchMakerClickEvent(String artMaker, String queryType) {
+        this.artQuery = artMaker;
+        this.queryType = queryType;
         showMakerFragment();
     }
-
+    @Override
+    public void searchClassificationClickEvent(String artClassification, String queryType) {
+        this.artQuery = artClassification;
+        this.queryType = queryType;
+        showMakerFragment();
+    }
 
 
     @Override
@@ -375,7 +393,8 @@ public class MainActivity extends AppCompatActivity implements
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
             fragmentTransaction.remove(makerFragment).commit();
-            makerFragment = makerFragment.finish();
+            makerFragment.finish();
+            makerFragment = null;
 
         } else if (searchFragment != null) {
 
@@ -383,7 +402,8 @@ public class MainActivity extends AppCompatActivity implements
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
             fragmentTransaction.remove(searchFragment).commit();
-            searchFragment = searchFragment.finish();
+            searchFragment.finish();
+            searchFragment = null;
 
         } else {
             if (isSearchLayoutOpen()) {
@@ -410,7 +430,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void showSearchFragment() {
 
-        searchFragment = SearchFragment.getInstance();
+        searchFragment = new SearchFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
@@ -420,7 +440,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void showMakerFragment() {
 
-        makerFragment = MakerFragment.getInstance();
+        makerFragment = new MakerFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
@@ -432,8 +452,12 @@ public class MainActivity extends AppCompatActivity implements
         return search_edit_text.getText().toString();
     }
 
-    public String getArtMaker() {
-        return artMaker;
+    public String getArtQuery() {
+        return artQuery;
+    }
+
+    public String getQueryType() {
+        return queryType;
     }
 
 }

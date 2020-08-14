@@ -1,7 +1,6 @@
 package com.company.art_and_culture.myarts.ui.home;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -9,8 +8,6 @@ import androidx.lifecycle.LiveData;
 import androidx.paging.PagedList;
 
 import com.company.art_and_culture.myarts.pojo.Art;
-
-import java.util.ArrayList;
 
 
 public class HomeViewModel extends AndroidViewModel {

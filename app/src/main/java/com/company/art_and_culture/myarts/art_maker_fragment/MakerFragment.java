@@ -37,18 +37,10 @@ public class MakerFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private android.content.res.Resources res;
     private MainActivity activity;
-    private static MakerFragment instance;
-    private String artMaker;
+    private String artQuery, queryType;
     private int scrollPosition = 0;
     private int scrollPixels = 0;
     private int spanCount = 2;
-
-    public static MakerFragment getInstance() {
-        if(instance == null){
-            instance = new MakerFragment();
-        }
-        return instance;
-    }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -69,8 +61,11 @@ public class MakerFragment extends Fragment {
 
         activity = (MainActivity) getActivity();
 
-        if (activity != null) artMaker = activity.getArtMaker();
-        appbar_maker.setText(artMaker);
+        if (activity != null) artQuery = activity.getArtQuery();
+        if (activity != null) queryType = activity.getQueryType();
+        appbar_maker.setText(artQuery);
+
+        makerViewModel.setArtQueryAndType(artQuery, queryType);
 
         initSwipeRefreshLayout();
         subscribeObservers();
@@ -78,7 +73,6 @@ public class MakerFragment extends Fragment {
 
         return root;
     }
-
 
     private void setOnBackPressedListener(final View root) {
         //You need to add the following line for this solution to work; thanks skayred
@@ -151,10 +145,8 @@ public class MakerFragment extends Fragment {
 
             @Override
             public void onArtImageClick(Art art, int position) {
-                Collection<Art> listArts = new ArrayList<>();
-                Art artInMemory = MakerDataInMemory.getInstance().getSingleItem(position);
-                listArts.add(artInMemory);
-                makerEventListener.makerArtClickEvent(listArts, 0);
+                ArrayList<Art> artInMemory = MakerDataInMemory.getInstance().getAllData();
+                makerEventListener.makerArtClickEvent(artInMemory, position);
             }
 
         };
@@ -216,15 +208,8 @@ public class MakerFragment extends Fragment {
         return scrollPosition;
     }
 
-
-    public String getArtMaker() {
-        return artMaker;
-    }
-
-    public MakerFragment finish() {
+    public void finish() {
         makerViewModel.finish ();
-        instance = null;
-        return instance;
     }
 
 

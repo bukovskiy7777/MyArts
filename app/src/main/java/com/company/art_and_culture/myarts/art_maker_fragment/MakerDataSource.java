@@ -39,10 +39,16 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
         updateIsListEmptyState(false);
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        String artMaker = MakerFragment.getInstance().getArtMaker();
+        String artQuery = MakerRepository.getInstance(application).getArtQuery();
+        String queryType = MakerRepository.getInstance(application).getQueryType();
         ServerRequest request = new ServerRequest();
-        request.setOperation(Constants.GET_ARTS_LIST_MAKER_OPERATION);
-        request.setArtMaker(artMaker);
+        if (queryType != null && queryType.equals(Constants.ART_MAKER)) {
+            request.setOperation(Constants.GET_ARTS_LIST_MAKER_OPERATION);
+        } else if (queryType != null && queryType.equals(Constants.ART_CLASSIFICATION)) {
+            request.setOperation(Constants.GET_ARTS_LIST_CLASSIFICATION_OPERATION);
+            request.setOldList(MakerDataInMemory.getInstance().getAllData());
+        }
+        request.setArtQuery(artQuery);
         request.setPageNumber(1);
         request.setUserUniqueId(userUniqueId);
 
@@ -79,10 +85,16 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
     public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Art> callback) {
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        String artMaker = MakerFragment.getInstance().getArtMaker();
+        String artQuery = MakerRepository.getInstance(application).getArtQuery();
+        String queryType = MakerRepository.getInstance(application).getQueryType();
         ServerRequest request = new ServerRequest();
-        request.setOperation(Constants.GET_ARTS_LIST_MAKER_OPERATION);
-        request.setArtMaker(artMaker);
+        if (queryType != null && queryType.equals(Constants.ART_MAKER)) {
+            request.setOperation(Constants.GET_ARTS_LIST_MAKER_OPERATION);
+        } else if (queryType != null && queryType.equals(Constants.ART_CLASSIFICATION)) {
+            request.setOperation(Constants.GET_ARTS_LIST_CLASSIFICATION_OPERATION);
+            request.setOldList(MakerDataInMemory.getInstance().getAllData());
+        }
+        request.setArtQuery(artQuery);
         request.setPageNumber(params.key);
         request.setUserUniqueId(userUniqueId);
 
