@@ -106,13 +106,13 @@ public class FavoritesFragment extends Fragment {
 
                 if (arts == null) {
                     favoritesAdapter.clearItems();
-                    showText();
+                    //showText();
                 } else {
                     setAnimationRecyclerView (arts);
                     listArts = arts;
                     favoritesAdapter.clearItems();
                     favoritesAdapter.setItems(listArts);
-                    hideText();
+                    //hideText();
                 }
                 swipeRefreshLayout.setRefreshing(false);
             }

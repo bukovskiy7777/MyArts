@@ -169,7 +169,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(PagedList<Art> arts) {
                 homeAdapter.submitList(arts);
-                //hideText();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });

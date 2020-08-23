@@ -98,6 +98,7 @@ class FavoritesDataSource {
     }
 
     public void refresh() {
+        updateIsListEmptyState(false);
         loadMyFavorites();
     }
 

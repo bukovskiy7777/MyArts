@@ -37,6 +37,7 @@ public class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.SuggestV
 
     public interface OnSuggestClickListener {
         void onSuggestClick(Suggest suggest, int position);
+        void onSuggestLongClick(Suggest suggest, View v);
     }
 
     public void setItems(Collection<Suggest> suggests){
@@ -77,7 +78,7 @@ public class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.SuggestV
         return suggestList.size();
     }
 
-    class SuggestViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
+    class SuggestViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener, View.OnLongClickListener {
 
         private Suggest suggest;
         private int position;
@@ -104,6 +105,11 @@ public class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.SuggestV
             art_count.setOnTouchListener(this);
             imageView.setOnTouchListener(this);
             image_is_used_earlie.setOnTouchListener(this);
+
+            tv_suggest.setOnLongClickListener(this);
+            art_count.setOnLongClickListener(this);
+            imageView.setOnLongClickListener(this);
+            image_is_used_earlie.setOnLongClickListener(this);
         }
 
         void bind(Suggest suggest, int position) {
@@ -149,6 +155,14 @@ public class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.SuggestV
                 }
             }
             return false;
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (v.getId() == tv_suggest.getId() || v.getId() == art_count.getId() || v.getId() == imageView.getId()|| v.getId() == image_is_used_earlie.getId()) {
+                onSuggestsClickListener.onSuggestLongClick(suggest, v);
+            }
+            return true;
         }
     }
 

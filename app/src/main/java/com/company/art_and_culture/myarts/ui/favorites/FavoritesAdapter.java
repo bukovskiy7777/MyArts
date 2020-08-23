@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
@@ -84,6 +85,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         private Art art;
         private int position;
         private ImageView art_image;
+        private TextView art_maker;
         private String artImgUrl = " ";
         private final Target target = new Target() {
             @Override
@@ -102,6 +104,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
             itemView.getLayoutParams().width = displayWidth/spanCount;
             itemView.getLayoutParams().height = displayWidth/spanCount;
             art_image = itemView.findViewById(R.id.art_image);
+            art_maker = itemView.findViewById(R.id.art_maker);
             art_image.setOnClickListener(this);
         }
 
@@ -123,6 +126,8 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
             } else {
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);
             }
+
+            art_maker.setText(art.getArtMaker());
         }
 
         @Override

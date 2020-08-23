@@ -17,4 +17,7 @@
     <string name="items">items</string>
     <string name="http">http</string>
     <string name="copy_text">copy text</string>
+    <string name="art_makers">Art makers</string>
+    <string name="delete_query">delete query</string>
+    <string name="view_all">View all</string>
 </resources>

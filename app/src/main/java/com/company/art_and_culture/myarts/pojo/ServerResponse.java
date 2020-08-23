@@ -9,6 +9,7 @@ public class ServerResponse {
     private ArrayList<Art> listArts;
     private Art art;
     private ArrayList<Suggest> listSuggests;
+    private ArrayList<ExploreObject> listExplore;
 
     public ArrayList<Art> getListArts() {
         return listArts;
@@ -28,5 +29,9 @@ public class ServerResponse {
 
     public ArrayList<Suggest> getListSuggests() {
         return listSuggests;
+    }
+
+    public ArrayList<ExploreObject> getListExplore() {
+        return listExplore;
     }
 }

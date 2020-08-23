@@ -8,6 +8,7 @@
 
     <com.google.android.material.appbar.AppBarLayout
         app:layout_constraintTop_toTopOf="parent"
+        android:elevation="4dp"
         android:id="@+id/app_bar_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -81,9 +82,19 @@
                         android:imeOptions="actionSearch"
                         android:inputType="text"
                         app:layout_constraintLeft_toRightOf="@+id/search_back"
-                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintRight_toLeftOf="@+id/search_clear"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"/>
+
+                    <ImageView
+                        android:id="@+id/search_clear"
+                        android:layout_marginRight="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:src="@drawable/ic_clear_black_100dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -121,23 +132,17 @@
         app:layout_constraintRight_toRightOf="parent"
         app:menu="@menu/bottom_nav_menu"/>
 
-    <FrameLayout
-        android:elevation="10dp"
-        android:id="@+id/frame_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
     <androidx.recyclerview.widget.RecyclerView
         android:background="@color/colorPrimary"
-        android:elevation="6dp"
+        android:elevation="8dp"
         android:id="@+id/suggestions_recycler_view"
         app:layout_constraintTop_toBottomOf="@+id/app_bar_main"
-        app:layout_constraintBottom_toTopOf="@id/nav_view"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
 
     <ProgressBar
-        android:elevation="6dp"
+        android:elevation="8dp"
         android:id="@+id/suggestions_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
@@ -150,16 +155,28 @@
         android:indeterminate="true"/>
 
     <FrameLayout
-        android:elevation="6dp"
+        android:elevation="10dp"
         android:id="@+id/frame_container_search"
         app:layout_constraintTop_toBottomOf="@+id/app_bar_main"
-        app:layout_constraintBottom_toTopOf="@id/nav_view"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
 
     <FrameLayout
-        android:elevation="8dp"
+        android:elevation="12dp"
         android:id="@+id/frame_container_maker"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <FrameLayout
+        android:elevation="14dp"
+        android:id="@+id/frame_container_art_show"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <FrameLayout
+        android:elevation="10dp"
+        android:id="@+id/frame_container_maker_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

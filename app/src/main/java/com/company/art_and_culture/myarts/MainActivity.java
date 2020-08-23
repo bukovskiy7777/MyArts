@@ -8,8 +8,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -18,17 +18,21 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerFragment;
 import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
+import com.company.art_and_culture.myarts.maker_search_fragment.MakerSearchFragment;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.ExploreObject;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
 import com.company.art_and_culture.myarts.pojo.Suggest;
 import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
+import com.company.art_and_culture.myarts.ui.explore.ExploreFragment;
 import com.company.art_and_culture.myarts.ui.favorites.FavoritesFragment;
 import com.company.art_and_culture.myarts.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -51,7 +55,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements
         HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
-        MakerFragment.MakerEventListener, View.OnClickListener {
+        MakerFragment.MakerEventListener, View.OnClickListener, ExploreFragment.ExploreEventListener {
 
     private int homePosition = 0;
     private int favoritesPosition = 0;
@@ -61,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private Toolbar toolbar;
     private ArtShowFragment artShowFragment;
-    private ImageView search_btn, search_back;
+    private ImageView search_btn, search_back, search_clear;
     private ConstraintLayout search_layout;
     private EditText search_edit_text;
     private RecyclerView suggestions_recycler_view;
@@ -71,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements
     private MakerFragment makerFragment;
     private String artQuery, queryType;
     private SharedPreferences preferences;
+    private MakerSearchFragment makerSearchFragment;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -89,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements
         search_btn = findViewById(R.id.search_btn);
         search_layout = findViewById(R.id.search_layout);
         search_back = findViewById(R.id.search_back);
+        search_clear = findViewById(R.id.search_clear);
         search_edit_text = findViewById(R.id.search_edit_text);
         suggestions_recycler_view = findViewById(R.id.suggestions_recycler_view);
         suggestions_progress = findViewById(R.id.suggestions_progress);
@@ -96,9 +102,11 @@ public class MainActivity extends AppCompatActivity implements
         search_layout.setVisibility(View.GONE);
         suggestions_recycler_view.setVisibility(View.GONE);
         suggestions_progress.setVisibility(View.GONE);
+        search_clear.setVisibility(View.GONE);
 
         search_btn.setOnClickListener(this);
         search_back.setOnClickListener(this);
+        search_clear.setOnClickListener(this);
 
         initSuggestRecyclerView();
 
@@ -111,8 +119,10 @@ public class MainActivity extends AppCompatActivity implements
             public void afterTextChanged(Editable s) {
                 if (s.toString().length() == 0) {
                     getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,""));
+                    search_clear.setVisibility(View.GONE);
                 } else {
                     getSuggests(s.toString(), preferences.getString(Constants.USER_UNIQUE_ID,""));
+                    search_clear.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -161,12 +171,10 @@ public class MainActivity extends AppCompatActivity implements
                 if (response.body() != null) {
                     if (response.body().getListSuggests() == null) {
                         suggestAdapter.clearItems();
-                        //showText();
                     } else {
                         setAnimationSuggestsRecyclerView ();
                         suggestAdapter.clearItems();
                         suggestAdapter.setItems(response.body().getListSuggests());
-                        //hideText();
                     }
                 }
             }
@@ -197,13 +205,11 @@ public class MainActivity extends AppCompatActivity implements
                 if (response.body() != null) {
                     if (response.body().getListSuggests() == null) {
                         suggestAdapter.clearItems();
-                        //showText();
                     } else {
                         if (search_edit_text.getText().toString().length() > 0) {
                             setAnimationSuggestsRecyclerView ();
                             suggestAdapter.clearItems();
                             suggestAdapter.setItems(response.body().getListSuggests());
-                            //hideText();
                         }
                     }
                 }
@@ -232,9 +238,62 @@ public class MainActivity extends AppCompatActivity implements
                 showSearchFragment();
                 hideSoftKeyboard(MainActivity.this);
             }
+
+            @Override
+            public void onSuggestLongClick(Suggest suggest, View v) {
+                showPopupMenu(suggest, v);
+            }
         };
         suggestAdapter = new SuggestAdapter(this, onSuggestClickListener);
         suggestions_recycler_view.setAdapter(suggestAdapter);
+    }
+
+    private void showPopupMenu(final Suggest suggest, View view) {
+
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        popupMenu.inflate(R.menu.delete_query_pop_up_menu);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.delete_query:
+
+                        deleteQuery(suggest.getSuggestStr(), preferences.getString(Constants.USER_UNIQUE_ID,""));
+
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+        popupMenu.show();
+    }
+
+    private void deleteQuery(String suggestStr, String userUniqueId) {
+
+        ServerRequest request = new ServerRequest();
+        request.setOperation(Constants.DELETE_SUGGEST_QUERY_OPERATION);
+        request.setSearchQuery(suggestStr);
+        request.setUserUniqueId(userUniqueId);
+
+        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
+        response.enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                if (response.body() != null) {
+                    if (response.body().getListSuggests() == null) {
+                        suggestAdapter.clearItems();
+                    } else {
+                        setAnimationSuggestsRecyclerView ();
+                        suggestAdapter.clearItems();
+                        suggestAdapter.setItems(response.body().getListSuggests());
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) { }
+        });
+
     }
 
     @Override
@@ -256,6 +315,7 @@ public class MainActivity extends AppCompatActivity implements
             hideSoftKeyboard(this);
             search_layout.setVisibility(View.GONE);
             suggestions_recycler_view.setVisibility(View.GONE);
+            search_edit_text.setText("");
 
             if (searchFragment != null) {
                 FragmentManager fragmentManager = getSupportFragmentManager();
@@ -266,6 +326,16 @@ public class MainActivity extends AppCompatActivity implements
                 searchFragment = null;
             }
 
+        } else if (v.getId() == search_clear.getId()) {
+            search_edit_text.setText("");
+            if (searchFragment != null) {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
+                fragmentTransaction.remove(searchFragment).commit();
+                searchFragment.finish();
+                searchFragment = null;
+            }
         }
     }
 
@@ -311,18 +381,11 @@ public class MainActivity extends AppCompatActivity implements
         showMakerFragment();
     }
 
-    public int getHomePosition() {
-        return homePosition;
-    }
-
 
 
     @Override
     public void favoritesScrollEvent(int position) {
         this.favoritesPosition = position;
-    }
-    public int getFavoritesPosition() {
-        return favoritesPosition;
     }
     @Override
     public void favoritesClickEvent(Collection<Art> listArts, int position) {
@@ -355,6 +418,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+
     @Override
     public void makerArtClickEvent(Collection<Art> arts, int position) {
         this.listArts = arts;
@@ -364,6 +428,26 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+
+    @Override
+    public void exploreMakerSearchClick() {
+        showMakerSearchFragment();
+    }
+    @Override
+    public void exploreClickEvent(ExploreObject exploreObject, int position) {
+
+    }
+
+
+
+
+    public int getHomePosition() {
+        return homePosition;
+    }
+
+    public int getFavoritesPosition() {
+        return favoritesPosition;
+    }
 
     public Collection<Art> getListArts() {
         return listArts;
@@ -376,6 +460,20 @@ public class MainActivity extends AppCompatActivity implements
     public ArtShowFragment getArtShowFragment() {
         return artShowFragment;
     }
+
+    public String getSearchQuery() {
+        return search_edit_text.getText().toString();
+    }
+
+    public String getArtQuery() {
+        return artQuery;
+    }
+
+    public String getQueryType() {
+        return queryType;
+    }
+
+
 
     @Override
     public void onBackPressed() {
@@ -405,11 +503,21 @@ public class MainActivity extends AppCompatActivity implements
             searchFragment.finish();
             searchFragment = null;
 
+        } else if (makerSearchFragment != null) {
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
+            fragmentTransaction.remove(makerSearchFragment).commit();
+            makerSearchFragment.finish();
+            makerSearchFragment = null;
+
         } else {
             if (isSearchLayoutOpen()) {
 
                 search_layout.setVisibility(View.GONE);
                 suggestions_recycler_view.setVisibility(View.GONE);
+                search_edit_text.setText("");
 
             } else {
                 super.onBackPressed();
@@ -425,7 +533,7 @@ public class MainActivity extends AppCompatActivity implements
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
         //fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.add(R.id.frame_container, artShowFragment, "favoritesShowFragment").commit();
+        fragmentTransaction.add(R.id.frame_container_art_show, artShowFragment, "favoritesShowFragment").commit();
     }
 
     private void showSearchFragment() {
@@ -448,16 +556,17 @@ public class MainActivity extends AppCompatActivity implements
         fragmentTransaction.add(R.id.frame_container_maker, makerFragment, "makerFragment").commit();
     }
 
-    public String getSearchQuery() {
-        return search_edit_text.getText().toString();
+    private void showMakerSearchFragment() {
+        makerSearchFragment = new MakerSearchFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
+        //fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.add(R.id.frame_container_maker_search, makerSearchFragment, "makerSearchFragment").commit();
     }
 
-    public String getArtQuery() {
-        return artQuery;
-    }
 
-    public String getQueryType() {
-        return queryType;
-    }
+
+
 
 }
