@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.maker_search_fragment;
+package com.company.art_and_culture.myarts.art_maker_search_fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,7 +17,7 @@ public class MakerSearchFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_maker_search, container, false);
+        View root = inflater.inflate(R.layout.fragment_art_maker_search, container, false);
 
         return root;
     }

@@ -171,20 +171,11 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
     private void setAnimationRecyclerView(ArrayList<ExploreObject> objects) {
 
         boolean animate = false;
-        if (listObjects != null) {
-            if (objects.size() != exploreAdapter.getItemCount()) {
-                animate = true;
-            } else {
-                int count = 0;
-                if (objects.size() > exploreAdapter.getItemCount()) {
-                    count = exploreAdapter.getItemCount();
-                } else {
-                    count = objects.size();
-                }
-                for (int i = 0; i < count; i++) {
-                    if (!objects.get(i).getImageUrl().equals(exploreAdapter.getItems().get(i).getImageUrl())) {
-                        animate = true;
-                    }
+        if (exploreAdapter.getItemCount() > 0) {
+
+            for (int i = 0; i < objects.size(); i++) {
+                if (!objects.get(i).getImageUrl().equals(exploreAdapter.getItems().get(i).getImageUrl())) {
+                    animate = true;
                 }
             }
             if (animate) {

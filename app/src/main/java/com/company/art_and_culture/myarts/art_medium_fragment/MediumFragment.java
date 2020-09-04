@@ -1,7 +1,8 @@
-package com.company.art_and_culture.myarts.art_maker_fragment;
+package com.company.art_and_culture.myarts.art_medium_fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,47 +23,49 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class MakerFragment extends Fragment {
+public class MediumFragment extends Fragment {
 
-    private MakerViewModel makerViewModel;
-    private RecyclerView makerRecyclerView;
-    private MakerAdapter makerAdapter;
-    private ProgressBar makerProgressBar;
-    private TextView textView, appbar_maker;
-    private MakerEventListener makerEventListener;
+    private MediumViewModel mediumViewModel;
+    private RecyclerView mediumRecyclerView;
+    private MediumAdapter mediumAdapter;
+    private ProgressBar mediumProgressBar;
+    private TextView textView, appbar_medium;
+    private MediumEventListener mediumEventListener;
     private SwipeRefreshLayout swipeRefreshLayout;
     private android.content.res.Resources res;
     private MainActivity activity;
-    private String artMaker;
+    private String artQuery, queryType;
     private int spanCount = 2;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_art_maker, container, false);
-        textView = root.findViewById(R.id.text_maker);
-        makerRecyclerView = root.findViewById(R.id.recycler_view_maker);
-        makerProgressBar = root.findViewById(R.id.progress_bar_maker);
-        swipeRefreshLayout = root.findViewById(R.id.maker_swipeRefreshLayout);
-        appbar_maker = root.findViewById(R.id.appbar_maker);
+        View root = inflater.inflate(R.layout.fragment_art_medium, container, false);
+        textView = root.findViewById(R.id.text_medium);
+        mediumRecyclerView = root.findViewById(R.id.recycler_view_medium);
+        mediumProgressBar = root.findViewById(R.id.progress_bar_medium);
+        swipeRefreshLayout = root.findViewById(R.id.medium_swipeRefreshLayout);
+        appbar_medium = root.findViewById(R.id.appbar_medium);
 
-        makerViewModel = new ViewModelProvider(this).get(MakerViewModel.class);
+        mediumViewModel = new ViewModelProvider(this).get(MediumViewModel.class);
 
         res = getResources();
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
-        initRecyclerView(makerViewModel, displayWidth, displayHeight);
+        initRecyclerView(mediumViewModel, displayWidth, displayHeight);
 
         activity = (MainActivity) getActivity();
 
-        if (activity != null) artMaker = activity.getArtMakerForMakerFragment();
-        appbar_maker.setText(artMaker);
+        if (activity != null) artQuery = activity.getArtQueryForMediumFragment();
+        if (activity != null) queryType = activity.getQueryTypeForMediumFragment();
+        appbar_medium.setText(artQuery);
 
-        makerViewModel.setArtMaker(artMaker);
+        mediumViewModel.setArtQueryAndType(artQuery, queryType);
 
         initSwipeRefreshLayout();
         subscribeObservers();
@@ -81,9 +84,9 @@ public class MakerFragment extends Fragment {
 
                 if( keyCode == KeyEvent.KEYCODE_BACK && activity.getArtShowFragment() == null ) {
                     int scrollPosition = 0;
-                    if (makerAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
+                    if (mediumAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
                     if (scrollPosition > 4) {
-                        makerRecyclerView.smoothScrollToPosition(0);
+                        mediumRecyclerView.smoothScrollToPosition(0);
                         return true;
                     }
                     return false;
@@ -97,7 +100,7 @@ public class MakerFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                boolean networkState = makerViewModel.refresh();
+                boolean networkState = mediumViewModel.refresh();
                 if (!networkState) {
                     Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
                     swipeRefreshLayout.setRefreshing(false);
@@ -115,21 +118,21 @@ public class MakerFragment extends Fragment {
 
     private void subscribeObservers() {
 
-        makerViewModel.getArtList().observe(getViewLifecycleOwner(), new Observer<PagedList<Art>>() {
+        mediumViewModel.getArtList().observe(getViewLifecycleOwner(), new Observer<PagedList<Art>>() {
             @Override
             public void onChanged(PagedList<Art> arts) {
-                makerAdapter.submitList(arts);
+                mediumAdapter.submitList(arts);
                 hideText();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-        makerViewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        mediumViewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) { showProgressBar(); } else { hideProgressBar(); }
             }
         });
-        makerViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        mediumViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) { showText(); } else { hideText(); }
@@ -137,30 +140,30 @@ public class MakerFragment extends Fragment {
         });
     }
 
-    private void initRecyclerView(final MakerViewModel makerViewModel, int displayWidth, int displayHeight){
+    private void initRecyclerView(final MediumViewModel mediumViewModel, int displayWidth, int displayHeight){
 
-        MakerAdapter.OnArtClickListener onArtClickListener = new MakerAdapter.OnArtClickListener() {
+        MediumAdapter.OnArtClickListener onArtClickListener = new MediumAdapter.OnArtClickListener() {
 
             @Override
             public void onArtImageClick(Art art, int position) {
-                ArrayList<Art> artInMemory = MakerDataInMemory.getInstance().getAllData();
-                makerEventListener.makerArtClickEvent(artInMemory, position);
+                ArrayList<Art> artInMemory = MediumDataInMemory.getInstance().getAllData();
+                mediumEventListener.mediumArtClickEvent(artInMemory, position);
             }
 
         };
 
-        makerAdapter = new MakerAdapter(makerViewModel,getContext(), onArtClickListener, displayWidth, displayHeight, spanCount);
+        mediumAdapter = new MediumAdapter(mediumViewModel, getContext(), onArtClickListener, displayWidth, displayHeight, spanCount);
         RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
-        makerRecyclerView.setLayoutManager(layoutManager);
-        makerRecyclerView.setAdapter(makerAdapter);
+        mediumRecyclerView.setLayoutManager(layoutManager);
+        mediumRecyclerView.setAdapter(mediumAdapter);
     }
 
     private void showProgressBar(){
-        makerProgressBar.setVisibility(View.VISIBLE);
+        mediumProgressBar.setVisibility(View.VISIBLE);
     }
 
     private void hideProgressBar(){
-        makerProgressBar.setVisibility(View.GONE);
+        mediumProgressBar.setVisibility(View.GONE);
     }
 
     private void showText(){
@@ -171,15 +174,15 @@ public class MakerFragment extends Fragment {
         textView.setVisibility(View.GONE);
     }
 
-    public interface MakerEventListener {
-        void makerArtClickEvent(Collection<Art> arts, int position);
+    public interface MediumEventListener {
+        void mediumArtClickEvent(Collection<Art> arts, int position);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            makerEventListener = (MakerEventListener) context;
+            mediumEventListener = (MediumEventListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement onSomeEventListener");
         }
@@ -187,13 +190,13 @@ public class MakerFragment extends Fragment {
 
     private int getTargetScrollPosition () {
 
-        int scrollPosition = ((StaggeredGridLayoutManager) makerRecyclerView.getLayoutManager()).findFirstVisibleItemPositions(null)[0];
+        int scrollPosition = ((StaggeredGridLayoutManager) mediumRecyclerView.getLayoutManager()).findFirstVisibleItemPositions(null)[0];
 
         return scrollPosition;
     }
 
     public void finish() {
-        makerViewModel.finish ();
+        mediumViewModel.finish ();
     }
 
 

@@ -17,7 +17,7 @@ public class Art {
     private String artLogoUrl;
     private String artClassification;
     private boolean isLiked;
-    //private String serverTableName;
+    private String century;
 
 
     public void setArtWidth(int artWidth) {
@@ -86,5 +86,9 @@ public class Art {
 
     public String getArtProviderId() {
         return artProviderId;
+    }
+
+    public String getCentury() {
+        return century;
     }
 }

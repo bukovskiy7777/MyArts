@@ -163,20 +163,26 @@
         android:layout_height="0dp"/>
 
     <FrameLayout
+        android:elevation="10dp"
+        android:id="@+id/frame_container_maker_search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <FrameLayout
         android:elevation="12dp"
         android:id="@+id/frame_container_maker"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
     <FrameLayout
-        android:elevation="14dp"
-        android:id="@+id/frame_container_art_show"
+        android:elevation="12dp"
+        android:id="@+id/frame_container_medium"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
     <FrameLayout
-        android:elevation="10dp"
-        android:id="@+id/frame_container_maker_search"
+        android:elevation="14dp"
+        android:id="@+id/frame_container_art_show"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

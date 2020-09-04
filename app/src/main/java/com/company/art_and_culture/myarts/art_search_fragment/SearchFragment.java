@@ -62,7 +62,6 @@ public class SearchFragment extends Fragment {
     private SearchAdapter searchAdapter;
     private ProgressBar searchProgressBar, download_progress;
     private TextView textView;
-    private int scrollPosition = 0;
     private SearchEventListener searchEventListener;
     private SharedPreferences preferences;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -128,6 +127,7 @@ public class SearchFragment extends Fragment {
             public boolean onKey( View v, int keyCode, KeyEvent event ) {
 
                 if( keyCode == KeyEvent.KEYCODE_BACK && activity.getArtShowFragment() == null ) {
+                    int scrollPosition = 0;
                     if (searchAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
                     if (scrollPosition > 4) {
                         searchRecyclerView.smoothScrollToPosition(0);

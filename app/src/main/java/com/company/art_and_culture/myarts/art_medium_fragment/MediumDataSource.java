@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.art_maker_fragment;
+package com.company.art_and_culture.myarts.art_medium_fragment;
 
 import android.app.Application;
 import android.content.Context;
@@ -6,6 +6,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.art_maker_fragment.MakerDataInMemory;
+import com.company.art_and_culture.myarts.art_maker_fragment.MakerRepository;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
@@ -19,13 +21,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
+public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
 
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
     private Application application;
 
-    public MakerDataSource(Application application) {
+    public MediumDataSource(Application application) {
         this.application = application;
     }
 
@@ -39,13 +41,20 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
         updateIsListEmptyState(false);
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        String artMaker = MakerRepository.getInstance(application).getArtMaker();
+        String artQuery = MediumRepository.getInstance(application).getArtQuery();
+        String queryType = MediumRepository.getInstance(application).getQueryType();
 
         ServerRequest request = new ServerRequest();
-        request.setArtQuery(artMaker);
+        request.setArtQuery(artQuery);
         request.setPageNumber(1);
         request.setUserUniqueId(userUniqueId);
-        request.setOperation(Constants.GET_ARTS_LIST_MAKER_OPERATION);
+
+        if (queryType != null && queryType.equals(Constants.ART_MEDIUM)) {
+            request.setOperation(Constants.GET_ARTS_LIST_MEDIUM_OPERATION);
+        } else if (queryType != null && queryType.equals(Constants.ART_CLASSIFICATION)) {
+            request.setOperation(Constants.GET_ARTS_LIST_CLASSIFICATION_OPERATION);
+            request.setOldList(MediumDataInMemory.getInstance().getAllData());
+        }
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
         response.enqueue(new Callback<ServerResponse>() {
@@ -57,8 +66,8 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsListEmptyState(false);
-                        MakerDataInMemory.getInstance().addData(resp.getListArts());
-                        callback.onResult(MakerDataInMemory.getInstance().getInitialData(),null, 2);
+                        MediumDataInMemory.getInstance().addData(resp.getListArts());
+                        callback.onResult(MediumDataInMemory.getInstance().getInitialData(),null, 2);
                     } else {
                         updateIsListEmptyState(true);
                     }
@@ -80,13 +89,20 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
     public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Art> callback) {
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        String artMaker = MakerRepository.getInstance(application).getArtMaker();
+        String artQuery = MediumRepository.getInstance(application).getArtQuery();
+        String queryType = MediumRepository.getInstance(application).getQueryType();
 
         ServerRequest request = new ServerRequest();
-        request.setArtQuery(artMaker);
+        request.setArtQuery(artQuery);
         request.setPageNumber(params.key);
         request.setUserUniqueId(userUniqueId);
-        request.setOperation(Constants.GET_ARTS_LIST_MAKER_OPERATION);
+
+        if (queryType != null && queryType.equals(Constants.ART_MEDIUM)) {
+            request.setOperation(Constants.GET_ARTS_LIST_MEDIUM_OPERATION);
+        } else if (queryType != null && queryType.equals(Constants.ART_CLASSIFICATION)) {
+            request.setOperation(Constants.GET_ARTS_LIST_CLASSIFICATION_OPERATION);
+            request.setOldList(MediumDataInMemory.getInstance().getAllData());
+        }
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
         response.enqueue(new Callback<ServerResponse>() {
@@ -98,8 +114,8 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsListEmptyState(false);
-                        MakerDataInMemory.getInstance().addData(resp.getListArts());
-                        callback.onResult(MakerDataInMemory.getInstance().getAfterData(params.key), params.key + 1);
+                        MediumDataInMemory.getInstance().addData(resp.getListArts());
+                        callback.onResult(MediumDataInMemory.getInstance().getAfterData(params.key), params.key + 1);
                     } else {
                         updateIsListEmptyState(false);
                     }
@@ -134,7 +150,7 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
     }
 
     public void refresh() {
-        MakerDataInMemory.getInstance().refresh();
+        MediumDataInMemory.getInstance().refresh();
         invalidate();
     }
 

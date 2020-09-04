@@ -3,7 +3,6 @@ package com.company.art_and_culture.myarts.ui.favorites;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,19 +22,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHolder> {
+public class FavoritesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private FavoritesFragment.Sort sort_type;
     private Context context;
     private OnArtClickListener onArtClickListener;
     private int displayWidth, displayHeight, spanCount;
+    private double k = 0.4;
     private List<Art> artList=new ArrayList<>();
 
-    public FavoritesAdapter(Context context, OnArtClickListener onArtClickListener, int displayWidth, int displayHeight, int spanCount) {
+    public FavoritesAdapter(Context context, OnArtClickListener onArtClickListener, int displayWidth, int displayHeight,
+                            int spanCount, FavoritesFragment.Sort sort_type) {
         this.context = context;
         this.onArtClickListener = onArtClickListener;
         this.displayWidth = displayWidth;
         this.displayHeight = displayHeight;
         this.spanCount = spanCount;
+        this.sort_type = sort_type;
     }
 
     public interface OnArtClickListener {
@@ -51,23 +54,82 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         return artList;
     }
 
+    public FavoritesFragment.Sort getSort_type() {
+        return sort_type;
+    }
+
     public void clearItems(){
         artList.clear();
         notifyDataSetChanged();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+
+        if (sort_type.equals(FavoritesFragment.Sort.by_date)) {
+            return 1;
+
+        } else if (sort_type.equals(FavoritesFragment.Sort.by_maker)) {
+            if (position > 0) {
+                if (!artList.get(position-1).getArtMaker().equals(artList.get(position).getArtMaker())) {
+                    return 3;
+                } else {
+                    return 2;
+                }
+            } else {
+                return 3;
+            }
+
+        } else if (sort_type.equals(FavoritesFragment.Sort.by_century)) {
+            if (position > 0){
+                if (!artList.get(position-1).getCentury().equals(artList.get(position).getCentury())) {
+                    return 3;
+                } else {
+                    return 2;
+                }
+            } else {
+                return 3;
+            }
+
+        } else {
+            return 1;
+        }
+    }
+
     @NonNull
     @Override
-    public FavoritesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_favorites, parent, false);
-        return new FavoritesViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view;
+        if (viewType == 1) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_favorites_1, parent, false);
+            return new Favorites_1_ViewHolder(view);
+        } else if (viewType == 2) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_favorites_2, parent, false);
+            return new Favorites_2_ViewHolder(view);
+        } else if (viewType == 3) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_favorites_3, parent, false);
+            return new Favorites_3_ViewHolder(view);
+        } else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_favorites_1, parent, false);
+            return new Favorites_1_ViewHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FavoritesViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Art art = artList.get(position);
         if (art != null) {
-            holder.bind(art, position);
+            if (holder.getItemViewType() == 1) {
+                Favorites_1_ViewHolder viewHolder = (Favorites_1_ViewHolder) holder;
+                viewHolder.bind(art, position);
+            } else if (holder.getItemViewType() == 2) {
+                Favorites_2_ViewHolder viewHolder = (Favorites_2_ViewHolder) holder;
+                viewHolder.bind(art, position);
+            } else if (holder.getItemViewType() == 3) {
+                Favorites_3_ViewHolder viewHolder = (Favorites_3_ViewHolder) holder;
+                viewHolder.bind(art, position);
+            }
+
         } else {
             // Null defines a placeholder item - PagedListAdapter will automatically invalidate
             // this row when the actual object is loaded from the database
@@ -80,7 +142,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         return artList.size();
     }
 
-    class FavoritesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class Favorites_1_ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private Art art;
         private int position;
@@ -99,7 +161,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
             public void onPrepareLoad(Drawable placeHolderDrawable) { }
         };
 
-        FavoritesViewHolder(@NonNull View itemView) {
+        Favorites_1_ViewHolder(@NonNull View itemView) {
             super(itemView);
             itemView.getLayoutParams().width = displayWidth/spanCount;
             itemView.getLayoutParams().height = displayWidth/spanCount;
@@ -133,6 +195,148 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         @Override
         public void onClick(View v) {
             if (v.getId() == art_image.getId()) {
+                onArtClickListener.onArtImageClick(art, position);
+            }
+        }
+    }
+
+    class Favorites_2_ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        private Art art;
+        private int position;
+        private ImageView art_image;
+        private TextView art_maker, art_title;
+        private String artImgUrl = " ";
+        private final Target target = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(art_image);
+            }
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) { }
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) { }
+        };
+
+        Favorites_2_ViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            art_image = itemView.findViewById(R.id.art_image);
+            art_maker = itemView.findViewById(R.id.art_maker);
+            art_title = itemView.findViewById(R.id.art_title);
+
+            itemView.getLayoutParams().width = displayWidth/spanCount;
+            itemView.getLayoutParams().height = (int) (displayWidth * k);
+            art_image.getLayoutParams().height = (int) (displayWidth * k);
+            art_image.getLayoutParams().width = (int) (displayWidth * k);
+
+            art_image.setOnClickListener(this);
+            art_maker.setOnClickListener(this);
+            art_title.setOnClickListener(this);
+        }
+
+        void bind(Art art, int position) {
+            this.art = art;
+            this.position = position;
+
+            if (!art.getArtImgUrlSmall().equals(" ") && art.getArtImgUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
+                artImgUrl = art.getArtImgUrlSmall();
+            } else {
+                artImgUrl= art.getArtImgUrl();
+            }
+
+            art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
+            if (art.getArtWidth() > 0) {
+                int imgWidth = displayWidth/spanCount;
+                int imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
+                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image);
+            } else {
+                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);
+            }
+
+            art_maker.setText(art.getArtMaker());
+            art_title.setText(art.getArtLongTitle());
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == art_image.getId() || v.getId() == art_maker.getId() || v.getId() == art_title.getId()) {
+                onArtClickListener.onArtImageClick(art, position);
+            }
+        }
+    }
+
+    class Favorites_3_ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        private Art art;
+        private int position;
+        private ImageView art_image;
+        private TextView art_maker, art_title, header;
+        private String artImgUrl = " ";
+        private final Target target = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(art_image);
+            }
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) { }
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) { }
+        };
+
+        Favorites_3_ViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            art_image = itemView.findViewById(R.id.art_image);
+            art_maker = itemView.findViewById(R.id.art_maker);
+            art_title = itemView.findViewById(R.id.art_title);
+            header = itemView.findViewById(R.id.header);
+
+            itemView.getLayoutParams().width = displayWidth/spanCount;
+            //itemView.getLayoutParams().height = (int) (displayWidth * k);
+            art_image.getLayoutParams().height = (int) (displayWidth * k);
+            art_image.getLayoutParams().width = (int) (displayWidth * k);
+
+            art_image.setOnClickListener(this);
+            art_maker.setOnClickListener(this);
+            art_title.setOnClickListener(this);
+        }
+
+        void bind(Art art, int position) {
+            this.art = art;
+            this.position = position;
+
+            if (!art.getArtImgUrlSmall().equals(" ") && art.getArtImgUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
+                artImgUrl = art.getArtImgUrlSmall();
+            } else {
+                artImgUrl= art.getArtImgUrl();
+            }
+
+            art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
+            if (art.getArtWidth() > 0) {
+                int imgWidth = displayWidth/spanCount;
+                int imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
+                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image);
+            } else {
+                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);
+            }
+
+            art_maker.setText(art.getArtMaker());
+            art_title.setText(art.getArtLongTitle());
+
+            if (sort_type.equals(FavoritesFragment.Sort.by_maker)) {
+                header.setText(art.getArtMaker());
+            } else if (sort_type.equals(FavoritesFragment.Sort.by_century)) {
+                String text = art.getCentury() + context.getResources().getString(R.string.th_century);
+                header.setText(text);
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == art_image.getId() || v.getId() == art_maker.getId() || v.getId() == art_title.getId()) {
                 onArtClickListener.onArtImageClick(art, position);
             }
         }

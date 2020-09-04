@@ -89,8 +89,8 @@ public class ArtShowFragment extends Fragment {
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
 
         if (activity != null) {
-            Collection<Art> listArts = activity.getListArts();
-            int artClickPosition = activity.getClickPosition();
+            Collection<Art> listArts = activity.getListArtsForArtShowFragment();
+            int artClickPosition = activity.getClickPositionForArtShowFragment();
 
             if (listArts == null) {
                 artShowAdapter.clearItems();
