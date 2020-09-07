@@ -22,4 +22,8 @@
     <string name="view_all">View all</string>
     <string name="sort_by">Sort ArtWorks by</string>
     <string name="th_century">th century</string>
+    <string name="folders">Folders</string>
+    <string name="create_a_folder">Create a folder</string>
+    <string name="organize_your_favorites">Organize your favorite artWorks into folders according to different criteria: author, subject, etc.</string>
+
 </resources>

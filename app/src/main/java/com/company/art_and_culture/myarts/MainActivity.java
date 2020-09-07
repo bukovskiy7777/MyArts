@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -39,6 +40,7 @@ import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
 import com.company.art_and_culture.myarts.ui.explore.ExploreFragment;
 import com.company.art_and_culture.myarts.ui.favorites.FavoritesFragment;
 import com.company.art_and_culture.myarts.ui.home.HomeFragment;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Collection;
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements
     private Collection<Art> listArtsForArtShowFragment;
     private int clickPositionForArtShowFragment;
 
+    private AppBarLayout app_bar_main;
     private Toolbar toolbar;
     private ArtShowFragment artShowFragment;
     private ImageView search_btn, search_back, search_clear;
@@ -85,13 +88,14 @@ public class MainActivity extends AppCompatActivity implements
     private SharedPreferences preferences;
     private MakerSearchFragment makerSearchFragment;
     private MediumFragment mediumFragment;
+    private BottomNavigationView navView;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -100,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements
         NavigationUI.setupWithNavController(navView, navController);
 
         toolbar = findViewById(R.id.toolbar_main);
+        app_bar_main = findViewById(R.id.app_bar_main);
         search_btn = findViewById(R.id.search_btn);
         search_layout = findViewById(R.id.search_layout);
         search_back = findViewById(R.id.search_back);
@@ -331,6 +336,7 @@ public class MainActivity extends AppCompatActivity implements
 
             search_layout.setVisibility(View.VISIBLE);
             suggestions_recycler_view.setVisibility(View.VISIBLE);
+            navView.setVisibility(View.GONE);
             AnimatorSet set = new AnimatorSet();
             set.setDuration(400).playTogether(
                     ObjectAnimator.ofFloat(search_layout, View.ALPHA, 0.2f, 1f),
@@ -341,6 +347,7 @@ public class MainActivity extends AppCompatActivity implements
         } else if (v.getId() == search_back.getId()) {
 
             hideSoftKeyboard(this);
+            navView.setVisibility(View.VISIBLE);
             search_edit_text.setText("");
             AnimatorSet set = new AnimatorSet();
             set.setDuration(300).playTogether(
@@ -435,6 +442,43 @@ public class MainActivity extends AppCompatActivity implements
         this.listArtsForArtShowFragment = listArts;
         this.clickPositionForArtShowFragment = position;
         showArtFragment();
+    }
+    @Override
+    public void favoritesOnScroll(int direction) {
+        Log.i("favoritesOnScroll", direction+"");
+        if (direction == 1){
+            if (navView.isShown()) {
+                AnimatorSet set = new AnimatorSet();
+                set.setDuration(600).playTogether(
+                        ObjectAnimator.ofFloat(navView, View.TRANSLATION_Y,  0f,getToolbarHeight()),
+                        ObjectAnimator.ofFloat(app_bar_main, View.TRANSLATION_Y, 0f, -getToolbarHeight())
+                );
+                set.addListener(goneNavigationListener(navView, app_bar_main));
+                set.start();
+            }
+        } else if (direction == 0){
+            if (!navView.isShown()) {
+                navView.setVisibility(View.VISIBLE);
+                app_bar_main.setVisibility(View.VISIBLE);
+                AnimatorSet set = new AnimatorSet();
+                set.setDuration(600).playTogether(
+                        ObjectAnimator.ofFloat(navView, View.TRANSLATION_Y,  getToolbarHeight(), 0f),
+                        ObjectAnimator.ofFloat(app_bar_main, View.TRANSLATION_Y, -getToolbarHeight(), 0f)
+                );
+                set.start();
+            }
+        }
+    }
+
+    private Animator.AnimatorListener goneNavigationListener(final BottomNavigationView navView, final AppBarLayout app_bar_main) {
+        return new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                navView.setVisibility(View.GONE);
+                app_bar_main.setVisibility(View.GONE);
+            }
+        };
     }
 
 
@@ -582,6 +626,7 @@ public class MainActivity extends AppCompatActivity implements
             if (isSearchLayoutOpen()) {
 
                 search_edit_text.setText("");
+                navView.setVisibility(View.VISIBLE);
                 AnimatorSet set = new AnimatorSet();
                 set.setDuration(300).playTogether(
                         ObjectAnimator.ofFloat(search_layout, View.ALPHA, 1.0f, 0f),

@@ -8,7 +8,6 @@
 
     <com.google.android.material.appbar.AppBarLayout
         app:layout_constraintTop_toTopOf="parent"
-        android:elevation="4dp"
         android:id="@+id/app_bar_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -115,7 +114,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/app_bar_main"
-        app:navGraph="@navigation/mobile_navigation" />
+        app:navGraph="@navigation/bottom_menu_navigation" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
@@ -123,7 +122,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
-        android:elevation="4dp"
         app:itemIconTint="@drawable/selector_nav_bottom"
         app:itemTextColor="@drawable/selector_nav_bottom"
         android:background="?android:attr/windowBackground"
@@ -134,7 +132,6 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:background="@color/colorPrimary"
-        android:elevation="8dp"
         android:id="@+id/suggestions_recycler_view"
         app:layout_constraintTop_toBottomOf="@+id/app_bar_main"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -142,7 +139,6 @@
         android:layout_height="0dp"/>
 
     <ProgressBar
-        android:elevation="8dp"
         android:id="@+id/suggestions_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
@@ -155,7 +151,6 @@
         android:indeterminate="true"/>
 
     <FrameLayout
-        android:elevation="10dp"
         android:id="@+id/frame_container_search"
         app:layout_constraintTop_toBottomOf="@+id/app_bar_main"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -163,25 +158,25 @@
         android:layout_height="0dp"/>
 
     <FrameLayout
-        android:elevation="10dp"
+        android:elevation="8dp"
         android:id="@+id/frame_container_maker_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
     <FrameLayout
-        android:elevation="12dp"
+        android:elevation="8dp"
         android:id="@+id/frame_container_maker"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
     <FrameLayout
-        android:elevation="12dp"
+        android:elevation="8dp"
         android:id="@+id/frame_container_medium"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
     <FrameLayout
-        android:elevation="14dp"
+        android:elevation="8dp"
         android:id="@+id/frame_container_art_show"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
