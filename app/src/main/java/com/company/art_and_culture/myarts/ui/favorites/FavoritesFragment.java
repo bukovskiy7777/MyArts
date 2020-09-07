@@ -354,38 +354,44 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
 
     public int getTargetScrollPosition () {
 
-        final int firstPosition = ((LinearLayoutManager) favoritesRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-        final int lastPosition = ((LinearLayoutManager) favoritesRecyclerView.getLayoutManager()).findLastVisibleItemPosition();
-        Rect rvRect = new Rect();
-        favoritesRecyclerView.getGlobalVisibleRect(rvRect);
-        int scrollPosition = firstPosition;
-        int targetPercent = 0;
+        if (listArts.size() > 0) {
 
-        for (int i = firstPosition; i <= lastPosition; i++) {
+            final int firstPosition = ((LinearLayoutManager) favoritesRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+            final int lastPosition = ((LinearLayoutManager) favoritesRecyclerView.getLayoutManager()).findLastVisibleItemPosition();
+            Rect rvRect = new Rect();
+            favoritesRecyclerView.getGlobalVisibleRect(rvRect);
+            int scrollPosition = firstPosition;
+            int targetPercent = 0;
 
-            Rect rowRect = new Rect();
-            favoritesRecyclerView.getLayoutManager().findViewByPosition(i).getGlobalVisibleRect(rowRect);
+            for (int i = firstPosition; i <= lastPosition; i++) {
 
-            int percent;
-            if (rowRect.bottom >= rvRect.bottom){
-                int visibleHeightFirst =rvRect.bottom - rowRect.top;
-                percent = (visibleHeightFirst * 100) / favoritesRecyclerView.getLayoutManager().findViewByPosition(i).getHeight();
-            }else {
-                int visibleHeightFirst = rowRect.bottom - rvRect.top;
-                percent = (visibleHeightFirst * 100) / favoritesRecyclerView.getLayoutManager().findViewByPosition(i).getHeight();
+                Rect rowRect = new Rect();
+                favoritesRecyclerView.getLayoutManager().findViewByPosition(i).getGlobalVisibleRect(rowRect);
+
+                int percent;
+                if (rowRect.bottom >= rvRect.bottom){
+                    int visibleHeightFirst =rvRect.bottom - rowRect.top;
+                    percent = (visibleHeightFirst * 100) / favoritesRecyclerView.getLayoutManager().findViewByPosition(i).getHeight();
+                }else {
+                    int visibleHeightFirst = rowRect.bottom - rvRect.top;
+                    percent = (visibleHeightFirst * 100) / favoritesRecyclerView.getLayoutManager().findViewByPosition(i).getHeight();
+                }
+
+                if (percent>100) percent = 100;
+
+                if (percent > targetPercent) {
+                    targetPercent = percent;
+                    scrollPosition = i;
+                }
             }
 
-            if (percent>100) percent = 100;
+            Log.i("getTargetScroll", scrollPosition+" ");
 
-            if (percent > targetPercent) {
-                targetPercent = percent;
-                scrollPosition = i;
-            }
+            return scrollPosition;
+
+        } else {
+            return 0;
         }
-
-        Log.i("getTargetScroll", scrollPosition+" ");
-
-        return scrollPosition;
     }
 
     public int getSpanCount() {
