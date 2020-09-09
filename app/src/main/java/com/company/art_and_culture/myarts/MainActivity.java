@@ -649,7 +649,7 @@ public class MainActivity extends AppCompatActivity implements
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
         //fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.add(R.id.frame_container_art_show, artShowFragment, "favoritesShowFragment").commit();
+        fragmentTransaction.add(R.id.frame_container_common, artShowFragment, "favoritesShowFragment").commit();
     }
 
     private void showSearchFragment() {
@@ -669,7 +669,7 @@ public class MainActivity extends AppCompatActivity implements
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
         //fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.add(R.id.frame_container_medium, mediumFragment, "mediumFragment").commit();
+        fragmentTransaction.add(R.id.frame_container_common, mediumFragment, "mediumFragment").commit();
     }
 
     private void showMakerFragment() {
@@ -679,7 +679,7 @@ public class MainActivity extends AppCompatActivity implements
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
         //fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.add(R.id.frame_container_maker, makerFragment, "makerFragment").commit();
+        fragmentTransaction.add(R.id.frame_container_common, makerFragment, "makerFragment").commit();
     }
 
     private void showMakerSearchFragment() {
@@ -688,7 +688,7 @@ public class MainActivity extends AppCompatActivity implements
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
         //fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.add(R.id.frame_container_maker_search, makerSearchFragment, "makerSearchFragment").commit();
+        fragmentTransaction.add(R.id.frame_container_common, makerSearchFragment, "makerSearchFragment").commit();
     }
 
 

@@ -131,6 +131,7 @@
         app:menu="@menu/bottom_nav_menu"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:visibility="gone"
         android:background="@color/colorPrimary"
         android:id="@+id/suggestions_recycler_view"
         app:layout_constraintTop_toBottomOf="@+id/app_bar_main"
@@ -159,25 +160,7 @@
 
     <FrameLayout
         android:elevation="8dp"
-        android:id="@+id/frame_container_maker_search"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <FrameLayout
-        android:elevation="8dp"
-        android:id="@+id/frame_container_maker"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <FrameLayout
-        android:elevation="8dp"
-        android:id="@+id/frame_container_medium"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <FrameLayout
-        android:elevation="8dp"
-        android:id="@+id/frame_container_art_show"
+        android:id="@+id/frame_container_common"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

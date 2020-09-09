@@ -385,8 +385,6 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
                 }
             }
 
-            Log.i("getTargetScroll", scrollPosition+" ");
-
             return scrollPosition;
 
         } else {
