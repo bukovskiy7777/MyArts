@@ -450,8 +450,8 @@ public class MainActivity extends AppCompatActivity implements
             if (navView.isShown()) {
                 AnimatorSet set = new AnimatorSet();
                 set.setDuration(600).playTogether(
-                        ObjectAnimator.ofFloat(navView, View.TRANSLATION_Y,  0f,getToolbarHeight()),
-                        ObjectAnimator.ofFloat(app_bar_main, View.TRANSLATION_Y, 0f, -getToolbarHeight())
+                        ObjectAnimator.ofFloat(navView, View.TRANSLATION_Y,  0f,getToolbarHeight())
+                        //ObjectAnimator.ofFloat(app_bar_main, View.TRANSLATION_Y, 0f, -getToolbarHeight())
                 );
                 set.addListener(goneNavigationListener(navView, app_bar_main));
                 set.start();
@@ -462,8 +462,8 @@ public class MainActivity extends AppCompatActivity implements
                 app_bar_main.setVisibility(View.VISIBLE);
                 AnimatorSet set = new AnimatorSet();
                 set.setDuration(600).playTogether(
-                        ObjectAnimator.ofFloat(navView, View.TRANSLATION_Y,  getToolbarHeight(), 0f),
-                        ObjectAnimator.ofFloat(app_bar_main, View.TRANSLATION_Y, -getToolbarHeight(), 0f)
+                        ObjectAnimator.ofFloat(navView, View.TRANSLATION_Y,  getToolbarHeight(), 0f)
+                        //ObjectAnimator.ofFloat(app_bar_main, View.TRANSLATION_Y, -getToolbarHeight(), 0f)
                 );
                 set.start();
             }
@@ -476,7 +476,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 navView.setVisibility(View.GONE);
-                app_bar_main.setVisibility(View.GONE);
+                //app_bar_main.setVisibility(View.GONE);
             }
         };
     }

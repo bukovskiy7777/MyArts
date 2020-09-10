@@ -8,7 +8,10 @@
     tools:context=".ui.favorites.FoldersFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:padding="20dp"
+        android:paddingTop="25dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="30dp"
         android:background="@drawable/create_folder_placeholder"
         android:layout_marginTop="60dp"
         android:layout_marginLeft="20dp"
@@ -18,7 +21,6 @@
         android:layout_height="0dp">
 
         <TextView
-            android:layout_marginTop="10dp"
             android:text="@string/create_a_folder"
             android:textColor="@color/colorPrimary"
             android:fontFamily="@string/font_sans_serif"
