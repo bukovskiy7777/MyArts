@@ -24,6 +24,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.ExploreObject;
+import com.company.art_and_culture.myarts.pojo.Maker;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +33,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
 
     private ExploreViewModel exploreViewModel;
     private TextView textView, explore_maker, explore_maker_more;
-    private RecyclerView exploreRecyclerView;
+    private RecyclerView makerRecyclerView;
     private ExploreAdapter exploreAdapter;
     private int spanCount = 3;
     private ProgressBar exploreProgressBar;
@@ -56,7 +57,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
         explore_maker_more.setVisibility(View.GONE);
         explore_maker_more.setOnClickListener(this);
         explore_maker_more.setOnTouchListener(this);
-        exploreRecyclerView = root.findViewById(R.id.recycler_view_explore);
+        makerRecyclerView = root.findViewById(R.id.makerRecyclerView);
         exploreProgressBar = root.findViewById(R.id.progress_bar_explore);
         swipeRefreshLayout = root.findViewById(R.id.explore_swipeRefreshLayout);
 
@@ -64,7 +65,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
-        initRecyclerView(displayWidth, displayHeight);
+        initMakerRecyclerView(displayWidth, displayHeight);
 
         initSwipeRefreshLayout();
         subscribeObservers();
@@ -72,19 +73,26 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
         return root;
     }
 
-    private void initRecyclerView(int displayWidth, int displayHeight) {
+    private void initMakerRecyclerView(int displayWidth, int displayHeight) {
 
         ExploreAdapter.OnExploreClickListener onExploreClickListener = new ExploreAdapter.OnExploreClickListener() {
             @Override
             public void onExploreImageClick(ExploreObject exploreObject, int position) {
-                exploreEventListener.exploreClickEvent(exploreObject, position);
+                String imageUrl;
+                if (!exploreObject.getImageUrlSmall().equals(" ") && exploreObject.getImageUrlSmall().startsWith(getResources().getString(R.string.http))) {
+                    imageUrl = exploreObject.getImageUrlSmall();
+                } else {
+                    imageUrl= exploreObject.getImageUrl();
+                }
+                Maker maker = new Maker(exploreObject.getText(), exploreObject.getArtistBio(), null, imageUrl, exploreObject.getWidth(), exploreObject.getHeight());
+                exploreEventListener.exploreMakerClickEvent(maker);
 
             }
         };
         exploreAdapter = new ExploreAdapter(getContext(), onExploreClickListener, displayWidth, displayHeight, spanCount);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
-        exploreRecyclerView.setLayoutManager(layoutManager);
-        exploreRecyclerView.setAdapter(exploreAdapter);
+        makerRecyclerView.setLayoutManager(layoutManager);
+        makerRecyclerView.setAdapter(exploreAdapter);
 
 
     }
@@ -180,9 +188,9 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
             }
             if (animate) {
                 LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.favorites_fall_down);
-                exploreRecyclerView.setLayoutAnimation(layoutAnimationController);
-                exploreRecyclerView.getAdapter().notifyDataSetChanged();
-                exploreRecyclerView.scheduleLayoutAnimation();
+                makerRecyclerView.setLayoutAnimation(layoutAnimationController);
+                makerRecyclerView.getAdapter().notifyDataSetChanged();
+                makerRecyclerView.scheduleLayoutAnimation();
             }
         }
     }
@@ -213,7 +221,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
 
     public interface ExploreEventListener {
         void exploreMakerSearchClick();
-        void exploreClickEvent(ExploreObject exploreObject, int position);
+        void exploreMakerClickEvent(Maker maker);
     }
 
     @Override

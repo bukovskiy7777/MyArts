@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.company.art_and_culture.myarts.art_search_fragment.SearchRepository;
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.Maker;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -19,6 +20,8 @@ public class MakerViewModel extends AndroidViewModel {
     private MakerRepository makerRepository;
     private android.content.res.Resources res;
     private Application application;
+    private LiveData<Maker> maker;
+    private LiveData<Art> art;
 
     public MakerViewModel(@NonNull Application application) {
         super(application);
@@ -28,6 +31,8 @@ public class MakerViewModel extends AndroidViewModel {
         artList = makerRepository.getArtList();
         isLoading = makerRepository.getIsLoading();
         isListEmpty = makerRepository.getIsListEmpty();
+        maker = makerRepository.getMaker();
+        art = makerRepository.getArt();
     }
 
     public LiveData<PagedList<Art>> getArtList(){
@@ -42,6 +47,18 @@ public class MakerViewModel extends AndroidViewModel {
         return isListEmpty;
     }
 
+    public LiveData<Maker> getMaker() {
+        return maker;
+    }
+
+    public LiveData<Art> getArt() {
+        return art;
+    }
+
+    public boolean likeArt(Art art, int position, String userUniqueId) {
+        return makerRepository.likeArt (art, position, userUniqueId);
+    }
+
     public boolean refresh() {
         return makerRepository.refresh();
     }
@@ -54,7 +71,11 @@ public class MakerViewModel extends AndroidViewModel {
         makerRepository = makerRepository.finish (application);
     }
 
-    public void setArtMaker(String artMaker) {
+    public void setArtMaker(Maker artMaker) {
         makerRepository.setArtMaker(artMaker);
+    }
+
+    public boolean likeMaker(Maker maker, String userUniqueId) {
+        return makerRepository.likeMaker(maker, userUniqueId);
     }
 }

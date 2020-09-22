@@ -6,6 +6,7 @@ import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.art_search_fragment.SearchDataSource;
 import com.company.art_and_culture.myarts.art_search_fragment.SearchDataSourceFactory;
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.Maker;
 
 import androidx.lifecycle.LiveData;
 import androidx.paging.LivePagedListBuilder;
@@ -17,8 +18,8 @@ public class MakerRepository {
     private LiveData<PagedList<Art>> artList;
     private MakerDataSource makerDataSource;
     private MakerDataSourceFactory makerDataSourceFactory;
-
-    private String artMaker;
+    private LiveData<Art> art;
+    private Maker artMaker;
 
 
     public static MakerRepository getInstance(Application application){
@@ -39,6 +40,8 @@ public class MakerRepository {
         artList = new LivePagedListBuilder<>(makerDataSourceFactory, config).build();
 
         makerDataSource = (MakerDataSource) makerDataSourceFactory.create();//if remove this line artLike will not working after refresh
+
+        art = makerDataSource.getArt();
     }
 
     public LiveData<PagedList<Art>> getArtList(){
@@ -53,6 +56,27 @@ public class MakerRepository {
         return makerDataSource.getIsListEmpty();
     }
 
+    public LiveData<Maker> getMaker() {
+        return makerDataSource.getMaker();
+    }
+
+    public LiveData<Art> getArt() {
+        return art;
+    }
+
+    public boolean likeArt(Art art, int position, String userUniqueId) {
+
+        boolean isConnected = makerDataSource.isNetworkAvailable();
+        if (isConnected){
+            makerDataSource.likeArt(art, position, userUniqueId);
+        }
+        return isConnected;
+    }
+
+    public MakerDataSource getMakerDataSource() {
+        return makerDataSource;
+    }
+
     public boolean refresh() {
         return makerDataSourceFactory.refresh();
     }
@@ -62,18 +86,26 @@ public class MakerRepository {
     }
 
     public MakerRepository finish(Application application) {
-        makerDataSource.refresh();
+        MakerDataInMemory.getInstance().refresh();
         instance = new MakerRepository(application);
         return instance;
     }
 
-    public void setArtMaker(String artMaker) {
+    public void setArtMaker(Maker artMaker) {
         this.artMaker = artMaker;
     }
 
-    public String getArtMaker() {
+    public Maker getArtMaker() {
         return artMaker;
     }
 
 
+    public boolean likeMaker(Maker maker, String userUniqueId) {
+
+        boolean isConnected = makerDataSource.isNetworkAvailable();
+        if (isConnected){
+            makerDataSource.likeMaker(maker, userUniqueId);
+        }
+        return isConnected;
+    }
 }

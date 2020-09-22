@@ -29,6 +29,7 @@ import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.Maker;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -198,7 +199,14 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onArtMakerClick(Art art) {
-                searchEventListener.searchMakerClickEvent(art.getArtMaker(), Constants.ART_MAKER);
+                String artImgUrl;
+                if (!art.getArtImgUrlSmall().equals(" ") && art.getArtImgUrlSmall().startsWith(getResources().getString(R.string.http))) {
+                    artImgUrl = art.getArtImgUrlSmall();
+                } else {
+                    artImgUrl= art.getArtImgUrl();
+                }
+                Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), null, artImgUrl, art.getArtWidth(), art.getArtHeight());
+                searchEventListener.searchMakerClickEvent(maker);
             }
 
             @Override
@@ -417,7 +425,7 @@ public class SearchFragment extends Fragment {
 
     public interface SearchEventListener {
         void searchArtClickEvent(Collection<Art> arts, int position);
-        void searchMakerClickEvent(String artMaker, String queryType);
+        void searchMakerClickEvent(Maker maker);
         void searchClassificationClickEvent(String artClassification, String queryType);
     }
 

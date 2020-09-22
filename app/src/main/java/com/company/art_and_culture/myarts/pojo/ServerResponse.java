@@ -10,6 +10,7 @@ public class ServerResponse {
     private Art art;
     private ArrayList<Suggest> listSuggests;
     private ArrayList<ExploreObject> listExplore;
+    private Maker artMaker;
 
     public ArrayList<Art> getListArts() {
         return listArts;
@@ -34,4 +35,9 @@ public class ServerResponse {
     public ArrayList<ExploreObject> getListExplore() {
         return listExplore;
     }
+
+    public Maker getArtMaker() {
+        return artMaker;
+    }
+
 }

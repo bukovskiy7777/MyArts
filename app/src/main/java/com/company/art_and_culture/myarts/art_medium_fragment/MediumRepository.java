@@ -62,9 +62,13 @@ public class MediumRepository {
     }
 
     public MediumRepository finish(Application application) {
-        mediumDataSource.refresh();
+        MediumDataInMemory.getInstance().refresh();
         instance = new MediumRepository(application);
         return instance;
+    }
+
+    public MediumDataSource getMediumDataSource() {
+        return mediumDataSource;
     }
 
     public void setArtQueryAndType(String artQuery, String queryType) {

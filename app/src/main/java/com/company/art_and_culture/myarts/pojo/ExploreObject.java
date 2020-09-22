@@ -9,6 +9,7 @@ public class ExploreObject {
     private String type;
     private String text;
     private int artCount;
+    private String artistBio;
 
 
     public String getImageUrl() {
@@ -38,4 +39,9 @@ public class ExploreObject {
     public int getHeight() {
         return height;
     }
+
+    public String getArtistBio() {
+        return artistBio;
+    }
+
 }

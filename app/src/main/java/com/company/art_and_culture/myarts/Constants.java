@@ -31,5 +31,7 @@ public class Constants {
     public static final String GET_EXPLORE_LIST_OPERATION = "getExploreList";
     public static final String DELETE_SUGGEST_QUERY_OPERATION = "deleteSuggestQuery";
     public static final String GET_ARTS_LIST_MEDIUM_OPERATION = "getArtsListMedium";
+    public static final String GET_MAKER_OBJECT = "getMakerObject";
+    public static final String MAKER_LIKE_OPERATION = "makerLike";
 }
 

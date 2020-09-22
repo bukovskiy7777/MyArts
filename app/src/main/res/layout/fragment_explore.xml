@@ -78,7 +78,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:layout_marginTop="4dp"
             app:layout_constraintTop_toBottomOf="@+id/explore_maker"
-            android:id="@+id/recycler_view_explore"
+            android:id="@+id/makerRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

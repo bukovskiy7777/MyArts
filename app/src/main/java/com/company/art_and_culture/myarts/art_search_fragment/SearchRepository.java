@@ -77,7 +77,7 @@ public class SearchRepository {
     }
 
     public SearchRepository finish(Application application) {
-        searchDataSource.refresh();
+        SearchDataInMemory.getInstance().refresh();
         instance = new SearchRepository(application);
         return instance;
     }

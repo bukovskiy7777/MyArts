@@ -7,6 +7,9 @@ import android.net.NetworkInfo;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerDataInMemory;
+import com.company.art_and_culture.myarts.art_maker_fragment.MakerRepository;
+import com.company.art_and_culture.myarts.art_medium_fragment.MediumDataInMemory;
+import com.company.art_and_culture.myarts.art_medium_fragment.MediumRepository;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
@@ -65,7 +68,11 @@ class ArtShowDataSource {
                         HomeRepository.getInstance(application).getHomeDataSource().updateArt(resp.getArt());
                         HomeDataInMemory.getInstance().updateSingleItem(resp.getArt());
 
+                        MakerRepository.getInstance(application).getMakerDataSource().updateArt(resp.getArt());
                         MakerDataInMemory.getInstance().updateSingleItem(resp.getArt());
+
+                        //MediumRepository.getInstance(application).getMediumDataSource().updateArt(resp.getArt());
+                        MediumDataInMemory.getInstance().updateSingleItem(resp.getArt());
 
                         FavoritesRepository favoritesRepository = FavoritesRepository.getInstance(application);
                         favoritesRepository.refresh();

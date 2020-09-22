@@ -11,6 +11,7 @@ public class ServerRequest {
     private String searchQuery;
     private String artQuery;
     private ArrayList<Art> oldList;
+    private Maker maker;
 
     public void setOperation(String operation) {
         this.operation = operation;
@@ -44,4 +45,7 @@ public class ServerRequest {
         this.oldList = oldList;
     }
 
+    public void setMaker(Maker maker) {
+        this.maker = maker;
+    }
 }

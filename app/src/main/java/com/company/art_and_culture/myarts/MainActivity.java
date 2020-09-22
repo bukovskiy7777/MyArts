@@ -33,6 +33,7 @@ import com.company.art_and_culture.myarts.art_maker_search_fragment.MakerSearchF
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ExploreObject;
+import com.company.art_and_culture.myarts.pojo.Maker;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
 import com.company.art_and_culture.myarts.pojo.Suggest;
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements
     private SearchFragment searchFragment;
     private MakerFragment makerFragment;
     private String artQueryForMediumFragment, queryTypeForMediumFragment;
-    private String artMakerForMakerFragment;
+    private Maker makerForMakerFragment;
     private SharedPreferences preferences;
     private MakerSearchFragment makerSearchFragment;
     private MediumFragment mediumFragment;
@@ -419,8 +420,8 @@ public class MainActivity extends AppCompatActivity implements
         showArtFragment();
     }
     @Override
-    public void homeMakerClickEvent(String artMaker, String queryType) {
-        this.artMakerForMakerFragment = artMaker;
+    public void homeMakerClickEvent(Maker maker) {
+        this.makerForMakerFragment = maker;
         showMakerFragment();
     }
     @Override
@@ -490,8 +491,8 @@ public class MainActivity extends AppCompatActivity implements
         showArtFragment();
     }
     @Override
-    public void searchMakerClickEvent(String artMaker, String queryType) {
-        this.artMakerForMakerFragment = artMaker;
+    public void searchMakerClickEvent(Maker maker) {
+        this.makerForMakerFragment = maker;
         showMakerFragment();
     }
     @Override
@@ -528,8 +529,8 @@ public class MainActivity extends AppCompatActivity implements
         showMakerSearchFragment();
     }
     @Override
-    public void exploreClickEvent(ExploreObject exploreObject, int position) {
-        this.artMakerForMakerFragment = exploreObject.getText();
+    public void exploreMakerClickEvent(Maker maker) {
+        this.makerForMakerFragment = maker;
         showMakerFragment();
     }
 
@@ -572,8 +573,8 @@ public class MainActivity extends AppCompatActivity implements
         return queryTypeForMediumFragment;
     }
 
-    public String getArtMakerForMakerFragment() {
-        return artMakerForMakerFragment;
+    public Maker getMakerForMakerFragment() {
+        return makerForMakerFragment;
     }
 
     @Override

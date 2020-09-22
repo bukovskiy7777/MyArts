@@ -25,5 +25,8 @@
     <string name="folders">Folders</string>
     <string name="create_a_folder">Create a folder</string>
     <string name="organize_your_favorites">Organize your favorite artWorks into folders according to different criteria: author, subject, etc.</string>
+    <string name="read_more">Read more</string>
+    <string name="show_less">Show less</string>
+    <string name="wikipedia">WikipediA</string>
 
 </resources>

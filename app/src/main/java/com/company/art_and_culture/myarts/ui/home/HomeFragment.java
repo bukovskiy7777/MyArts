@@ -41,6 +41,7 @@ import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.Maker;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -200,7 +201,14 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onArtMakerClick(Art art) {
-                homeEventListener.homeMakerClickEvent(art.getArtMaker(), Constants.ART_MAKER);
+                String artImgUrl;
+                if (!art.getArtImgUrlSmall().equals(" ") && art.getArtImgUrlSmall().startsWith(getResources().getString(R.string.http))) {
+                    artImgUrl = art.getArtImgUrlSmall();
+                } else {
+                    artImgUrl= art.getArtImgUrl();
+                }
+                Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), null, artImgUrl, art.getArtWidth(), art.getArtHeight());
+                homeEventListener.homeMakerClickEvent(maker);
             }
 
             @Override
@@ -420,7 +428,7 @@ public class HomeFragment extends Fragment {
     public interface HomeEventListener {
         void homeScrollEvent(int position);
         void homeArtClickEvent(Collection<Art> arts, int position);
-        void homeMakerClickEvent(String artMaker, String queryType);
+        void homeMakerClickEvent(Maker maker);
         void homeClassificationClickEvent(String artClassification, String queryType);
     }
 

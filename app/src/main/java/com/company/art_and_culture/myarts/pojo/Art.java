@@ -18,6 +18,7 @@ public class Art {
     private String artClassification;
     private boolean isLiked;
     private String century;
+    private String artistBio;
 
 
     public void setArtWidth(int artWidth) {
@@ -90,5 +91,9 @@ public class Art {
 
     public String getCentury() {
         return century;
+    }
+
+    public String getArtistBio() {
+        return artistBio;
     }
 }
