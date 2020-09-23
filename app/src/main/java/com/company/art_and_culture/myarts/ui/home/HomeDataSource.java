@@ -4,14 +4,13 @@ import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
-import com.company.art_and_culture.myarts.ui.favorites.FavoritesRepository;
+import com.company.art_and_culture.myarts.ui.favorites.Favorites.FavoritesRepository;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;

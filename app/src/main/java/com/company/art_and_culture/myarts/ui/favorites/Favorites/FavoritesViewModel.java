@@ -1,19 +1,14 @@
-package com.company.art_and_culture.myarts.ui.favorites;
+package com.company.art_and_culture.myarts.ui.favorites.Favorites;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import androidx.paging.PagedList;
 
 public class FavoritesViewModel extends AndroidViewModel {
 

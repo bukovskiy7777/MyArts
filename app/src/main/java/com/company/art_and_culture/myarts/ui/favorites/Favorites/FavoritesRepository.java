@@ -1,11 +1,10 @@
-package com.company.art_and_culture.myarts.ui.favorites;
+package com.company.art_and_culture.myarts.ui.favorites.Favorites;
 
 import android.app.Application;
 
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import androidx.lifecycle.LiveData;
 

@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.ui.favorites;
+package com.company.art_and_culture.myarts.ui.favorites.Folders;
 
 import android.app.Application;
 

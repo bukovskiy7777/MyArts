@@ -1,10 +1,12 @@
-package com.company.art_and_culture.myarts.ui.favorites;
+package com.company.art_and_culture.myarts.ui.favorites.Artists;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,7 +16,6 @@ import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Maker;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -94,6 +95,7 @@ public class ArtistsFragment extends Fragment {
                 if (makers == null) {
                     artistsAdapter.clearItems();
                 } else {
+                    setAnimationRecyclerView (makers);
                     artistsAdapter.clearItems();
                     artistsAdapter.setItems(makers);
                 }
@@ -114,6 +116,30 @@ public class ArtistsFragment extends Fragment {
             }
         });
 
+    }
+
+    private void setAnimationRecyclerView(ArrayList<Maker> makers) {
+
+        boolean animate = false;
+        if (artistsAdapter.getItemCount() > 0) {
+
+            if (makers.size() != artistsAdapter.getItemCount()) {
+                animate = true;
+            } else {
+
+                for (int i = 0; i < makers.size(); i++) {
+                    if (!makers.get(i).getArtMaker().equals(artistsAdapter.getItems().get(i).getArtMaker())) {
+                        animate = true;
+                    }
+                }
+            }
+            if (animate) {
+                LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.favorites_fall_down);
+                artistsRecyclerView.setLayoutAnimation(layoutAnimationController);
+                artistsRecyclerView.getAdapter().notifyDataSetChanged();
+                artistsRecyclerView.scheduleLayoutAnimation();
+            }
+        }
     }
 
     private void initRecyclerView(int displayWidth, int displayHeight) {

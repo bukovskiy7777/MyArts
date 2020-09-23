@@ -3,15 +3,12 @@ package com.company.art_and_culture.myarts.ui.explore;
 import android.app.Application;
 
 import com.company.art_and_culture.myarts.pojo.ExploreObject;
-import com.company.art_and_culture.myarts.ui.favorites.FavoritesRepository;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 public class ExploreViewModel extends AndroidViewModel {
 

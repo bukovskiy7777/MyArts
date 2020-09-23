@@ -1,17 +1,14 @@
-package com.company.art_and_culture.myarts.ui.favorites;
+package com.company.art_and_culture.myarts.ui.favorites.Favorites;
 
 import android.animation.AnimatorSet;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.AbsListView;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -35,8 +32,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import static com.company.art_and_culture.myarts.ui.favorites.FavoritesAnimations.scaleDown;
-import static com.company.art_and_culture.myarts.ui.favorites.FavoritesAnimations.scaleUp;
+import static com.company.art_and_culture.myarts.ui.favorites.Favorites.FavoritesAnimations.scaleDown;
+import static com.company.art_and_culture.myarts.ui.favorites.Favorites.FavoritesAnimations.scaleUp;
 
 public class FavoritesFragment extends Fragment implements View.OnClickListener {
 

@@ -9,14 +9,13 @@ import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerDataInMemory;
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerRepository;
 import com.company.art_and_culture.myarts.art_medium_fragment.MediumDataInMemory;
-import com.company.art_and_culture.myarts.art_medium_fragment.MediumRepository;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
 import com.company.art_and_culture.myarts.art_search_fragment.SearchDataInMemory;
 import com.company.art_and_culture.myarts.art_search_fragment.SearchRepository;
-import com.company.art_and_culture.myarts.ui.favorites.FavoritesRepository;
+import com.company.art_and_culture.myarts.ui.favorites.Favorites.FavoritesRepository;
 import com.company.art_and_culture.myarts.ui.home.HomeDataInMemory;
 import com.company.art_and_culture.myarts.ui.home.HomeRepository;
 

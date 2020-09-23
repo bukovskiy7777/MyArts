@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.ui.favorites;
+package com.company.art_and_culture.myarts.ui.favorites.Favorites;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
