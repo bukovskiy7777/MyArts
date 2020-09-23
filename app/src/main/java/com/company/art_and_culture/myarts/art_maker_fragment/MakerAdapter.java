@@ -115,7 +115,7 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
         private ImageView art_image, art_image_header, maker_image;
         private TextView art_title, art_maker, maker_name, maker_bio, maker_description, read_more, wikipedia;
         private ImageButton art_share, art_download, art_like, maker_like, maker_share;
-        private String artImgUrl, artistImageUrl;
+        private String artImgUrl, makerWikiImageUrl;
         private final Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -209,9 +209,9 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
                             read_more.setVisibility(View.GONE);
                         }
 
-                        artistImageUrl = "";
+                        makerWikiImageUrl = "";
                         if(maker.getMakerWikiImageUrl() != null && maker.getMakerWikiImageUrl().length() > 0) {
-                            artistImageUrl = maker.getMakerWikiImageUrl();
+                            makerWikiImageUrl = maker.getMakerWikiImageUrl();
                             Picasso.get().load(maker.getMakerWikiImageUrl()).placeholder(R.color.colorSilver).into(maker_image);
                         }
 
@@ -319,7 +319,7 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
                 }
 
             } else if (v.getId() == maker_like.getId()) {
-                Maker maker = new Maker (artMaker, artistBio, artistImageUrl, artHeaderImageUrl, artWidth, artHeight, makerWikiDescription);
+                Maker maker = new Maker (artMaker, artistBio, artHeaderImageUrl, artWidth, artHeight, makerWikiDescription, makerWikiImageUrl);
                 onArtClickListener.onMakerLikeClick(maker);
 
             }

@@ -17,9 +17,10 @@ public class BlankAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         switch (position) {
-            case 1:
-
+            case 2:
                 return new FoldersFragment();
+            case 1:
+                return new ArtistsFragment();
             default:
                 favoritesFragment = new FavoritesFragment();
                 return favoritesFragment;
@@ -28,7 +29,7 @@ public class BlankAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 2;
+        return 3;
     }
 
     public FavoritesFragment getFavoritesFragment() {

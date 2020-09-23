@@ -39,6 +39,7 @@ import com.company.art_and_culture.myarts.pojo.ServerResponse;
 import com.company.art_and_culture.myarts.pojo.Suggest;
 import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
 import com.company.art_and_culture.myarts.ui.explore.ExploreFragment;
+import com.company.art_and_culture.myarts.ui.favorites.ArtistsFragment;
 import com.company.art_and_culture.myarts.ui.favorites.FavoritesFragment;
 import com.company.art_and_culture.myarts.ui.home.HomeFragment;
 import com.google.android.material.appbar.AppBarLayout;
@@ -64,7 +65,8 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements
         HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
-        MakerFragment.MakerEventListener, View.OnClickListener, ExploreFragment.ExploreEventListener, MediumFragment.MediumEventListener {
+        MakerFragment.MakerEventListener, View.OnClickListener, ExploreFragment.ExploreEventListener, MediumFragment.MediumEventListener,
+        ArtistsFragment.ArtistsEventListener {
 
     private int homePosition = 0;
     private int favoritesPosition = 0;
@@ -446,6 +448,10 @@ public class MainActivity extends AppCompatActivity implements
     }
     @Override
     public void favoritesOnScroll(int direction) {
+        animateNavView(direction);
+    }
+
+    private void animateNavView (int direction) {
         Log.i("favoritesOnScroll", direction+"");
         if (direction == 1){
             if (navView.isShown()) {
@@ -535,6 +541,17 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+
+
+    @Override
+    public void artistsClickEvent(Maker maker) {
+        this.makerForMakerFragment = maker;
+        showMakerFragment();
+    }
+    @Override
+    public void artistsOnScroll(int direction) {
+        animateNavView(direction);
+    }
 
 
     public int getHomePosition() {

@@ -207,7 +207,7 @@ public class HomeFragment extends Fragment {
                 } else {
                     artImgUrl= art.getArtImgUrl();
                 }
-                Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), null, artImgUrl, art.getArtWidth(), art.getArtHeight());
+                Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), artImgUrl, art.getArtWidth(), art.getArtHeight());
                 homeEventListener.homeMakerClickEvent(maker);
             }
 

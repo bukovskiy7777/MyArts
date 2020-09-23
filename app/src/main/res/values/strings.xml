@@ -28,5 +28,7 @@
     <string name="read_more">Read more</string>
     <string name="show_less">Show less</string>
     <string name="wikipedia">WikipediA</string>
+    <string name="artists">Artists</string>
+    <string name="artworks">artworks</string>
 
 </resources>

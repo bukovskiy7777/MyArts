@@ -84,7 +84,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
                 } else {
                     imageUrl= exploreObject.getImageUrl();
                 }
-                Maker maker = new Maker(exploreObject.getText(), exploreObject.getArtistBio(), null, imageUrl, exploreObject.getWidth(), exploreObject.getHeight());
+                Maker maker = new Maker(exploreObject.getText(), exploreObject.getArtistBio(), imageUrl, exploreObject.getWidth(), exploreObject.getHeight());
                 exploreEventListener.exploreMakerClickEvent(maker);
 
             }

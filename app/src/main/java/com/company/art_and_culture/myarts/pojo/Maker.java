@@ -4,7 +4,6 @@ public class Maker {
 
     private String artMaker;
     private String artistBio;
-    private String artistImageUrl;
     private int artCount;
     private boolean isLiked;
 
@@ -16,23 +15,22 @@ public class Maker {
     private String makerWikiImageUrl;
     private String makerWikiPageUrl;
 
-    public Maker(String artMaker, String artistBio, String artistImageUrl, String artHeaderImageUrl, int artWidth, int artHeight) {
+    public Maker(String artMaker, String artistBio, String artHeaderImageUrl, int artWidth, int artHeight) {
         this.artMaker = artMaker;
         this.artistBio = artistBio;
-        this.artistImageUrl = artistImageUrl;
         this.artHeaderImageUrl = artHeaderImageUrl;
         this.artWidth = artWidth;
         this.artHeight = artHeight;
     }
 
-    public Maker(String artMaker, String artistBio, String artistImageUrl, String artHeaderImageUrl, int artWidth, int artHeight, String makerWikiDescription) {
+    public Maker(String artMaker, String artistBio, String artHeaderImageUrl, int artWidth, int artHeight, String makerWikiDescription, String makerWikiImageUrl) {
         this.artMaker = artMaker;
         this.artistBio = artistBio;
-        this.artistImageUrl = artistImageUrl;
         this.artHeaderImageUrl = artHeaderImageUrl;
         this.artWidth = artWidth;
         this.artHeight = artHeight;
         this.makerWikiDescription = makerWikiDescription;
+        this.makerWikiImageUrl = makerWikiImageUrl;
     }
 
     public String getArtMaker() {
@@ -49,14 +47,6 @@ public class Maker {
 
     public void setArtistBio(String artistBio) {
         this.artistBio = artistBio;
-    }
-
-    public String getArtistImageUrl() {
-        return artistImageUrl;
-    }
-
-    public void setArtistImageUrl(String artistImageUrl) {
-        this.artistImageUrl = artistImageUrl;
     }
 
     public int getArtCount() {

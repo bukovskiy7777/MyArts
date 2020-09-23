@@ -55,7 +55,7 @@ public class BlankFragment extends Fragment {
             touchSlopField.setAccessible(true);
 
             final int touchSlop = (int) touchSlopField.get(recyclerView);
-            touchSlopField.set(recyclerView, touchSlop * 6);//6 is empirical value
+            touchSlopField.set(recyclerView, touchSlop * 5);//6 is empirical value
         } catch (Exception ignore) {
         }
 
@@ -68,6 +68,9 @@ public class BlankFragment extends Fragment {
                         tab.setText(R.string.app_name);
                         break;
                     case 1:
+                        tab.setText(R.string.artists);
+                        break;
+                    case 2:
                         tab.setText(R.string.folders);
                         break;
                 }

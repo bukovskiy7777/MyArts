@@ -20,7 +20,7 @@ public class FavoritesViewModel extends AndroidViewModel {
     private LiveData<ArrayList<Art>> artList;
     private LiveData<Boolean> isLoading;
     private LiveData<Boolean> isListEmpty;
-    private  FavoritesRepository favoritesRepository;
+    private FavoritesRepository favoritesRepository;
 
     public FavoritesViewModel(@NonNull Application application) {
         super(application);
