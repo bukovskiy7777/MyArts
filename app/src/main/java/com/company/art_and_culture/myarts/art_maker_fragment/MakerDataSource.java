@@ -14,8 +14,8 @@ import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
-import com.company.art_and_culture.myarts.ui.favorites.ArtistsRepository;
-import com.company.art_and_culture.myarts.ui.favorites.FavoritesRepository;
+import com.company.art_and_culture.myarts.ui.favorites.Artists.ArtistsRepository;
+import com.company.art_and_culture.myarts.ui.favorites.Favorites.FavoritesRepository;
 import com.company.art_and_culture.myarts.ui.home.HomeDataInMemory;
 import com.company.art_and_culture.myarts.ui.home.HomeRepository;
 

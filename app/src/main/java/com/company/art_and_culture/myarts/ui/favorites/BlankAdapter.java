@@ -1,5 +1,9 @@
 package com.company.art_and_culture.myarts.ui.favorites;
 
+import com.company.art_and_culture.myarts.ui.favorites.Artists.ArtistsFragment;
+import com.company.art_and_culture.myarts.ui.favorites.Favorites.FavoritesFragment;
+import com.company.art_and_culture.myarts.ui.favorites.Folders.FoldersFragment;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
