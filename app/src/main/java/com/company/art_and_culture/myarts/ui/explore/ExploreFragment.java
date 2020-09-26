@@ -32,14 +32,13 @@ import java.util.Collection;
 public class ExploreFragment extends Fragment implements View.OnClickListener, View.OnTouchListener {
 
     private ExploreViewModel exploreViewModel;
-    private TextView textView, explore_maker, explore_maker_more;
-    private RecyclerView makerRecyclerView;
-    private ExploreAdapter exploreAdapter;
+    private TextView textView, explore_maker, explore_maker_more, explore_culture, explore_culture_more;
+    private RecyclerView makerRecyclerView, cultureRecyclerView;
+    private ExploreAdapter makerAdapter, cultureAdapter;
     private int spanCount = 3;
     private ProgressBar exploreProgressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
     private android.content.res.Resources res;
-    private Collection<ExploreObject> listObjects;
     private ExploreEventListener exploreEventListener;
 
 
@@ -58,6 +57,13 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
         explore_maker_more.setOnClickListener(this);
         explore_maker_more.setOnTouchListener(this);
         makerRecyclerView = root.findViewById(R.id.makerRecyclerView);
+        explore_culture = root.findViewById(R.id.explore_culture);
+        explore_culture.setVisibility(View.GONE);
+        explore_culture_more = root.findViewById(R.id.explore_culture_more);
+        explore_culture_more.setVisibility(View.GONE);
+        explore_culture_more.setOnClickListener(this);
+        explore_culture_more.setOnTouchListener(this);
+        cultureRecyclerView = root.findViewById(R.id.cultureRecyclerView);
         exploreProgressBar = root.findViewById(R.id.progress_bar_explore);
         swipeRefreshLayout = root.findViewById(R.id.explore_swipeRefreshLayout);
 
@@ -66,6 +72,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
         initMakerRecyclerView(displayWidth, displayHeight);
+        initCultureRecyclerView(displayWidth, displayHeight);
 
         initSwipeRefreshLayout();
         subscribeObservers();
@@ -86,36 +93,67 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
                 }
                 Maker maker = new Maker(exploreObject.getText(), exploreObject.getArtistBio(), imageUrl, exploreObject.getWidth(), exploreObject.getHeight());
                 exploreEventListener.exploreMakerClickEvent(maker);
-
             }
         };
-        exploreAdapter = new ExploreAdapter(getContext(), onExploreClickListener, displayWidth, displayHeight, spanCount);
+        makerAdapter = new ExploreAdapter(getContext(), onExploreClickListener, displayWidth, displayHeight, spanCount);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
         makerRecyclerView.setLayoutManager(layoutManager);
-        makerRecyclerView.setAdapter(exploreAdapter);
+        makerRecyclerView.setAdapter(makerAdapter);
+    }
 
+    private void initCultureRecyclerView(int displayWidth, int displayHeight) {
 
+        ExploreAdapter.OnExploreClickListener onExploreClickListener = new ExploreAdapter.OnExploreClickListener() {
+            @Override
+            public void onExploreImageClick(ExploreObject exploreObject, int position) {
+                exploreEventListener.exploreCultureClickEvent(exploreObject.getText(), exploreObject.getType());
+            }
+        };
+        cultureAdapter = new ExploreAdapter(getContext(), onExploreClickListener, displayWidth, displayHeight, spanCount);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
+        cultureRecyclerView.setLayoutManager(layoutManager);
+        cultureRecyclerView.setAdapter(cultureAdapter);
     }
 
     private void subscribeObservers() {
 
-        exploreViewModel.getExploreData().observe(getViewLifecycleOwner(), new Observer<ArrayList<ExploreObject>>() {
+        exploreViewModel.getMakersList().observe(getViewLifecycleOwner(), new Observer<ArrayList<ExploreObject>>() {
             @Override
             public void onChanged(ArrayList<ExploreObject> objects) {
 
                 if (objects == null) {
-                    exploreAdapter.clearItems();
+                    makerAdapter.clearItems();
                 } else {
-                    setAnimationRecyclerView (objects);
-                    listObjects = objects;
-                    exploreAdapter.clearItems();
-                    exploreAdapter.setItems(listObjects);
+                    setAnimationRecyclerView (objects, makerAdapter, makerRecyclerView);
+                    makerAdapter.clearItems();
+                    makerAdapter.setItems(objects);
                     if (objects.size() > 0) {
                         explore_maker.setVisibility(View.VISIBLE);
                         explore_maker_more.setVisibility(View.VISIBLE);
                     } else {
                         explore_maker.setVisibility(View.GONE);
                         explore_maker_more.setVisibility(View.GONE);
+                    }
+                }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        exploreViewModel.getCultureList().observe(getViewLifecycleOwner(), new Observer<ArrayList<ExploreObject>>() {
+            @Override
+            public void onChanged(ArrayList<ExploreObject> objects) {
+
+                if (objects == null) {
+                    cultureAdapter.clearItems();
+                } else {
+                    setAnimationRecyclerView (objects, cultureAdapter, cultureRecyclerView);
+                    cultureAdapter.clearItems();
+                    cultureAdapter.setItems(objects);
+                    if (objects.size() > 0) {
+                        explore_culture.setVisibility(View.VISIBLE);
+                        explore_culture_more.setVisibility(View.VISIBLE);
+                    } else {
+                        explore_culture.setVisibility(View.GONE);
+                        explore_culture_more.setVisibility(View.GONE);
                     }
                 }
                 swipeRefreshLayout.setRefreshing(false);
@@ -176,22 +214,13 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
         return exploreViewModel.refresh();
     }
 
-    private void setAnimationRecyclerView(ArrayList<ExploreObject> objects) {
+    private void setAnimationRecyclerView(ArrayList<ExploreObject> objects, ExploreAdapter exploreAdapter, RecyclerView recyclerView) {
 
-        boolean animate = false;
         if (exploreAdapter.getItemCount() > 0) {
-
-            for (int i = 0; i < objects.size(); i++) {
-                if (!objects.get(i).getImageUrl().equals(exploreAdapter.getItems().get(i).getImageUrl())) {
-                    animate = true;
-                }
-            }
-            if (animate) {
-                LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.favorites_fall_down);
-                makerRecyclerView.setLayoutAnimation(layoutAnimationController);
-                makerRecyclerView.getAdapter().notifyDataSetChanged();
-                makerRecyclerView.scheduleLayoutAnimation();
-            }
+            LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.favorites_fall_down);
+            recyclerView.setLayoutAnimation(layoutAnimationController);
+            recyclerView.getAdapter().notifyDataSetChanged();
+            recyclerView.scheduleLayoutAnimation();
         }
     }
 
@@ -205,7 +234,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (v.getId() == explore_maker_more.getId()) {
+        if (v.getId() == explore_maker_more.getId() || v.getId() == explore_culture_more.getId()) {
             switch(event.getAction()){
                 case MotionEvent.ACTION_DOWN:
                     ((TextView)v).setTextColor(getContext().getResources().getColor(R.color.colorBlack));
@@ -222,6 +251,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
     public interface ExploreEventListener {
         void exploreMakerSearchClick();
         void exploreMakerClickEvent(Maker maker);
+        void exploreCultureClickEvent(String text, String type);
     }
 
     @Override

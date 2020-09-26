@@ -23,7 +23,8 @@ class ExploreDataSource {
 
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
-    private MutableLiveData<ArrayList<ExploreObject>> exploreList = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<ExploreObject>> makersList = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<ExploreObject>> cultureList = new MutableLiveData<>();
     private Application application;
 
     public ExploreDataSource(Application application) {
@@ -41,8 +42,12 @@ class ExploreDataSource {
         isListEmpty.postValue(state);
     }
 
-    private void updateExploreList(ArrayList<ExploreObject> listExplore) {
-        exploreList.postValue(listExplore);
+    private void updateMakersList(ArrayList<ExploreObject> listExplore) {
+        makersList.postValue(listExplore);
+    }
+
+    private void updateCultureList(ArrayList<ExploreObject> listExplore) {
+        cultureList.postValue(listExplore);
     }
 
 
@@ -71,8 +76,12 @@ class ExploreDataSource {
         return isAvailable;
     }
 
-    public LiveData<ArrayList<ExploreObject>> getExploreList() {
-        return exploreList;
+    public LiveData<ArrayList<ExploreObject>> getMakersList() {
+        return makersList;
+    }
+
+    public LiveData<ArrayList<ExploreObject>> getCultureList() {
+        return cultureList;
     }
 
     public void loadExploreList (){
@@ -92,10 +101,12 @@ class ExploreDataSource {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsListEmptyState(false);
-                        updateExploreList(resp.getListExplore());
+                        updateMakersList(resp.getListMaker());
+                        updateCultureList(resp.getListCulture());
                     } else {
                         updateIsListEmptyState(true);
-                        updateExploreList(null);
+                        updateMakersList(null);
+                        updateCultureList(null);
                     }
                 } else {
                     updateIsListEmptyState(true);

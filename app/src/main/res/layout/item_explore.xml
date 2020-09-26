@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <com.makeramen.roundedimageview.RoundedImageView
+        app:riv_corner_radius="6dp"
         android:scaleType="centerCrop"
         android:layout_margin="2dp"
         android:id="@+id/explore_image"

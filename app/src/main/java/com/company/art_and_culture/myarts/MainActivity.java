@@ -539,7 +539,12 @@ public class MainActivity extends AppCompatActivity implements
         showMakerFragment();
     }
 
-
+    @Override
+    public void exploreCultureClickEvent(String text, String type) {
+        this.artQueryForMediumFragment = text;
+        this.queryTypeForMediumFragment = type;
+        showMediumFragment();
+    }
 
 
     @Override

@@ -116,6 +116,8 @@ public class ArtistsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             if(maker.getMakerWikiImageUrl() != null && maker.getMakerWikiImageUrl().length() > 0) {
                 Picasso.get().load(maker.getMakerWikiImageUrl()).placeholder(R.color.colorSilver).into(maker_image);
+            } else {
+                maker_image.setImageDrawable(context.getResources().getDrawable(R.drawable.maker_placeholder));
             }
 
             maker_name.setText(maker.getArtMaker());

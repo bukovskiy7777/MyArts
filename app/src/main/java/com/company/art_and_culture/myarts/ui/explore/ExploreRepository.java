@@ -43,7 +43,11 @@ class ExploreRepository {
         return isConnected;
     }
 
-    public LiveData<ArrayList<ExploreObject>> getExploreList() {
-        return exploreDataSource.getExploreList();
+    public LiveData<ArrayList<ExploreObject>> getMakersList() {
+        return exploreDataSource.getMakersList();
+    }
+
+    public LiveData<ArrayList<ExploreObject>> getCultureList() {
+        return exploreDataSource.getCultureList();
     }
 }
