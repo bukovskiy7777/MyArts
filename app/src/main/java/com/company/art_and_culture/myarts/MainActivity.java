@@ -65,7 +65,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements
         HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
         MakerFragment.MakerEventListener, View.OnClickListener, ExploreFragment.ExploreEventListener, MediumFragment.MediumEventListener,
-        ArtistsFragment.ArtistsEventListener {
+        ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener {
 
     private int homePosition = 0;
     private int favoritesPosition = 0;
@@ -556,6 +556,16 @@ public class MainActivity extends AppCompatActivity implements
     public void artistsOnScroll(int direction) {
         animateNavView(direction);
     }
+
+
+
+
+    @Override
+    public void makerClickEvent(Maker maker) {
+        this.makerForMakerFragment = maker;
+        showMakerFragment();
+    }
+
 
 
     public int getHomePosition() {

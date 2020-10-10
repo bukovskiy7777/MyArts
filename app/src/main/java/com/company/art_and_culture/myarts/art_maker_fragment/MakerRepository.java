@@ -60,6 +60,10 @@ public class MakerRepository {
         return makerDataSource.getMaker();
     }
 
+    public LiveData<Maker> getMakerFirstTime() {
+        return makerDataSource.getMakerFirstTime();
+    }
+
     public LiveData<Art> getArt() {
         return art;
     }
@@ -98,7 +102,6 @@ public class MakerRepository {
     public Maker getArtMaker() {
         return artMaker;
     }
-
 
     public boolean likeMaker(Maker maker, String userUniqueId) {
 

@@ -25,6 +25,8 @@ class ExploreDataSource {
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
     private MutableLiveData<ArrayList<ExploreObject>> makersList = new MutableLiveData<>();
     private MutableLiveData<ArrayList<ExploreObject>> cultureList = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<ExploreObject>> mediumList = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<ExploreObject>> centuryList = new MutableLiveData<>();
     private Application application;
 
     public ExploreDataSource(Application application) {
@@ -50,6 +52,13 @@ class ExploreDataSource {
         cultureList.postValue(listExplore);
     }
 
+    private void updateMediumList(ArrayList<ExploreObject> listExplore) {
+        mediumList.postValue(listExplore);
+    }
+
+    private void updateCenturyList(ArrayList<ExploreObject> listExplore) {
+        centuryList.postValue(listExplore);
+    }
 
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
@@ -84,6 +93,14 @@ class ExploreDataSource {
         return cultureList;
     }
 
+    public LiveData<ArrayList<ExploreObject>> getMediumList() {
+        return mediumList;
+    }
+
+    public LiveData<ArrayList<ExploreObject>> getCenturyList() {
+        return centuryList;
+    }
+
     public void loadExploreList (){
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
@@ -103,10 +120,14 @@ class ExploreDataSource {
                         updateIsListEmptyState(false);
                         updateMakersList(resp.getListMaker());
                         updateCultureList(resp.getListCulture());
+                        updateMediumList(resp.getListMedium());
+                        updateCenturyList(resp.getListCentury());
                     } else {
                         updateIsListEmptyState(true);
                         updateMakersList(null);
                         updateCultureList(null);
+                        updateMediumList(null);
+                        updateCenturyList(null);
                     }
                 } else {
                     updateIsListEmptyState(true);

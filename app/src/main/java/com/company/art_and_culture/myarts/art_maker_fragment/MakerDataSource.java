@@ -32,6 +32,7 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
     private MutableLiveData<Maker> maker = new MutableLiveData<>();
+    private MutableLiveData<Maker> makerFirstTime = new MutableLiveData<>();
     private MutableLiveData<Art> art = new MutableLiveData<>();
     private Application application;
 
@@ -140,8 +141,16 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
         maker.postValue(artMaker);
     }
 
+    private void updateArtMakerFirstTime(Maker artMaker) {
+        makerFirstTime.postValue(artMaker);
+    }
+
     public MutableLiveData<Maker> getMaker() {
         return maker;
+    }
+
+    public MutableLiveData<Maker> getMakerFirstTime() {
+        return makerFirstTime;
     }
 
     public void updateArt(Art newArt) {
@@ -249,7 +258,7 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
-                        updateArtMaker(resp.getArtMaker());
+                        updateArtMakerFirstTime(resp.getArtMaker());
                     } else {
 
                     }

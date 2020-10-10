@@ -12,7 +12,7 @@ import androidx.lifecycle.LiveData;
 
 public class ExploreViewModel extends AndroidViewModel {
 
-    private LiveData<ArrayList<ExploreObject>> makersList, cultureList;
+    private LiveData<ArrayList<ExploreObject>> makersList, cultureList, mediumList, centuryList;
     private LiveData<Boolean> isLoading;
     private LiveData<Boolean> isListEmpty;
     private ExploreRepository exploreRepository;
@@ -23,6 +23,8 @@ public class ExploreViewModel extends AndroidViewModel {
         exploreRepository = ExploreRepository.getInstance(application);
         makersList = exploreRepository.getMakersList();
         cultureList = exploreRepository.getCultureList();
+        mediumList = exploreRepository.getMediumList();
+        centuryList = exploreRepository.getCenturyList();
         isLoading = exploreRepository.getIsLoading();
         isListEmpty = exploreRepository.getIsListEmpty();
     }
@@ -45,5 +47,13 @@ public class ExploreViewModel extends AndroidViewModel {
 
     public LiveData<ArrayList<ExploreObject>> getCultureList() {
         return cultureList;
+    }
+
+    public LiveData<ArrayList<ExploreObject>> getMediumList() {
+        return mediumList;
+    }
+
+    public LiveData<ArrayList<ExploreObject>> getCenturyList() {
+        return centuryList;
     }
 }

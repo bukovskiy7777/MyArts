@@ -50,4 +50,12 @@ class ExploreRepository {
     public LiveData<ArrayList<ExploreObject>> getCultureList() {
         return exploreDataSource.getCultureList();
     }
+
+    public LiveData<ArrayList<ExploreObject>> getMediumList() {
+        return exploreDataSource.getMediumList();
+    }
+
+    public LiveData<ArrayList<ExploreObject>> getCenturyList() {
+        return exploreDataSource.getCenturyList();
+    }
 }

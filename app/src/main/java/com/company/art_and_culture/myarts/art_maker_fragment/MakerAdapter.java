@@ -189,9 +189,10 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
                     Picasso.get().load(artHeaderImageUrl).placeholder(R.color.colorSilver).into(art_image_header);
                 }
 
-                makerViewModel.getMaker().observe(this, new Observer<Maker>() {
+                makerViewModel.getMakerFirstTime().observe(this, new Observer<Maker>() {
                     @Override
                     public void onChanged(Maker maker) {
+
                         makerWikiDescription = maker.getMakerWikiDescription();
                         if (maker.getMakerWikiDescription() != null) {
                             maker_description.setVisibility(View.VISIBLE);
@@ -218,6 +219,20 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
                         if(maker.isLiked()){
                             maker_like.setImageResource(R.drawable.ic_favorite_red_100dp);
                             maker_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        } else {
+                            maker_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
+                            maker_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        }
+                    }
+                });
+
+                makerViewModel.getMaker().observe(this, new Observer<Maker>() {
+                    @Override
+                    public void onChanged(Maker maker) {
+
+                        if(maker.isLiked()){
+                            maker_like.setImageResource(R.drawable.ic_favorite_red_100dp);
+                            maker_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
                             AnimatorSet set = new AnimatorSet();
                             set.playSequentially(likeFadeIn(maker_like), likeScaleDown(maker_like));
                             set.start();
@@ -228,7 +243,6 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
                             set.playSequentially(likeFadeIn(maker_like), likeScaleDown(maker_like));
                             set.start();
                         }
-
                     }
                 });
 

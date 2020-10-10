@@ -31,5 +31,7 @@
     <string name="artists">Artists</string>
     <string name="artworks">artworks</string>
     <string name="artist_culture">Artist culture</string>
+    <string name="art_mediums">Art mediums</string>
+    <string name="art_century">Art century</string>
 
 </resources>

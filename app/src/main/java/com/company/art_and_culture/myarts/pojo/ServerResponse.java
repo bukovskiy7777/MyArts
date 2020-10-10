@@ -11,6 +11,8 @@ public class ServerResponse {
     private ArrayList<Suggest> listSuggests;
     private ArrayList<ExploreObject> listMaker;
     private ArrayList<ExploreObject> listCulture;
+    private ArrayList<ExploreObject> listMedium;
+    private ArrayList<ExploreObject> listCentury;
     private Maker artMaker;
     private ArrayList<Maker> listMakers;
 
@@ -49,4 +51,13 @@ public class ServerResponse {
     public ArrayList<ExploreObject> getListCulture() {
         return listCulture;
     }
+
+    public ArrayList<ExploreObject> getListMedium() {
+        return listMedium;
+    }
+
+    public ArrayList<ExploreObject> getListCentury() {
+        return listCentury;
+    }
+
 }

@@ -35,8 +35,13 @@ public class ArtShowDataInMemory {
 
     }
 
-    public Art getSingleItem(int position) {
-        return listArts.get(position);
+    public Art getSingleItem(int position){
+        if (listArts.size() >= position) {
+            return listArts.get(position);
+        } else {
+            return null;
+        }
+
     }
 
 

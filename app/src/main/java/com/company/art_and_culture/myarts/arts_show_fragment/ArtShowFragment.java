@@ -43,6 +43,7 @@ import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.Maker;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -69,6 +70,7 @@ public class ArtShowFragment extends Fragment {
     private ConstraintLayout download_linear;
     private ProgressBar download_progress;
     private MainActivity activity;
+    private ArtShowEventListener artShowEventListener;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -205,6 +207,14 @@ public class ArtShowFragment extends Fragment {
 
             @Override
             public void onMakerClick(Art art, View view) {
+                String artImgUrl;
+                if (!art.getArtImgUrlSmall().equals(" ") && art.getArtImgUrlSmall().startsWith(getResources().getString(R.string.http))) {
+                    artImgUrl = art.getArtImgUrlSmall();
+                } else {
+                    artImgUrl= art.getArtImgUrl();
+                }
+                Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), artImgUrl, art.getArtWidth(), art.getArtHeight());
+                //artShowEventListener.makerClickEvent(maker);
                 showPopupMenu(art, view);
             }
         };
@@ -409,5 +419,20 @@ public class ArtShowFragment extends Fragment {
         artShowViewModel.finish ();
         return null;
     }
+
+    public interface ArtShowEventListener {
+        void makerClickEvent(Maker maker);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            artShowEventListener = (ArtShowEventListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement onSomeEventListener");
+        }
+    }
+
 
 }

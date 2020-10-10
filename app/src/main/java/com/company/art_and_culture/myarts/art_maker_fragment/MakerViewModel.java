@@ -20,7 +20,7 @@ public class MakerViewModel extends AndroidViewModel {
     private MakerRepository makerRepository;
     private android.content.res.Resources res;
     private Application application;
-    private LiveData<Maker> maker;
+    private LiveData<Maker> maker, makerFirstTime;
     private LiveData<Art> art;
 
     public MakerViewModel(@NonNull Application application) {
@@ -32,6 +32,7 @@ public class MakerViewModel extends AndroidViewModel {
         isLoading = makerRepository.getIsLoading();
         isListEmpty = makerRepository.getIsListEmpty();
         maker = makerRepository.getMaker();
+        makerFirstTime = makerRepository.getMakerFirstTime();
         art = makerRepository.getArt();
     }
 
@@ -49,6 +50,10 @@ public class MakerViewModel extends AndroidViewModel {
 
     public LiveData<Maker> getMaker() {
         return maker;
+    }
+
+    public LiveData<Maker> getMakerFirstTime() {
+        return makerFirstTime;
     }
 
     public LiveData<Art> getArt() {

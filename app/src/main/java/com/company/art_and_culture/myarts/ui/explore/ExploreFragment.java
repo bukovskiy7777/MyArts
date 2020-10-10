@@ -32,9 +32,9 @@ import java.util.Collection;
 public class ExploreFragment extends Fragment implements View.OnClickListener, View.OnTouchListener {
 
     private ExploreViewModel exploreViewModel;
-    private TextView textView, explore_maker, explore_maker_more, explore_culture, explore_culture_more;
-    private RecyclerView makerRecyclerView, cultureRecyclerView;
-    private ExploreAdapter makerAdapter, cultureAdapter;
+    private TextView textView, explore_maker, explore_maker_more, explore_culture, explore_culture_more, explore_medium, explore_medium_more, explore_century, explore_century_more;
+    private RecyclerView makerRecyclerView, cultureRecyclerView, mediumRecyclerView, centuryRecyclerView;
+    private ExploreAdapter makerAdapter, cultureAdapter, mediumAdapter, centuryAdapter;
     private int spanCount = 3;
     private ProgressBar exploreProgressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -64,6 +64,20 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
         explore_culture_more.setOnClickListener(this);
         explore_culture_more.setOnTouchListener(this);
         cultureRecyclerView = root.findViewById(R.id.cultureRecyclerView);
+        explore_medium = root.findViewById(R.id.explore_medium);
+        explore_medium.setVisibility(View.GONE);
+        explore_medium_more = root.findViewById(R.id.explore_medium_more);
+        explore_medium_more.setVisibility(View.GONE);
+        explore_medium_more.setOnClickListener(this);
+        explore_medium_more.setOnTouchListener(this);
+        mediumRecyclerView = root.findViewById(R.id.mediumRecyclerView);
+        explore_century = root.findViewById(R.id.explore_century);
+        explore_century.setVisibility(View.GONE);
+        explore_century_more = root.findViewById(R.id.explore_century_more);
+        explore_century_more.setVisibility(View.GONE);
+        explore_century_more.setOnClickListener(this);
+        explore_century_more.setOnTouchListener(this);
+        centuryRecyclerView = root.findViewById(R.id.centuryRecyclerView);
         exploreProgressBar = root.findViewById(R.id.progress_bar_explore);
         swipeRefreshLayout = root.findViewById(R.id.explore_swipeRefreshLayout);
 
@@ -73,6 +87,8 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
 
         initMakerRecyclerView(displayWidth, displayHeight);
         initCultureRecyclerView(displayWidth, displayHeight);
+        initMediumRecyclerView(displayWidth, displayHeight);
+        initCenturyRecyclerView(displayWidth, displayHeight);
 
         initSwipeRefreshLayout();
         subscribeObservers();
@@ -115,6 +131,34 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
         cultureRecyclerView.setAdapter(cultureAdapter);
     }
 
+    private void initMediumRecyclerView(int displayWidth, int displayHeight) {
+
+        ExploreAdapter.OnExploreClickListener onExploreClickListener = new ExploreAdapter.OnExploreClickListener() {
+            @Override
+            public void onExploreImageClick(ExploreObject exploreObject, int position) {
+                exploreEventListener.exploreCultureClickEvent(exploreObject.getText(), exploreObject.getType());
+            }
+        };
+        mediumAdapter = new ExploreAdapter(getContext(), onExploreClickListener, displayWidth, displayHeight, spanCount);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
+        mediumRecyclerView.setLayoutManager(layoutManager);
+        mediumRecyclerView.setAdapter(mediumAdapter);
+    }
+
+    private void initCenturyRecyclerView(int displayWidth, int displayHeight) {
+
+        ExploreAdapter.OnExploreClickListener onExploreClickListener = new ExploreAdapter.OnExploreClickListener() {
+            @Override
+            public void onExploreImageClick(ExploreObject exploreObject, int position) {
+                exploreEventListener.exploreCultureClickEvent(exploreObject.getText(), exploreObject.getType());
+            }
+        };
+        centuryAdapter = new ExploreAdapter(getContext(), onExploreClickListener, displayWidth, displayHeight, spanCount);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
+        centuryRecyclerView.setLayoutManager(layoutManager);
+        centuryRecyclerView.setAdapter(centuryAdapter);
+    }
+
     private void subscribeObservers() {
 
         exploreViewModel.getMakersList().observe(getViewLifecycleOwner(), new Observer<ArrayList<ExploreObject>>() {
@@ -154,6 +198,48 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
                     } else {
                         explore_culture.setVisibility(View.GONE);
                         explore_culture_more.setVisibility(View.GONE);
+                    }
+                }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        exploreViewModel.getMediumList().observe(getViewLifecycleOwner(), new Observer<ArrayList<ExploreObject>>() {
+            @Override
+            public void onChanged(ArrayList<ExploreObject> objects) {
+
+                if (objects == null) {
+                    mediumAdapter.clearItems();
+                } else {
+                    setAnimationRecyclerView (objects, mediumAdapter, mediumRecyclerView);
+                    mediumAdapter.clearItems();
+                    mediumAdapter.setItems(objects);
+                    if (objects.size() > 0) {
+                        explore_medium.setVisibility(View.VISIBLE);
+                        explore_medium_more.setVisibility(View.VISIBLE);
+                    } else {
+                        explore_medium.setVisibility(View.GONE);
+                        explore_medium_more.setVisibility(View.GONE);
+                    }
+                }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        exploreViewModel.getCenturyList().observe(getViewLifecycleOwner(), new Observer<ArrayList<ExploreObject>>() {
+            @Override
+            public void onChanged(ArrayList<ExploreObject> objects) {
+
+                if (objects == null) {
+                    centuryAdapter.clearItems();
+                } else {
+                    setAnimationRecyclerView (objects, mediumAdapter, mediumRecyclerView);
+                    centuryAdapter.clearItems();
+                    centuryAdapter.setItems(objects);
+                    if (objects.size() > 0) {
+                        explore_century.setVisibility(View.VISIBLE);
+                        explore_century_more.setVisibility(View.VISIBLE);
+                    } else {
+                        explore_century.setVisibility(View.GONE);
+                        explore_century_more.setVisibility(View.GONE);
                     }
                 }
                 swipeRefreshLayout.setRefreshing(false);
@@ -234,7 +320,8 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (v.getId() == explore_maker_more.getId() || v.getId() == explore_culture_more.getId()) {
+        if (v.getId() == explore_maker_more.getId() || v.getId() == explore_culture_more.getId()
+                || v.getId() == explore_medium_more.getId() || v.getId() == explore_century_more.getId()) {
             switch(event.getAction()){
                 case MotionEvent.ACTION_DOWN:
                     ((TextView)v).setTextColor(getContext().getResources().getColor(R.color.colorBlack));

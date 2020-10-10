@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -55,7 +56,7 @@ public class BlankFragment extends Fragment {
             touchSlopField.setAccessible(true);
 
             final int touchSlop = (int) touchSlopField.get(recyclerView);
-            touchSlopField.set(recyclerView, touchSlop * 5);//6 is empirical value
+            touchSlopField.set(recyclerView, touchSlop * 3);//6 is empirical value
         } catch (Exception ignore) {
         }
 
