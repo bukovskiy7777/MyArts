@@ -316,33 +316,36 @@ public class MakerFragment extends Fragment {
 
     private int getTargetScrollPosition () {
 
-        final int firstPosition = ((LinearLayoutManager) makerRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-        final int lastPosition = ((LinearLayoutManager) makerRecyclerView.getLayoutManager()).findLastVisibleItemPosition();
+        int targetPosition = 0;
+        if(makerAdapter.getItemCount() > 0) {
+            final int firstPosition = ((LinearLayoutManager) makerRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+            final int lastPosition = ((LinearLayoutManager) makerRecyclerView.getLayoutManager()).findLastVisibleItemPosition();
 
-        Rect rvRect = new Rect();
-        makerRecyclerView.getGlobalVisibleRect(rvRect);
+            Rect rvRect = new Rect();
+            makerRecyclerView.getGlobalVisibleRect(rvRect);
 
-        int targetPosition = firstPosition;
-        int targetPercent = 0;
-        for (int i = firstPosition; i <= lastPosition; i++) {
+            targetPosition = firstPosition;
+            int targetPercent = 0;
+            for (int i = firstPosition; i <= lastPosition; i++) {
 
-            Rect rowRect = new Rect();
-            makerRecyclerView.getLayoutManager().findViewByPosition(i).getGlobalVisibleRect(rowRect);
+                Rect rowRect = new Rect();
+                makerRecyclerView.getLayoutManager().findViewByPosition(i).getGlobalVisibleRect(rowRect);
 
-            int percent;
-            if (rowRect.bottom >= rvRect.bottom){
-                int visibleHeightFirst =rvRect.bottom - rowRect.top;
-                percent = (visibleHeightFirst * 100) / makerRecyclerView.getLayoutManager().findViewByPosition(i).getHeight();
-            }else {
-                int visibleHeightFirst = rowRect.bottom - rvRect.top;
-                percent = (visibleHeightFirst * 100) / makerRecyclerView.getLayoutManager().findViewByPosition(i).getHeight();
-            }
+                int percent;
+                if (rowRect.bottom >= rvRect.bottom){
+                    int visibleHeightFirst =rvRect.bottom - rowRect.top;
+                    percent = (visibleHeightFirst * 100) / makerRecyclerView.getLayoutManager().findViewByPosition(i).getHeight();
+                }else {
+                    int visibleHeightFirst = rowRect.bottom - rvRect.top;
+                    percent = (visibleHeightFirst * 100) / makerRecyclerView.getLayoutManager().findViewByPosition(i).getHeight();
+                }
 
-            if (percent>100) percent = 100;
+                if (percent>100) percent = 100;
 
-            if (percent > targetPercent) {
-                targetPercent = percent;
-                targetPosition = i;
+                if (percent > targetPercent) {
+                    targetPercent = percent;
+                    targetPosition = i;
+                }
             }
         }
         return targetPosition;
