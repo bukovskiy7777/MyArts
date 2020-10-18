@@ -49,29 +49,6 @@ public class ArtistsFragment extends Fragment {
         artistsProgressBar = root.findViewById(R.id.progress_bar_artists);
         swipeRefreshLayout = root.findViewById(R.id.artists_swipeRefreshLayout);
 
-        artistsRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            int offset = 0;
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                offset = offset + dy;
-            }
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                if(newState == 2) {
-                    if (offset >= 10) {
-                        artistsEventListener.artistsOnScroll(1);
-                    } else if (offset < -10) {
-                        artistsEventListener.artistsOnScroll(0);
-                    }
-                }
-                offset = 0;
-            }
-        });
-
         artistsViewModel =new ViewModelProvider(this).get(ArtistsViewModel.class);
 
         res = getResources();
@@ -182,7 +159,6 @@ public class ArtistsFragment extends Fragment {
 
     public interface ArtistsEventListener {
         void artistsClickEvent(Maker maker);
-        void artistsOnScroll(int direction);
     }
 
     @Override

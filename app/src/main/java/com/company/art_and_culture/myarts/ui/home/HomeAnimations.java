@@ -83,7 +83,7 @@ public class HomeAnimations {
         };
     }
 
-    public static AnimatorSet downloadFadeOut(ConstraintLayout download_linear, View done_view) {
+    public static AnimatorSet downloadFadeOut(ConstraintLayout download_linear, View done_view, int leftInitialMargin, int bottomInitialMargin) {
         AnimatorSet set = new AnimatorSet();
         float startValue = 1f;
         float endValue = 0.0f;
@@ -97,11 +97,11 @@ public class HomeAnimations {
                 ObjectAnimator.ofFloat(done_view, View.SCALE_Y, startValue, endValue)
 
         );
-        set.addListener(getDownloadFadeOutListener(download_linear, done_view));
+        set.addListener(getDownloadFadeOutListener(download_linear, done_view, leftInitialMargin, bottomInitialMargin));
         return set;
     }
 
-    private static AnimatorListenerAdapter getDownloadFadeOutListener(final ConstraintLayout download_linear, final View done_view) {
+    private static AnimatorListenerAdapter getDownloadFadeOutListener(final ConstraintLayout download_linear, final View done_view, final int leftInitialMargin, final int bottomInitialMargin) {
         return new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -114,6 +114,12 @@ public class HomeAnimations {
                 super.onAnimationEnd(animation);
                 download_linear.setVisibility(View.INVISIBLE);
                 done_view.setVisibility(View.INVISIBLE);
+
+                if (leftInitialMargin > 0) {
+                    ConstraintLayout.MarginLayoutParams marginLayoutParams = (ConstraintLayout.MarginLayoutParams) download_linear.getLayoutParams();
+                    marginLayoutParams.setMargins(leftInitialMargin, 0, 0, bottomInitialMargin);
+                    download_linear.setLayoutParams(marginLayoutParams);
+                }
             }
         };
     }

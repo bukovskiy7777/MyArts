@@ -75,29 +75,6 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
         sort_by_maker.setOnClickListener(this);
         sort_by_date.setOnClickListener(this);
 
-        favoritesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            int offset = 0;
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                offset = offset + dy;
-            }
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                if(newState == 2) {
-                    if (offset >= 10) {
-                        favoritesEventListener.favoritesOnScroll(1);
-                    } else if (offset < -10) {
-                        favoritesEventListener.favoritesOnScroll(0);
-                    }
-                }
-                offset = 0;
-            }
-        });
-
         favoritesViewModel =new ViewModelProvider(this).get(FavoritesViewModel.class);
 
         res = getResources();
@@ -337,7 +314,6 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
     public interface FavoritesEventListener {
         void favoritesScrollEvent(int position, Sort sort_type);
         void favoritesClickEvent(Collection<Art> art, int position);
-        void favoritesOnScroll (int direction);
     }
 
     @Override
@@ -402,8 +378,6 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
         int scrollPosition = 0;
         if (favoritesAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
         favoritesEventListener.favoritesScrollEvent(scrollPosition, favoritesAdapter.getSort_type());
-
-        favoritesEventListener.favoritesOnScroll(0);
     }
 
 }

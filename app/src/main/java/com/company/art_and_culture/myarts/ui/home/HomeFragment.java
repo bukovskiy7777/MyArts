@@ -73,6 +73,7 @@ public class HomeFragment extends Fragment {
     private ConstraintLayout download_linear;
     private MainActivity activity;
     private Target target;
+    private int bottomInitialMargin = 0, leftInitialMargin = 0;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -364,7 +365,7 @@ public class HomeFragment extends Fragment {
 
         AnimatorSet set = new AnimatorSet();
         set.playSequentially(
-                downloadFadeOut(download_linear, done_view)
+                downloadFadeOut(download_linear, done_view, leftInitialMargin, bottomInitialMargin)
         );
         set.start();
     }
@@ -373,15 +374,46 @@ public class HomeFragment extends Fragment {
 
         int actionBarHeight = 0;
         if (activity != null) actionBarHeight = activity.getToolbarHeight();
+
         add_view.setX(x);
-        add_view.setY(y - actionBarHeight);
+        if (activity.isToolbarOnScreen()) {
+            add_view.setY(y - actionBarHeight);
+        } else {
+            add_view.setY(y);
+        }
+
+        ConstraintLayout.MarginLayoutParams marginLayoutParams = (ConstraintLayout.MarginLayoutParams) download_linear.getLayoutParams();
+        bottomInitialMargin = marginLayoutParams.bottomMargin;
+        leftInitialMargin = marginLayoutParams.leftMargin;
+        int bottomMargin = bottomInitialMargin;
+        if (activity.isToolbarOnScreen()) {
+            bottomMargin = bottomMargin + actionBarHeight;
+        }
+        if (activity.isNavViewOnScreen()) {
+            int navViewHeight = activity.getNavViewHeight();
+            bottomMargin = bottomMargin + navViewHeight;
+        }
+        marginLayoutParams.setMargins(leftInitialMargin, 0, 0, bottomMargin);
+        download_linear.setLayoutParams(marginLayoutParams);
 
         int[] location = new int[2];
         download_view.getLocationOnScreen(location);
         int x1 = location[0];
         int y1 = location[1];
         int targetX = x1 + download_view.getWidth()/2;
-        int targetY = y1 - download_view.getHeight()/2;
+        int targetY = y1;
+        if (activity.isToolbarOnScreen()) {
+            targetY = targetY - download_view.getHeight()/2;
+        } else {
+            targetY = targetY + download_view.getHeight()/2;
+        }
+        if (activity.isToolbarOnScreen()) {
+            targetY = targetY - actionBarHeight;
+        }
+        if (activity.isNavViewOnScreen()) {
+            int navViewHeight = activity.getNavViewHeight();
+            targetY = targetY - navViewHeight;
+        }
 
         AnimatorSet set = new AnimatorSet();
         set.playSequentially(

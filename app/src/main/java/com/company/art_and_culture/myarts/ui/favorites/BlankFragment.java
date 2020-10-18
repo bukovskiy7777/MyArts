@@ -95,8 +95,10 @@ public class BlankFragment extends Fragment {
                 if( keyCode == KeyEvent.KEYCODE_BACK && activity.getArtShowFragment() == null && !activity.isSearchLayoutOpen()) {
                     int scrollPosition = 0;
                     int spanCount = 3;
-                    scrollPosition = blankAdapter.getFavoritesFragment().getTargetScrollPosition();
-                    spanCount = blankAdapter.getFavoritesFragment().getSpanCount();
+                    if (blankAdapter.getFavoritesFragment()!=null) {
+                        scrollPosition = blankAdapter.getFavoritesFragment().getTargetScrollPosition();
+                        spanCount = blankAdapter.getFavoritesFragment().getSpanCount();
+                    }
                     if (scrollPosition > 4 * spanCount) {
                         if(viewPager.getCurrentItem() == 0) {
                             blankAdapter.getFavoritesFragment().scrollRecyclerViewToStart();
@@ -115,7 +117,7 @@ public class BlankFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        blankAdapter.getFavoritesFragment().postScrollDataToMainActivity();
+        if (blankAdapter.getFavoritesFragment()!=null) blankAdapter.getFavoritesFragment().postScrollDataToMainActivity();
     }
 
 }

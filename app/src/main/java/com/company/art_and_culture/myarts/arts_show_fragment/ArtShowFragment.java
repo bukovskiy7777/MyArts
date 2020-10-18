@@ -328,7 +328,7 @@ public class ArtShowFragment extends Fragment {
 
         AnimatorSet set = new AnimatorSet();
         set.playSequentially(
-                downloadFadeOut(download_linear, done_view)
+                downloadFadeOut(download_linear, done_view, 0, 0)
         );
         set.start();
     }

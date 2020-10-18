@@ -29,7 +29,7 @@ import android.widget.TextView;
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerFragment;
 import com.company.art_and_culture.myarts.art_medium_fragment.MediumFragment;
 import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
-import com.company.art_and_culture.myarts.art_maker_search_fragment.MakerSearchFragment;
+import com.company.art_and_culture.myarts.filter_explore_fragment.FilterExploreFragment;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
@@ -65,7 +65,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements
         HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
         MakerFragment.MakerEventListener, View.OnClickListener, ExploreFragment.ExploreEventListener, MediumFragment.MediumEventListener,
-        ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener {
+        ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener, FilterExploreFragment.FilterExploreEventListener {
 
     private int homePosition = 0;
     private int favoritesPosition = 0;
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements
     private String artQueryForMediumFragment, queryTypeForMediumFragment;
     private Maker makerForMakerFragment;
     private SharedPreferences preferences;
-    private MakerSearchFragment makerSearchFragment;
+    private FilterExploreFragment filterExploreFragment;
     private MediumFragment mediumFragment;
     private BottomNavigationView navView;
 
@@ -396,8 +396,7 @@ public class MainActivity extends AppCompatActivity implements
         InputMethodManager inputMethodManager =
                 (InputMethodManager) activity.getSystemService(
                         Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(
-                activity.getCurrentFocus().getWindowToken(), 0);
+        if (activity.getCurrentFocus()!=null) inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 
     public boolean isSearchLayoutOpen () {
@@ -407,6 +406,29 @@ public class MainActivity extends AppCompatActivity implements
     public int getToolbarHeight (){
         return toolbar.getHeight();
     }
+
+    public boolean isToolbarOnScreen() {
+
+        int[] location = new int[2];
+        toolbar.getLocationOnScreen(location);
+        int y = location[1];
+        return y > 0;
+    }
+
+    public int getNavViewHeight (){
+        return navView.getHeight();
+    }
+
+    public boolean isNavViewOnScreen() {
+
+        android.content.res.Resources res = getResources();
+        int displayHeight = res.getDisplayMetrics().heightPixels;
+        int[] location = new int[2];
+        navView.getLocationOnScreen(location);
+        int y = location[1];
+        return y < displayHeight;
+    }
+
 
 
 
@@ -445,47 +467,8 @@ public class MainActivity extends AppCompatActivity implements
         this.clickPositionForArtShowFragment = position;
         showArtFragment();
     }
-    @Override
-    public void favoritesOnScroll(int direction) {
-        animateNavView(direction);
-    }
 
-    private void animateNavView (int direction) {
-        Log.i("favoritesOnScroll", direction+"");
-        if (direction == 1){
-            if (navView.isShown()) {
-                AnimatorSet set = new AnimatorSet();
-                set.setDuration(600).playTogether(
-                        ObjectAnimator.ofFloat(navView, View.TRANSLATION_Y,  0f,getToolbarHeight())
-                        //ObjectAnimator.ofFloat(app_bar_main, View.TRANSLATION_Y, 0f, -getToolbarHeight())
-                );
-                set.addListener(goneNavigationListener(navView, app_bar_main));
-                set.start();
-            }
-        } else if (direction == 0){
-            if (!navView.isShown()) {
-                navView.setVisibility(View.VISIBLE);
-                app_bar_main.setVisibility(View.VISIBLE);
-                AnimatorSet set = new AnimatorSet();
-                set.setDuration(600).playTogether(
-                        ObjectAnimator.ofFloat(navView, View.TRANSLATION_Y,  getToolbarHeight(), 0f)
-                        //ObjectAnimator.ofFloat(app_bar_main, View.TRANSLATION_Y, -getToolbarHeight(), 0f)
-                );
-                set.start();
-            }
-        }
-    }
 
-    private Animator.AnimatorListener goneNavigationListener(final BottomNavigationView navView, final AppBarLayout app_bar_main) {
-        return new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                navView.setVisibility(View.GONE);
-                //app_bar_main.setVisibility(View.GONE);
-            }
-        };
-    }
 
 
 
@@ -531,7 +514,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void exploreMakerSearchClick() {
-        showMakerSearchFragment();
+        showFilterExploreFragment();
     }
     @Override
     public void exploreMakerClickEvent(Maker maker) {
@@ -552,10 +535,6 @@ public class MainActivity extends AppCompatActivity implements
         this.makerForMakerFragment = maker;
         showMakerFragment();
     }
-    @Override
-    public void artistsOnScroll(int direction) {
-        animateNavView(direction);
-    }
 
 
 
@@ -565,6 +544,18 @@ public class MainActivity extends AppCompatActivity implements
         this.makerForMakerFragment = maker;
         showMakerFragment();
     }
+
+
+
+
+
+    @Override
+    public void filterExploreMakerClickEvent(Maker maker) {
+        this.makerForMakerFragment = maker;
+        showMakerFragment();
+    }
+
+
 
 
 
@@ -645,14 +636,14 @@ public class MainActivity extends AppCompatActivity implements
             searchFragment.finish();
             searchFragment = null;
 
-        } else if (makerSearchFragment != null) {
+        } else if (filterExploreFragment != null) {
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
-            fragmentTransaction.remove(makerSearchFragment).commit();
-            makerSearchFragment.finish();
-            makerSearchFragment = null;
+            fragmentTransaction.remove(filterExploreFragment).commit();
+            filterExploreFragment.finish();
+            filterExploreFragment = null;
 
         } else {
             if (isSearchLayoutOpen()) {
@@ -714,13 +705,13 @@ public class MainActivity extends AppCompatActivity implements
         fragmentTransaction.add(R.id.frame_container_common, makerFragment, "makerFragment").commit();
     }
 
-    private void showMakerSearchFragment() {
-        makerSearchFragment = new MakerSearchFragment();
+    private void showFilterExploreFragment() {
+        filterExploreFragment = new FilterExploreFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
         //fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.add(R.id.frame_container_common, makerSearchFragment, "makerSearchFragment").commit();
+        fragmentTransaction.add(R.id.frame_container_common, filterExploreFragment, "makerSearchFragment").commit();
     }
 
 

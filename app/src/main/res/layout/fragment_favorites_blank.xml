@@ -6,19 +6,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/favorite_tab"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tabIndicatorHeight="1dp"
-        app:tabIndicatorColor="@color/colorBlueLight"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="44dp"/>
+        android:layout_height="match_parent">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/favorite_view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/favorite_tab" />
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/favorite_tab"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tabIndicatorHeight="1dp"
+            app:tabIndicatorColor="@color/colorBlueLight"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"/>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:layout_marginTop="44dp"
+            android:id="@+id/favorite_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/favorite_tab" />
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
