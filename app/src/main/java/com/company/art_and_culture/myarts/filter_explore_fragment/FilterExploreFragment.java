@@ -1,8 +1,12 @@
 package com.company.art_and_culture.myarts.filter_explore_fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,8 +65,8 @@ public class FilterExploreFragment extends Fragment {
         initFilterRecyclerView(displayWidth, displayHeight);
         initExploreRecyclerView(displayWidth, displayHeight);
 
-        circle_filter_view.getLayoutParams().height = (int) (displayWidth / filterSpanCount * 0.8);
-        circle_filter_view.getLayoutParams().width = (int) (displayWidth / filterSpanCount * 0.8);
+        circle_filter_view.getLayoutParams().height = (int) (displayWidth / filterSpanCount * filterAdapter.getK() * 0.8);
+        circle_filter_view.getLayoutParams().width = (int) (displayWidth / filterSpanCount * filterAdapter.getK() * 0.8);
 
         filterExploreViewModel = new ViewModelProvider(this).get(FilterExploreViewModel.class);
 
@@ -109,7 +113,7 @@ public class FilterExploreFragment extends Fragment {
         recycler_view_explore.setAdapter(filterExploreAdapter);
 
         ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) recycler_view_explore.getLayoutParams();
-        marginLayoutParams.setMargins(0,0,0, displayWidth / filterSpanCount);
+        marginLayoutParams.setMargins(0,0,0, (int) (displayWidth / filterSpanCount * filterAdapter.getK()));
         recycler_view_explore.setLayoutParams(marginLayoutParams);
     }
 

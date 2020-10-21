@@ -229,7 +229,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
                 if (objects == null) {
                     centuryAdapter.clearItems();
                 } else {
-                    setAnimationRecyclerView (objects, mediumAdapter, mediumRecyclerView);
+                    setAnimationRecyclerView (objects, centuryAdapter, centuryRecyclerView);
                     centuryAdapter.clearItems();
                     centuryAdapter.setItems(objects);
                     if (objects.size() > 0) {
@@ -300,12 +300,10 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
 
     private void setAnimationRecyclerView(ArrayList<ExploreObject> objects, ExploreAdapter exploreAdapter, RecyclerView recyclerView) {
 
-        if (exploreAdapter.getItemCount() > 0) {
-            LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_fall_down);
-            recyclerView.setLayoutAnimation(layoutAnimationController);
-            recyclerView.getAdapter().notifyDataSetChanged();
-            recyclerView.scheduleLayoutAnimation();
-        }
+        LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_fade_in);
+        recyclerView.setLayoutAnimation(layoutAnimationController);
+        //recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
     }
 
     @Override

@@ -33,7 +33,7 @@ class ExploreDataSource {
         this.application = application;
         updateIsLoadingState(true);
         updateIsListEmptyState(false);
-        loadExploreList();
+        loadExploreListFirst();
     }
 
     private void updateIsLoadingState(Boolean state) {
@@ -70,7 +70,49 @@ class ExploreDataSource {
 
     public void refresh() {
         updateIsListEmptyState(false);
-        loadExploreList();
+        loadExploreListAll();
+    }
+
+    private void loadExploreListAll() {
+
+        String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
+        ServerRequest request = new ServerRequest();
+        request.setOperation(Constants.GET_EXPLORE_LIST_OPERATION);
+        request.setUserUniqueId(userUniqueId);
+
+        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
+        response.enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                updateIsLoadingState(false);
+                if (response.isSuccessful()) {
+                    ServerResponse resp = response.body();
+                    if(resp.getResult().equals(Constants.SUCCESS)) {
+
+                        updateIsListEmptyState(false);
+                        updateMakersList(resp.getListMaker());
+                        updateCultureList(resp.getListCulture());
+                        updateMediumList(resp.getListMedium());
+                        updateCenturyList(resp.getListCentury());
+                    } else {
+                        updateIsListEmptyState(true);
+                        updateMakersList(null);
+                        updateCultureList(null);
+                        updateMediumList(null);
+                        updateCenturyList(null);
+                    }
+                } else {
+                    updateIsListEmptyState(true);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) {
+                updateIsLoadingState(false);
+                updateIsListEmptyState(true);
+            }
+        });
+
     }
 
     public boolean isNetworkAvailable() {
@@ -101,7 +143,7 @@ class ExploreDataSource {
         return centuryList;
     }
 
-    public void loadExploreList (){
+    public void loadExploreListFirst (){
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
         ServerRequest request = new ServerRequest();

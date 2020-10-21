@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +29,7 @@ class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreViewHold
     private OnExploreClickListener onExploreClickListener;
     private int displayWidth, displayHeight, spanCount;
     private List<ExploreObject> exploreList=new ArrayList<>();
+    private int lastPosition = -1;
 
     public ExploreAdapter(Context context, OnExploreClickListener onExploreClickListener, int displayWidth, int displayHeight, int spanCount) {
         this.context = context;
@@ -66,10 +69,20 @@ class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreViewHold
         ExploreObject exploreObject = exploreList.get(position);
         if (exploreObject != null) {
             holder.bind(exploreObject, position);
+            setAnimation(holder.itemView, position);
         } else {
             // Null defines a placeholder item - PagedListAdapter will automatically invalidate
             // this row when the actual object is loaded from the database
             // holder.clear();
+        }
+    }
+
+    private void setAnimation(View viewToAnimate, int position) {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition) {
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.item_fade_in);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
         }
     }
 

@@ -21,6 +21,7 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private OnFilterClickListener onFilterClickListener;
     private int displayWidth, displayHeight;
     private int filterSpanCount;
+    private double k = 0.8;
     private ArrayList<String> itemsList = new ArrayList<>();
 
     public FilterAdapter(Context context, OnFilterClickListener onFilterClickListener, int displayWidth, int displayHeight, int filterSpanCount) {
@@ -79,6 +80,9 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return itemsList.size();
     }
 
+    public double getK() {
+        return k;
+    }
 
     class ArtistsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -89,7 +93,7 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         ArtistsViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            itemView.getLayoutParams().height = displayWidth / filterSpanCount;
+            itemView.getLayoutParams().height = (int) ((displayWidth / filterSpanCount) * k);
             itemView.getLayoutParams().width = displayWidth / filterSpanCount;
             itemView.setOnClickListener(this);
 

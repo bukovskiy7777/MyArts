@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +32,7 @@ public class ArtistsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private int displayWidth, displayHeight;
     private double k = 0.33;
     private List<Maker> makerList=new ArrayList<>();
+    private int lastPosition = -1;
 
     public ArtistsAdapter(Context context, OnMakerClickListener onMakerClickListener, int displayWidth, int displayHeight) {
         this.context = context;
@@ -74,11 +77,26 @@ public class ArtistsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (maker != null) {
             ArtistsViewHolder viewHolder = (ArtistsViewHolder) holder;
             viewHolder.bind(maker, position);
+            setAnimation(holder.itemView, position);
         } else {
             // Null defines a placeholder item - PagedListAdapter will automatically invalidate
             // this row when the actual object is loaded from the database
             // holder.clear();
         }
+    }
+
+    private void setAnimation(View viewToAnimate, int position) {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition) {
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.item_fade_in);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull RecyclerView.ViewHolder holder) {
+        holder.itemView.clearAnimation();
     }
 
     @Override

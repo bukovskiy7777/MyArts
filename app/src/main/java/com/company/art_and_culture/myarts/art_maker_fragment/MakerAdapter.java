@@ -113,7 +113,7 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
         private Art art;
         private int position;
         private ImageView art_image, art_image_header, maker_image;
-        private TextView art_title, art_maker, maker_name, maker_bio, maker_description, read_more, wikipedia;
+        private TextView art_title, art_maker, maker_name, maker_bio, maker_description, read_more, wikipedia, art_count;
         private ImageButton art_share, art_download, art_like, maker_like, maker_share;
         private String artImgUrl, makerWikiImageUrl;
         private final Target target = new Target() {
@@ -144,6 +144,7 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
                 maker_share = itemView.findViewById(R.id.maker_share);
                 read_more = itemView.findViewById(R.id.read_more);
                 wikipedia = itemView.findViewById(R.id.wikipedia);
+                art_count = itemView.findViewById(R.id.art_count);
                 maker_like.setOnClickListener(this);
                 maker_share.setOnClickListener(this);
                 read_more.setOnClickListener(this);
@@ -223,6 +224,9 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
                             maker_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
                             maker_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
                         }
+
+                        String artCount = context.getResources().getString(R.string.artworks_count) +" "+ maker.getArtCount();
+                        art_count.setText(artCount);
                     }
                 });
 
@@ -320,7 +324,7 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
                 onArtClickListener.onArtLikeClick(art, position);
 
             } else if(v.getId() == read_more.getId()) {
-                if (maker_description.getMaxLines() == 3) {
+                if (maker_description.getMaxLines() == 4) {
                     Paint paint = new Paint();
                     paint.setTextSize(context.getResources().getDimension(R.dimen.text_size_maker_description));
                     float widthText = paint.measureText(maker_description.getText().toString());
@@ -328,7 +332,7 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
                     maker_description.setMaxLines((int) (numLines + 10));
                     read_more.setText(context.getResources().getString(R.string.show_less));
                 } else {
-                    maker_description.setMaxLines(3);
+                    maker_description.setMaxLines(4);
                     read_more.setText(context.getResources().getString(R.string.read_more));
                 }
 
