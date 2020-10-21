@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class SpeedyFilterLayoutManager extends LinearLayoutManager {
 
-    private static final float MILLISECONDS_PER_INCH = 150f; //default is 25f (bigger = slower)
+    private static final float MILLISECONDS_PER_INCH = 200f; //default is 25f (bigger = slower)
 
     public SpeedyFilterLayoutManager(Context context) {
         super(context);

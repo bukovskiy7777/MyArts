@@ -6,14 +6,13 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.company.art_and_culture.myarts.R;
-import com.company.art_and_culture.myarts.art_medium_fragment.MediumViewModel;
-import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ExploreObject;
-import com.company.art_and_culture.myarts.ui.home.LifecycleViewHolder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -27,6 +26,7 @@ public class FilterExploreAdapter extends PagedListAdapter<ExploreObject, Filter
     private Context context;
     private OnExploreClickListener onExploreClickListener;
     private int displayWidth, displayHeight, spanCount;
+    private int lastPosition = -1;
 
 
     public FilterExploreAdapter(Context context, OnExploreClickListener onExploreClickListener, int displayWidth, int displayHeight, int spanCount) {
@@ -54,10 +54,24 @@ public class FilterExploreAdapter extends PagedListAdapter<ExploreObject, Filter
         ExploreObject exploreObject = getItem(position);
         if (exploreObject != null) {
             holder.bind(exploreObject, position);
+            setAnimation(holder.itemView, position);
         } else {
             // Null defines a placeholder item - PagedListAdapter will automatically invalidate
             // this row when the actual object is loaded from the database
             //holder.clear();
+        }
+    }
+
+    public void setLastPosition(int lastPosition) {
+        this.lastPosition = lastPosition;
+    }
+
+    private void setAnimation(View viewToAnimate, int position) {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition) {
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.item_fade_in);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
         }
     }
 

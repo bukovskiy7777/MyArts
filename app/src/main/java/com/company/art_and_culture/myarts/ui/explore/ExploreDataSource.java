@@ -105,7 +105,7 @@ class ExploreDataSource {
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
         ServerRequest request = new ServerRequest();
-        request.setOperation(Constants.GET_EXPLORE_LIST_OPERATION);
+        request.setOperation(Constants.GET_EXPLORE_LIST_MAKER);
         request.setUserUniqueId(userUniqueId);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
@@ -119,15 +119,11 @@ class ExploreDataSource {
 
                         updateIsListEmptyState(false);
                         updateMakersList(resp.getListMaker());
-                        updateCultureList(resp.getListCulture());
-                        updateMediumList(resp.getListMedium());
-                        updateCenturyList(resp.getListCentury());
+
+                        loadExploreListOther ();
                     } else {
                         updateIsListEmptyState(true);
                         updateMakersList(null);
-                        updateCultureList(null);
-                        updateMediumList(null);
-                        updateCenturyList(null);
                     }
                 } else {
                     updateIsListEmptyState(true);
@@ -138,6 +134,46 @@ class ExploreDataSource {
             public void onFailure(Call<ServerResponse> call, Throwable t) {
                 updateIsLoadingState(false);
                 updateIsListEmptyState(true);
+            }
+        });
+
+    }
+
+    public void loadExploreListOther (){
+
+        String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
+        ServerRequest request = new ServerRequest();
+        request.setOperation(Constants.GET_EXPLORE_LIST_OTHER);
+        request.setUserUniqueId(userUniqueId);
+
+        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
+        response.enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                //updateIsLoadingState(false);
+                if (response.isSuccessful()) {
+                    ServerResponse resp = response.body();
+                    if(resp.getResult().equals(Constants.SUCCESS)) {
+
+                        //updateIsListEmptyState(false);
+                        updateCultureList(resp.getListCulture());
+                        updateMediumList(resp.getListMedium());
+                        updateCenturyList(resp.getListCentury());
+                    } else {
+                        //updateIsListEmptyState(true);
+                        updateCultureList(null);
+                        updateMediumList(null);
+                        updateCenturyList(null);
+                    }
+                } else {
+                    //updateIsListEmptyState(true);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) {
+                //updateIsLoadingState(false);
+                //updateIsListEmptyState(true);
             }
         });
 

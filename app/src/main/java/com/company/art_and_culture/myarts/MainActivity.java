@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -70,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements
     private int homePosition = 0;
     private int favoritesPosition = 0;
     private FavoritesFragment.Sort sort_type = FavoritesFragment.Sort.by_date;
+    private int filterExploreFilterPosition = 0;
 
     private Collection<Art> listArtsForArtShowFragment;
     private int clickPositionForArtShowFragment;
@@ -258,9 +258,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setAnimationSuggestsRecyclerView() {
-        LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(this, R.anim.favorites_fall_down);
+        LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_fall_down);
         suggestions_recycler_view.setLayoutAnimation(layoutAnimationController);
-        suggestions_recycler_view.getAdapter().notifyDataSetChanged();
+        //suggestions_recycler_view.getAdapter().notifyDataSetChanged();
         suggestions_recycler_view.scheduleLayoutAnimation();
     }
 
@@ -554,10 +554,16 @@ public class MainActivity extends AppCompatActivity implements
         this.makerForMakerFragment = maker;
         showMakerFragment();
     }
+    @Override
+    public void filterExploreOnPauseEvent(int position) {
+        this.filterExploreFilterPosition = position;
+    }
 
 
 
-
+    public int getFilterExploreFilterPosition() {
+        return filterExploreFilterPosition;
+    }
 
     public int getHomePosition() {
         return homePosition;

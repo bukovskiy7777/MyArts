@@ -43,9 +43,10 @@ class FilterExploreDataSource extends PageKeyedDataSource<Integer, ExploreObject
                 if (response.isSuccessful()) {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
-
-                        FilterExploreDataInMemory.getInstance().addData(resp.getListMaker());
-                        callback.onResult(FilterExploreDataInMemory.getInstance().getInitialData(),null, 2);
+                        if (resp.getListMaker().get(0).getText().startsWith(FilterExploreRepository.getInstance(application).getFilter())) {
+                            FilterExploreDataInMemory.getInstance().addData(resp.getListMaker());
+                            callback.onResult(FilterExploreDataInMemory.getInstance().getInitialData(),null, 2);
+                        }
                     } else {
 
                     }
@@ -77,9 +78,10 @@ class FilterExploreDataSource extends PageKeyedDataSource<Integer, ExploreObject
                 if (response.isSuccessful()) {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
-
-                        FilterExploreDataInMemory.getInstance().addData(resp.getListMaker());
-                        callback.onResult(FilterExploreDataInMemory.getInstance().getAfterData(params.key), params.key + 1);                    } else {
+                        if (resp.getListMaker().get(0).getText().startsWith(FilterExploreRepository.getInstance(application).getFilter())) {
+                            FilterExploreDataInMemory.getInstance().addData(resp.getListMaker());
+                            callback.onResult(FilterExploreDataInMemory.getInstance().getAfterData(params.key), params.key + 1);                    } else {
+                        }
                     }
                 } else {
 

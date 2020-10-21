@@ -111,11 +111,16 @@ public class ArtistsFragment extends Fragment {
                 }
             }
             if (animate) {
-                LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.favorites_fall_down);
+                LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_fall_down);
                 artistsRecyclerView.setLayoutAnimation(layoutAnimationController);
-                artistsRecyclerView.getAdapter().notifyDataSetChanged();
+                //artistsRecyclerView.getAdapter().notifyDataSetChanged();
                 artistsRecyclerView.scheduleLayoutAnimation();
             }
+        } else {
+            LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_fade_in);
+            artistsRecyclerView.setLayoutAnimation(layoutAnimationController);
+            //favoritesRecyclerView.getAdapter().notifyDataSetChanged();
+            artistsRecyclerView.scheduleLayoutAnimation();
         }
     }
 

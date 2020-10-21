@@ -4,7 +4,6 @@ import android.animation.AnimatorSet;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -200,11 +199,16 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
                 }
             }
             if (animate) {
-                LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.favorites_fall_down);
+                LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_fall_down);
                 favoritesRecyclerView.setLayoutAnimation(layoutAnimationController);
-                favoritesRecyclerView.getAdapter().notifyDataSetChanged();
+                //favoritesRecyclerView.getAdapter().notifyDataSetChanged();
                 favoritesRecyclerView.scheduleLayoutAnimation();
             }
+        } else {
+            LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_fade_in);
+            favoritesRecyclerView.setLayoutAnimation(layoutAnimationController);
+            //favoritesRecyclerView.getAdapter().notifyDataSetChanged();
+            favoritesRecyclerView.scheduleLayoutAnimation();
         }
     }
 

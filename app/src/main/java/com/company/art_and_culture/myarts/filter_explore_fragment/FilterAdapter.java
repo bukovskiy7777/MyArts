@@ -20,14 +20,15 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private Context context;
     private OnFilterClickListener onFilterClickListener;
     private int displayWidth, displayHeight;
-    private double k = 0.2;
+    private int filterSpanCount;
     private ArrayList<String> itemsList = new ArrayList<>();
 
-    public FilterAdapter(Context context, OnFilterClickListener onFilterClickListener, int displayWidth, int displayHeight) {
+    public FilterAdapter(Context context, OnFilterClickListener onFilterClickListener, int displayWidth, int displayHeight, int filterSpanCount) {
         this.context = context;
         this.onFilterClickListener = onFilterClickListener;
         this.displayWidth = displayWidth;
         this.displayHeight = displayHeight;
+        this.filterSpanCount = filterSpanCount;
     }
 
     public interface OnFilterClickListener {
@@ -46,10 +47,6 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void clearItems(){
         itemsList.clear();
         notifyDataSetChanged();
-    }
-
-    public double getK() {
-        return k;
     }
 
     @Override
@@ -92,8 +89,8 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         ArtistsViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            itemView.getLayoutParams().height = (int) (displayWidth * k);
-            itemView.getLayoutParams().width = (int) (displayWidth * k);
+            itemView.getLayoutParams().height = displayWidth / filterSpanCount;
+            itemView.getLayoutParams().width = displayWidth / filterSpanCount;
             itemView.setOnClickListener(this);
 
             filter_text = itemView.findViewById(R.id.filter_text);

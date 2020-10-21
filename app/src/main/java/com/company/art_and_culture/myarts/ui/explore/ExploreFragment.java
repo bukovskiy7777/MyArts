@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -27,7 +26,6 @@ import com.company.art_and_culture.myarts.pojo.ExploreObject;
 import com.company.art_and_culture.myarts.pojo.Maker;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class ExploreFragment extends Fragment implements View.OnClickListener, View.OnTouchListener {
 
@@ -303,7 +301,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
     private void setAnimationRecyclerView(ArrayList<ExploreObject> objects, ExploreAdapter exploreAdapter, RecyclerView recyclerView) {
 
         if (exploreAdapter.getItemCount() > 0) {
-            LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.favorites_fall_down);
+            LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_fall_down);
             recyclerView.setLayoutAnimation(layoutAnimationController);
             recyclerView.getAdapter().notifyDataSetChanged();
             recyclerView.scheduleLayoutAnimation();

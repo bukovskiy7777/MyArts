@@ -33,6 +33,8 @@ public class Constants {
     public static final String GET_ARTS_LIST_MAKER_OPERATION = "getArtsListMaker";
     public static final String GET_ARTS_LIST_CLASSIFICATION_OPERATION = "getArtsListClassification";
     public static final String GET_EXPLORE_LIST_OPERATION = "getExploreList";
+    public static final String GET_EXPLORE_LIST_MAKER = "getExploreListMaker";
+    public static final String GET_EXPLORE_LIST_OTHER = "getExploreListOther";
     public static final String DELETE_SUGGEST_QUERY_OPERATION = "deleteSuggestQuery";
     public static final String GET_ARTS_LIST_MEDIUM_OPERATION = "getArtsListMedium";
     public static final String GET_ARTS_LIST_CULTURE_OPERATION = "getArtsListCulture";

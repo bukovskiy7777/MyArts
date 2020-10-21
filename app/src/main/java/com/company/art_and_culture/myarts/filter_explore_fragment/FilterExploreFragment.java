@@ -6,7 +6,10 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.ExploreObject;
 import com.company.art_and_culture.myarts.pojo.Maker;
@@ -36,6 +39,7 @@ public class FilterExploreFragment extends Fragment {
     private FilterAdapter filterAdapter;
     private FilterExploreAdapter filterExploreAdapter;
     private int spanCount = 3;
+    private int filterSpanCount = 5;
     private android.content.res.Resources res;
     private ArrayList<String> filterList = new ArrayList<>();
     private FilterExploreEventListener filterExploreEventListener;
@@ -57,14 +61,17 @@ public class FilterExploreFragment extends Fragment {
         initFilterRecyclerView(displayWidth, displayHeight);
         initExploreRecyclerView(displayWidth, displayHeight);
 
-        circle_filter_view.getLayoutParams().height = (int) (displayWidth * filterAdapter.getK() * 0.8);
-        circle_filter_view.getLayoutParams().width = (int) (displayWidth * filterAdapter.getK() * 0.8);
+        circle_filter_view.getLayoutParams().height = (int) (displayWidth / filterSpanCount * 0.8);
+        circle_filter_view.getLayoutParams().width = (int) (displayWidth / filterSpanCount * 0.8);
 
         filterExploreViewModel = new ViewModelProvider(this).get(FilterExploreViewModel.class);
 
         filterList = getFilterList();
         filterAdapter.setItems(filterList);
-        filterExploreViewModel.setFilter(filterList.get(0));
+        MainActivity activity = (MainActivity) getActivity();
+        int filterPosition = activity.getFilterExploreFilterPosition();
+        filterExploreViewModel.setFilter(filterList.get(filterPosition));
+        recycler_view_filter.scrollToPosition(filterPosition);
 
         subscribeObservers();
 
@@ -102,12 +109,13 @@ public class FilterExploreFragment extends Fragment {
         recycler_view_explore.setAdapter(filterExploreAdapter);
 
         ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) recycler_view_explore.getLayoutParams();
-        marginLayoutParams.setMargins(0,0,0, (int) (displayWidth * filterAdapter.getK()));
+        marginLayoutParams.setMargins(0,0,0, displayWidth / filterSpanCount);
         recycler_view_explore.setLayoutParams(marginLayoutParams);
     }
 
     public interface FilterExploreEventListener {
         void filterExploreMakerClickEvent(Maker maker);
+        void filterExploreOnPauseEvent(int position);
     }
 
     @Override
@@ -142,14 +150,14 @@ public class FilterExploreFragment extends Fragment {
                 recycler_view_filter.smoothScrollToPosition(position);
             }
         };
-        filterAdapter = new FilterAdapter(getContext(), onFilterClickListener, displayWidth, displayHeight);
+        filterAdapter = new FilterAdapter(getContext(), onFilterClickListener, displayWidth, displayHeight, filterSpanCount);
         RecyclerView.LayoutManager layoutManager = new SpeedyFilterLayoutManager(getContext(), RecyclerView.HORIZONTAL, false);
         recycler_view_filter.setLayoutManager(layoutManager);
         recycler_view_filter.setAdapter(filterAdapter);
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recycler_view_filter);
 
-        int padding = (int) (displayWidth * filterAdapter.getK() * 2);
+        int padding = (displayWidth / filterSpanCount) * (filterSpanCount/2);
         recycler_view_filter.setPadding(padding,0, padding,0);
 
         recycler_view_filter.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -161,7 +169,7 @@ public class FilterExploreFragment extends Fragment {
             int currentPosition = 0;
 
             private Timer timer=new Timer();
-            private final long DELAY = 900; // milliseconds
+            private final long DELAY = 700; // milliseconds
 
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -188,6 +196,8 @@ public class FilterExploreFragment extends Fragment {
                                             if (newPosition == currentPosition && newPosition != previousPosition) {
                                                 previousPosition = currentPosition;
                                                 getMakers(newPosition);
+                                                filterExploreAdapter.setLastPosition(-1);
+
                                             }
                                         }
                                     });
@@ -204,19 +214,24 @@ public class FilterExploreFragment extends Fragment {
     }
 
     private void getMakers(int position) {
-        //Log.i("recycler_view_filter", position+" "+ filterList.get(position));
         filterExploreViewModel.setFilter(filterList.get(position));
     }
 
     private int getTargetFilterPosition() {
         if (filterList.size() > 0) {
-            return ((LinearLayoutManager) recycler_view_filter.getLayoutManager()).findFirstVisibleItemPosition();
+            return ((LinearLayoutManager) recycler_view_filter.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
         } else {
             return 0;
         }
     }
 
     public void finish() {
-        filterExploreViewModel.finish ();
+        //filterExploreViewModel.finish ();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        filterExploreEventListener.filterExploreOnPauseEvent(getTargetFilterPosition());
     }
 }
