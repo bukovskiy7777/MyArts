@@ -16,11 +16,11 @@ public class Constants {
 
     public static final int PERMISSION_REQUEST_CODE = 1;
 
-    //public static final String ART_MAKER = "artMaker";
+    public static final String ART_MAKER = "artMaker";
     public static final String ART_CLASSIFICATION = "artClassification";
     public static final String ART_MEDIUM = "artMedium";
     public static final String ART_CULTURE = "artCulture";
-    public static final String ART_CENTURY = "artCentury";
+    //public static final String ART_CENTURY = "artCentury";
 
 
     public static final String GET_ARTS_LIST_OPERATION = "getArtsList";
@@ -33,16 +33,15 @@ public class Constants {
     public static final String GET_ARTS_LIST_MAKER_OPERATION = "getArtsListMaker";
     public static final String GET_ARTS_LIST_CLASSIFICATION_OPERATION = "getArtsListClassification";
     public static final String GET_EXPLORE_LIST_OPERATION = "getExploreList";
-    public static final String GET_EXPLORE_LIST_MAKER = "getExploreListMaker";
-    public static final String GET_EXPLORE_LIST_OTHER = "getExploreListOther";
     public static final String DELETE_SUGGEST_QUERY_OPERATION = "deleteSuggestQuery";
     public static final String GET_ARTS_LIST_MEDIUM_OPERATION = "getArtsListMedium";
     public static final String GET_ARTS_LIST_CULTURE_OPERATION = "getArtsListCulture";
-    public static final String GET_ARTS_LIST_CENTURY_OPERATION = "getArtsListCentury";
+    //public static final String GET_ARTS_LIST_CENTURY_OPERATION = "getArtsListCentury";
     public static final String GET_MAKER_OBJECT = "getMakerObject";
     public static final String MAKER_LIKE_OPERATION = "makerLike";
     public static final String GET_MY_FAVORITES_ARTISTS_OPERATION = "getMyFavoritesArtists";
 
-    public static final String GET_FILTER_EXPLORE_MAKERS_OPERATION = "getFilterExploreMakers";
+    public static final String GET_FILTER_MAKERS_OPERATION = "getFilterMakers";
+
 }
 

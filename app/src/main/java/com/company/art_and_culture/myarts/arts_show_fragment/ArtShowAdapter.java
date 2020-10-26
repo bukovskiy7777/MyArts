@@ -118,19 +118,6 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
         private ConstraintLayout art_header, art_footer;
         private int artWidth, artHeight;
         int imgWidth, imgHeight;
-        private final Target target = new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                artWidth = bitmap.getWidth();
-                artHeight = bitmap.getHeight();
-
-                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(art_image);
-            }
-            @Override
-            public void onBitmapFailed(Exception e, Drawable errorDrawable) { }
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) { }
-        };
 
         ArtShowViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -180,10 +167,9 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
                 art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
             }
 
-            art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
+            artImgUrl= art.getArtImgUrl();
 
             if (art.getArtWidth() > 0) {
-                artImgUrl= art.getArtImgUrl();
 
                 artWidth = art.getArtWidth();
                 artHeight = art.getArtHeight();
@@ -194,12 +180,9 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
                     imgHeight = 1600;
                     imgWidth = (art.getArtWidth() * imgHeight) / art.getArtHeight();
                 }
-                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image);
+                Picasso.get().load(artImgUrl).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image);
             } else {
-                artImgUrl = art.getArtImgUrlSmall();
-                if (!artImgUrl.equals(" ")) {
-                    Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);
-                }
+                Picasso.get().load(artImgUrl).into(art_image);
             }
 
             artShowViewModel.getArt().observe(this, new Observer<Art>() {

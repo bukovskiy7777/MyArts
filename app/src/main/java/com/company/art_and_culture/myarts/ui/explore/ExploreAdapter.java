@@ -97,23 +97,11 @@ class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreViewHold
         private int position;
         private ImageView explore_image;
         private TextView explore_text, explore_count;
-        private String imageUrl = " ";
-        private final Target target = new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-
-                Picasso.get().load(imageUrl).placeholder(R.color.colorSilver).into(explore_image);
-            }
-            @Override
-            public void onBitmapFailed(Exception e, Drawable errorDrawable) { }
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) { }
-        };
 
         ExploreViewHolder(@NonNull View itemView) {
             super(itemView);
             itemView.getLayoutParams().width = displayWidth/spanCount;
-            itemView.getLayoutParams().height = displayWidth/spanCount;
+            itemView.getLayoutParams().height = (int) (displayWidth/spanCount * 0.7);
             explore_image = itemView.findViewById(R.id.explore_image);
             explore_text = itemView.findViewById(R.id.explore_text);
             explore_count = itemView.findViewById(R.id.explore_count);
@@ -124,25 +112,12 @@ class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreViewHold
             this.exploreObject = exploreObject;
             this.position = position;
 
-            if (!exploreObject.getImageUrlSmall().equals(" ") && exploreObject.getImageUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
-                imageUrl = exploreObject.getImageUrlSmall();
-            } else {
-                imageUrl= exploreObject.getImageUrl();
-            }
-
-            //explore_image.getLayoutParams().width = displayWidth/spanCount;
-            //explore_image.getLayoutParams().height = displayWidth/spanCount;
-            explore_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
-            if (exploreObject.getWidth() > 0) {
-                int imgWidth = displayWidth/spanCount;
-                int imgHeight = (exploreObject.getHeight() * imgWidth) / exploreObject.getWidth();
-                Picasso.get().load(imageUrl).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(explore_image);
-            } else {
-                Picasso.get().load(imageUrl).placeholder(R.color.colorSilver).into(target);
+            if (exploreObject.getImageUrl() != null && exploreObject.getImageUrl().startsWith(context.getResources().getString(R.string.http))) {
+                Picasso.get().load(exploreObject.getImageUrl()).placeholder(R.color.colorSilver).into(explore_image);
             }
 
             explore_text.setText(exploreObject.getText());
-            String text = exploreObject.getArtCount()+" "+context.getResources().getString(R.string.items);
+            String text = exploreObject.getItemsCount()+" "+context.getResources().getString(R.string.items);
             explore_count.setText(text);
         }
 

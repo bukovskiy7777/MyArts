@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -15,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.view.inputmethod.EditorInfo;
@@ -28,7 +30,7 @@ import android.widget.TextView;
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerFragment;
 import com.company.art_and_culture.myarts.art_medium_fragment.MediumFragment;
 import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
-import com.company.art_and_culture.myarts.filter_explore_fragment.FilterExploreFragment;
+import com.company.art_and_culture.myarts.filter_maker_fragment.FilterMakerFragment;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
@@ -47,6 +49,7 @@ import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -64,7 +67,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements
         HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
         MakerFragment.MakerEventListener, View.OnClickListener, ExploreFragment.ExploreEventListener, MediumFragment.MediumEventListener,
-        ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener, FilterExploreFragment.FilterExploreEventListener {
+        ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener, FilterMakerFragment.FilterMakerEventListener {
 
     private int homePosition = 0;
     private int favoritesPosition = 0;
@@ -88,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements
     private String artQueryForMediumFragment, queryTypeForMediumFragment;
     private Maker makerForMakerFragment;
     private SharedPreferences preferences;
-    private FilterExploreFragment filterExploreFragment;
+    private FilterMakerFragment filterMakerFragment;
     private MediumFragment mediumFragment;
     private BottomNavigationView navView;
 
@@ -513,21 +516,16 @@ public class MainActivity extends AppCompatActivity implements
 
 
     @Override
-    public void exploreMakerSearchClick() {
-        showFilterExploreFragment();
-    }
-    @Override
-    public void exploreMakerClickEvent(Maker maker) {
-        this.makerForMakerFragment = maker;
-        showMakerFragment();
+    public void exploreClick(String type) {
+        if(type.equals(Constants.ART_MAKER)) {
+
+            showFilterMakerFragment();
+        }
+
     }
 
-    @Override
-    public void exploreCultureClickEvent(String text, String type) {
-        this.artQueryForMediumFragment = text;
-        this.queryTypeForMediumFragment = type;
-        showMediumFragment();
-    }
+
+
 
 
     @Override
@@ -550,15 +548,14 @@ public class MainActivity extends AppCompatActivity implements
 
 
     @Override
-    public void filterExploreMakerClickEvent(Maker maker) {
+    public void filterMakerClickEvent(Maker maker) {
         this.makerForMakerFragment = maker;
         showMakerFragment();
     }
     @Override
-    public void filterExploreOnPauseEvent(int position) {
+    public void filterMakerOnPauseEvent(int position) {
         this.filterExploreFilterPosition = position;
     }
-
 
 
     public int getFilterExploreFilterPosition() {
@@ -642,14 +639,14 @@ public class MainActivity extends AppCompatActivity implements
             searchFragment.finish();
             searchFragment = null;
 
-        } else if (filterExploreFragment != null) {
+        } else if (filterMakerFragment != null) {
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
-            fragmentTransaction.remove(filterExploreFragment).commit();
-            filterExploreFragment.finish();
-            filterExploreFragment = null;
+            fragmentTransaction.remove(filterMakerFragment).commit();
+            //filterExploreFragment.finish();
+            filterMakerFragment = null;
 
         } else {
             if (isSearchLayoutOpen()) {
@@ -672,53 +669,68 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void showArtFragment() {
-
-        artShowFragment = new ArtShowFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
-        //fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.add(R.id.frame_container_common, artShowFragment, "favoritesShowFragment").commit();
+        if (artShowFragment == null) {
+            artShowFragment = new ArtShowFragment();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
+            //fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.add(R.id.frame_container_common, artShowFragment, "favoritesShowFragment").commit();
+        }
     }
 
     private void showSearchFragment() {
-
-        searchFragment = new SearchFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-        //fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.add(R.id.frame_container_search, searchFragment, "searchFragment").commit();
+        if (searchFragment == null) {
+            searchFragment = new SearchFragment();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
+            //fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.add(R.id.frame_container_search, searchFragment, "searchFragment").commit();
+        }
     }
 
     private void showMediumFragment() {
-
-        mediumFragment = new MediumFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-        //fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.add(R.id.frame_container_common, mediumFragment, "mediumFragment").commit();
+        if (mediumFragment == null) {
+            mediumFragment = new MediumFragment();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
+            //fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.add(R.id.frame_container_common, mediumFragment, "mediumFragment").commit();
+        }
     }
 
     private void showMakerFragment() {
-
-        makerFragment = new MakerFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-        //fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.add(R.id.frame_container_common, makerFragment, "makerFragment").commit();
+        if (makerFragment == null) {
+            makerFragment = new MakerFragment();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
+            //fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.add(R.id.frame_container_common, makerFragment, "makerFragment").commit();
+        }
     }
 
-    private void showFilterExploreFragment() {
-        filterExploreFragment = new FilterExploreFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
-        //fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.add(R.id.frame_container_common, filterExploreFragment, "makerSearchFragment").commit();
+    private void showFilterMakerFragment() {
+        if (filterMakerFragment == null) {
+            filterMakerFragment = new FilterMakerFragment();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
+            //fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.add(R.id.frame_container_common, filterMakerFragment, "makerSearchFragment").commit();
+        }
     }
 
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
+        if(newConfig.orientation==Configuration.ORIENTATION_LANDSCAPE){
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }else{
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+    }
 }

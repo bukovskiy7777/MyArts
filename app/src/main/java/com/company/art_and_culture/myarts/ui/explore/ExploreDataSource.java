@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
@@ -23,17 +24,14 @@ class ExploreDataSource {
 
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
-    private MutableLiveData<ArrayList<ExploreObject>> makersList = new MutableLiveData<>();
-    private MutableLiveData<ArrayList<ExploreObject>> cultureList = new MutableLiveData<>();
-    private MutableLiveData<ArrayList<ExploreObject>> mediumList = new MutableLiveData<>();
-    private MutableLiveData<ArrayList<ExploreObject>> centuryList = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<ExploreObject>> exploreList = new MutableLiveData<>();
     private Application application;
 
     public ExploreDataSource(Application application) {
         this.application = application;
         updateIsLoadingState(true);
         updateIsListEmptyState(false);
-        loadExploreListFirst();
+        loadExploreList();
     }
 
     private void updateIsLoadingState(Boolean state) {
@@ -44,20 +42,8 @@ class ExploreDataSource {
         isListEmpty.postValue(state);
     }
 
-    private void updateMakersList(ArrayList<ExploreObject> listExplore) {
-        makersList.postValue(listExplore);
-    }
-
-    private void updateCultureList(ArrayList<ExploreObject> listExplore) {
-        cultureList.postValue(listExplore);
-    }
-
-    private void updateMediumList(ArrayList<ExploreObject> listExplore) {
-        mediumList.postValue(listExplore);
-    }
-
-    private void updateCenturyList(ArrayList<ExploreObject> listExplore) {
-        centuryList.postValue(listExplore);
+    private void updateExploreList(ArrayList<ExploreObject> listExplore) {
+        exploreList.postValue(listExplore);
     }
 
     public LiveData<Boolean> getIsLoading() {
@@ -70,10 +56,10 @@ class ExploreDataSource {
 
     public void refresh() {
         updateIsListEmptyState(false);
-        loadExploreListAll();
+        loadExploreList();
     }
 
-    private void loadExploreListAll() {
+    private void loadExploreList() {
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
         ServerRequest request = new ServerRequest();
@@ -89,17 +75,12 @@ class ExploreDataSource {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
+                        Log.i("loadExploreList", resp.getResult());
                         updateIsListEmptyState(false);
-                        updateMakersList(resp.getListMaker());
-                        updateCultureList(resp.getListCulture());
-                        updateMediumList(resp.getListMedium());
-                        updateCenturyList(resp.getListCentury());
+                        updateExploreList(resp.getListExplore());
                     } else {
                         updateIsListEmptyState(true);
-                        updateMakersList(null);
-                        updateCultureList(null);
-                        updateMediumList(null);
-                        updateCenturyList(null);
+                        updateExploreList(null);
                     }
                 } else {
                     updateIsListEmptyState(true);
@@ -127,98 +108,8 @@ class ExploreDataSource {
         return isAvailable;
     }
 
-    public LiveData<ArrayList<ExploreObject>> getMakersList() {
-        return makersList;
-    }
-
-    public LiveData<ArrayList<ExploreObject>> getCultureList() {
-        return cultureList;
-    }
-
-    public LiveData<ArrayList<ExploreObject>> getMediumList() {
-        return mediumList;
-    }
-
-    public LiveData<ArrayList<ExploreObject>> getCenturyList() {
-        return centuryList;
-    }
-
-    public void loadExploreListFirst (){
-
-        String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        ServerRequest request = new ServerRequest();
-        request.setOperation(Constants.GET_EXPLORE_LIST_MAKER);
-        request.setUserUniqueId(userUniqueId);
-
-        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
-        response.enqueue(new Callback<ServerResponse>() {
-            @Override
-            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                updateIsLoadingState(false);
-                if (response.isSuccessful()) {
-                    ServerResponse resp = response.body();
-                    if(resp.getResult().equals(Constants.SUCCESS)) {
-
-                        updateIsListEmptyState(false);
-                        updateMakersList(resp.getListMaker());
-
-                        loadExploreListOther ();
-                    } else {
-                        updateIsListEmptyState(true);
-                        updateMakersList(null);
-                    }
-                } else {
-                    updateIsListEmptyState(true);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ServerResponse> call, Throwable t) {
-                updateIsLoadingState(false);
-                updateIsListEmptyState(true);
-            }
-        });
-
-    }
-
-    public void loadExploreListOther (){
-
-        String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        ServerRequest request = new ServerRequest();
-        request.setOperation(Constants.GET_EXPLORE_LIST_OTHER);
-        request.setUserUniqueId(userUniqueId);
-
-        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
-        response.enqueue(new Callback<ServerResponse>() {
-            @Override
-            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                //updateIsLoadingState(false);
-                if (response.isSuccessful()) {
-                    ServerResponse resp = response.body();
-                    if(resp.getResult().equals(Constants.SUCCESS)) {
-
-                        //updateIsListEmptyState(false);
-                        updateCultureList(resp.getListCulture());
-                        updateMediumList(resp.getListMedium());
-                        updateCenturyList(resp.getListCentury());
-                    } else {
-                        //updateIsListEmptyState(true);
-                        updateCultureList(null);
-                        updateMediumList(null);
-                        updateCenturyList(null);
-                    }
-                } else {
-                    //updateIsListEmptyState(true);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ServerResponse> call, Throwable t) {
-                //updateIsLoadingState(false);
-                //updateIsListEmptyState(true);
-            }
-        });
-
+    public LiveData<ArrayList<ExploreObject>> getExploreList() {
+        return exploreList;
     }
 
 

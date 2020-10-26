@@ -9,10 +9,7 @@ public class ServerResponse {
     private ArrayList<Art> listArts;
     private Art art;
     private ArrayList<Suggest> listSuggests;
-    private ArrayList<ExploreObject> listMaker;
-    private ArrayList<ExploreObject> listCulture;
-    private ArrayList<ExploreObject> listMedium;
-    private ArrayList<ExploreObject> listCentury;
+    private ArrayList<ExploreObject> listExplore;
     private Maker artMaker;
     private ArrayList<Maker> listMakers;
 
@@ -44,20 +41,9 @@ public class ServerResponse {
         return listMakers;
     }
 
-    public ArrayList<ExploreObject> getListMaker() {
-        return listMaker;
+    public ArrayList<ExploreObject> getListExplore() {
+        return listExplore;
     }
 
-    public ArrayList<ExploreObject> getListCulture() {
-        return listCulture;
-    }
-
-    public ArrayList<ExploreObject> getListMedium() {
-        return listMedium;
-    }
-
-    public ArrayList<ExploreObject> getListCentury() {
-        return listCentury;
-    }
 
 }

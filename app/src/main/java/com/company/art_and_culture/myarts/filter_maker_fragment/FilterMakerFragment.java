@@ -1,21 +1,14 @@
-package com.company.art_and_culture.myarts.filter_explore_fragment;
+package com.company.art_and_culture.myarts.filter_maker_fragment;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
-import com.company.art_and_culture.myarts.pojo.ExploreObject;
 import com.company.art_and_culture.myarts.pojo.Maker;
 
 import java.util.ArrayList;
@@ -35,32 +28,34 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class FilterExploreFragment extends Fragment {
+public class FilterMakerFragment extends Fragment {
 
-    private RecyclerView recycler_view_filter, recycler_view_explore;
-    private FilterExploreViewModel filterExploreViewModel;
+    private RecyclerView recycler_view_filter, recycler_view_maker;
+    private FilterMakerViewModel filterMakerViewModel;
     private CircleImageView circle_filter_view;
     private FilterAdapter filterAdapter;
-    private FilterExploreAdapter filterExploreAdapter;
+    private FilterMakerAdapter filterMakerAdapter;
     private int spanCount = 3;
     private int filterSpanCount = 5;
     private android.content.res.Resources res;
     private ArrayList<String> filterList = new ArrayList<>();
-    private FilterExploreEventListener filterExploreEventListener;
+    private FilterMakerEventListener filterMakerEventListener;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_filter_explore, container, false);
+        View root = inflater.inflate(R.layout.fragment_filter_maker, container, false);
 
         recycler_view_filter = root.findViewById(R.id.recycler_view_filter);
         circle_filter_view = root.findViewById(R.id.circle_filter_view);
-        recycler_view_explore = root.findViewById(R.id.recycler_view_explore);
+        recycler_view_maker = root.findViewById(R.id.recycler_view_maker);
 
         res = getResources();
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
+
+        filterMakerViewModel = new ViewModelProvider(this).get(FilterMakerViewModel.class);
 
         initFilterRecyclerView(displayWidth, displayHeight);
         initExploreRecyclerView(displayWidth, displayHeight);
@@ -68,13 +63,12 @@ public class FilterExploreFragment extends Fragment {
         circle_filter_view.getLayoutParams().height = (int) (displayWidth / filterSpanCount * filterAdapter.getK() * 0.8);
         circle_filter_view.getLayoutParams().width = (int) (displayWidth / filterSpanCount * filterAdapter.getK() * 0.8);
 
-        filterExploreViewModel = new ViewModelProvider(this).get(FilterExploreViewModel.class);
-
         filterList = getFilterList();
         filterAdapter.setItems(filterList);
+
         MainActivity activity = (MainActivity) getActivity();
         int filterPosition = activity.getFilterExploreFilterPosition();
-        filterExploreViewModel.setFilter(filterList.get(filterPosition));
+        filterMakerViewModel.setFilter(filterList.get(filterPosition));
         recycler_view_filter.scrollToPosition(filterPosition);
 
         subscribeObservers();
@@ -84,49 +78,50 @@ public class FilterExploreFragment extends Fragment {
 
     private void subscribeObservers() {
 
-        filterExploreViewModel.getExploreList().observe(this, new Observer<PagedList<ExploreObject>>() {
+        filterMakerViewModel.getMakerList().observe(this, new Observer<PagedList<Maker>>() {
             @Override
-            public void onChanged(PagedList<ExploreObject> exploreObjects) {
-                filterExploreAdapter.submitList(exploreObjects);
+            public void onChanged(PagedList<Maker> exploreObjects) {
+                //Log.i("filterExploreViewModel", exploreObjects.size()+"  fd");
+                filterMakerAdapter.submitList(exploreObjects);
+            }
+        });
+        filterMakerViewModel.getIsInitialLoaded().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                //Log.i("filterExploreViewModel", aBoolean+"  fd");
+                //recycler_view_explore.setAlpha(1f);
             }
         });
     }
 
     private void initExploreRecyclerView(int displayWidth, int displayHeight) {
 
-        FilterExploreAdapter.OnExploreClickListener onExploreClickListener = new FilterExploreAdapter.OnExploreClickListener() {
+        FilterMakerAdapter.OnMakerClickListener onExploreClickListener = new FilterMakerAdapter.OnMakerClickListener() {
             @Override
-            public void onExploreClick(ExploreObject exploreObject, int position) {
-                String imageUrl;
-                if (!exploreObject.getImageUrlSmall().equals(" ") && exploreObject.getImageUrlSmall().startsWith(getResources().getString(R.string.http))) {
-                    imageUrl = exploreObject.getImageUrlSmall();
-                } else {
-                    imageUrl= exploreObject.getImageUrl();
-                }
-                Maker maker = new Maker(exploreObject.getText(), exploreObject.getArtistBio(), imageUrl, exploreObject.getWidth(), exploreObject.getHeight());
-                filterExploreEventListener.filterExploreMakerClickEvent(maker);
+            public void onMakerClick(Maker maker, int position) {
+                filterMakerEventListener.filterMakerClickEvent(maker);
             }
         };
-        filterExploreAdapter = new FilterExploreAdapter(getContext(), onExploreClickListener, displayWidth, displayHeight, spanCount);
+        filterMakerAdapter = new FilterMakerAdapter(getContext(), onExploreClickListener, displayWidth, displayHeight, spanCount);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
-        recycler_view_explore.setLayoutManager(layoutManager);
-        recycler_view_explore.setAdapter(filterExploreAdapter);
+        recycler_view_maker.setLayoutManager(layoutManager);
+        recycler_view_maker.setAdapter(filterMakerAdapter);
 
-        ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) recycler_view_explore.getLayoutParams();
+        ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) recycler_view_maker.getLayoutParams();
         marginLayoutParams.setMargins(0,0,0, (int) (displayWidth / filterSpanCount * filterAdapter.getK()));
-        recycler_view_explore.setLayoutParams(marginLayoutParams);
+        recycler_view_maker.setLayoutParams(marginLayoutParams);
     }
 
-    public interface FilterExploreEventListener {
-        void filterExploreMakerClickEvent(Maker maker);
-        void filterExploreOnPauseEvent(int position);
+    public interface FilterMakerEventListener {
+        void filterMakerClickEvent(Maker maker);
+        void filterMakerOnPauseEvent(int position);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            filterExploreEventListener = (FilterExploreEventListener) context;
+            filterMakerEventListener = (FilterMakerEventListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement onSomeEventListener");
         }
@@ -200,7 +195,10 @@ public class FilterExploreFragment extends Fragment {
                                             if (newPosition == currentPosition && newPosition != previousPosition) {
                                                 previousPosition = currentPosition;
                                                 getMakers(newPosition);
-                                                filterExploreAdapter.setLastPosition(-1);
+                                                filterMakerAdapter.setLastPosition(-1);
+                                                //AnimatorSet set = new AnimatorSet();
+                                                //set.setDuration(600).playSequentially(ObjectAnimator.ofFloat(recycler_view_explore, View.ALPHA, 1f, 0.0f));
+                                                //set.start();
 
                                             }
                                         }
@@ -218,7 +216,7 @@ public class FilterExploreFragment extends Fragment {
     }
 
     private void getMakers(int position) {
-        filterExploreViewModel.setFilter(filterList.get(position));
+        filterMakerViewModel.setFilter(filterList.get(position));
     }
 
     private int getTargetFilterPosition() {
@@ -229,13 +227,9 @@ public class FilterExploreFragment extends Fragment {
         }
     }
 
-    public void finish() {
-        //filterExploreViewModel.finish ();
-    }
-
     @Override
     public void onPause() {
         super.onPause();
-        filterExploreEventListener.filterExploreOnPauseEvent(getTargetFilterPosition());
+        filterMakerEventListener.filterMakerOnPauseEvent(getTargetFilterPosition());
     }
 }

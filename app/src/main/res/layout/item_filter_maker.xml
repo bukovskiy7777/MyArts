@@ -8,47 +8,46 @@
     <com.makeramen.roundedimageview.RoundedImageView
         app:riv_corner_radius="12dp"
         android:scaleType="centerCrop"
-        android:layout_margin="16dp"
-        android:id="@+id/explore_image"
+        android:layout_margin="2dp"
+        android:id="@+id/maker_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <TextView
         android:text="Rembrandt"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
         android:layout_marginBottom="0dp"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/colorPrimary"
         android:fontFamily="@string/font_sans_serif_black"
-        android:textSize="24sp"
+        android:textSize="14sp"
         android:minLines="1"
         android:maxLines="2"
         android:ellipsize="end"
-        android:id="@+id/explore_text"
-        android:layout_width="wrap_content"
+        android:id="@+id/maker_name"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@+id/explore_image"
-        app:layout_constraintRight_toRightOf="@+id/explore_image"
-        app:layout_constraintBottom_toBottomOf="@+id/explore_image"
-        app:layout_constraintTop_toTopOf="@+id/explore_image"/>
+        app:layout_constraintLeft_toLeftOf="@+id/maker_image"
+        app:layout_constraintRight_toRightOf="@+id/maker_image"
+        app:layout_constraintBottom_toTopOf="@+id/art_count" />
 
     <TextView
         android:text="25 items"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/colorPrimary"
         android:fontFamily="@string/font_sans_serif_light"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:minLines="1"
         android:maxLines="1"
         android:ellipsize="end"
-        android:id="@+id/explore_count"
-        android:layout_width="wrap_content"
+        android:id="@+id/art_count"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
         android:layout_marginBottom="10dp"
-        app:layout_constraintLeft_toLeftOf="@+id/explore_image"
-        app:layout_constraintRight_toRightOf="@+id/explore_image"
-        app:layout_constraintTop_toBottomOf="@+id/explore_text" />
+        app:layout_constraintLeft_toLeftOf="@+id/maker_image"
+        app:layout_constraintRight_toRightOf="@+id/maker_image"
+        app:layout_constraintBottom_toBottomOf="@+id/maker_image" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

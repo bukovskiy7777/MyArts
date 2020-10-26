@@ -14,6 +14,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -106,7 +107,15 @@ public class ArtShowFragment extends Fragment {
 
         initDownloadViews(root);
 
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+
         return root;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     private void initDownloadViews(View root) {
@@ -220,7 +229,7 @@ public class ArtShowFragment extends Fragment {
         };
 
         artShowAdapter = new ArtShowAdapter(artShowViewModel,getContext(), onArtClickListener, displayWidth, displayHeight);
-        RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         artRecyclerView.setLayoutManager(linearLayoutManager);
         artRecyclerView.setAdapter(artShowAdapter);
         SnapHelper snapHelper = new PagerSnapHelper();
@@ -246,13 +255,6 @@ public class ArtShowFragment extends Fragment {
             }
         });
         popupMenu.show();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        
-        // TODO: Use the ViewModel
     }
 
     private File getFile(Art art) {

@@ -22,7 +22,18 @@ public class MediumDataInMemory {
     }
 
     public void addData(ArrayList<Art> data) {
-        listArts.addAll(data);
+        //listArts.addAll(data);
+        for (int i = 0; i < data.size(); i++) {
+            boolean add = true;
+            for (int j = 0; j < listArts.size(); j++) {
+                if (data.get(i).getArtId().equals(listArts.get(j).getArtId()) && data.get(i).getArtProvider().equals(listArts.get(j).getArtProvider())) {
+                    add = false;
+                }
+            }
+            if (add) {
+                listArts.add(data.get(i));
+            }
+        }
     }
 
     public ArrayList<Art> getInitialData() {

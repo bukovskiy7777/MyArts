@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.filter_explore_fragment;
+package com.company.art_and_culture.myarts.filter_maker_fragment;
 
 import android.content.Context;
 import android.graphics.PointF;

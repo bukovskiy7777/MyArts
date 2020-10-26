@@ -56,8 +56,6 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
             request.setOldList(MediumDataInMemory.getInstance().getAllData());
         } else if (queryType != null && queryType.equals(Constants.ART_CULTURE)) {
             request.setOperation(Constants.GET_ARTS_LIST_CULTURE_OPERATION);
-        } else if (queryType != null && queryType.equals(Constants.ART_CENTURY)) {
-            request.setOperation(Constants.GET_ARTS_LIST_CENTURY_OPERATION);
         }
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
@@ -108,8 +106,6 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
             request.setOldList(MediumDataInMemory.getInstance().getAllData());
         } else if (queryType != null && queryType.equals(Constants.ART_CULTURE)) {
             request.setOperation(Constants.GET_ARTS_LIST_CULTURE_OPERATION);
-        } else if (queryType != null && queryType.equals(Constants.ART_CENTURY)) {
-            request.setOperation(Constants.GET_ARTS_LIST_CENTURY_OPERATION);
         }
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
