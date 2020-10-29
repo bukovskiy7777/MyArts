@@ -34,5 +34,8 @@
     <string name="art_mediums">Art mediums</string>
     <string name="art_century">Art century</string>
     <string name="artworks_count">Artworks count:</string>
+    <string name="now">Now</string>
+    <string name="all">All</string>
+    <string name="zero_zero_date_filter">00</string>
 
 </resources>

@@ -8,6 +8,8 @@ public class Maker {
     private boolean isLiked;
 
     private String artHeaderImageUrl;
+    private String artHeaderId;
+    private String artHeaderProviderId;
     private int artWidth;
     private int artHeight;
 
@@ -15,22 +17,26 @@ public class Maker {
     private String makerWikiImageUrl;
     private String makerWikiPageUrl;
 
-    public Maker(String artMaker, String artistBio, String artHeaderImageUrl, int artWidth, int artHeight) {
+    public Maker(String artMaker, String artistBio, String artHeaderImageUrl, int artWidth, int artHeight, String artHeaderId, String artHeaderProviderId) {
         this.artMaker = artMaker;
         this.artistBio = artistBio;
         this.artHeaderImageUrl = artHeaderImageUrl;
         this.artWidth = artWidth;
         this.artHeight = artHeight;
+        this.artHeaderId = artHeaderId;
+        this.artHeaderProviderId = artHeaderProviderId;
     }
 
-    public Maker(String artMaker, String artistBio, String artHeaderImageUrl, int artWidth, int artHeight, String makerWikiDescription, String makerWikiImageUrl) {
+    public Maker(String artMaker, String artistBio, String artHeaderImageUrl, int artWidth, int artHeight,
+                 String makerWikiImageUrl, String artHeaderId, String artHeaderProviderId) {
         this.artMaker = artMaker;
         this.artistBio = artistBio;
         this.artHeaderImageUrl = artHeaderImageUrl;
         this.artWidth = artWidth;
         this.artHeight = artHeight;
-        this.makerWikiDescription = makerWikiDescription;
         this.makerWikiImageUrl = makerWikiImageUrl;
+        this.artHeaderId = artHeaderId;
+        this.artHeaderProviderId = artHeaderProviderId;
     }
 
     public String getArtMaker() {
@@ -113,6 +119,21 @@ public class Maker {
         this.makerWikiPageUrl = makerWikiPageUrl;
     }
 
+    public String getArtHeaderId() {
+        return artHeaderId;
+    }
+
+    public void setArtHeaderId(String artHeaderId) {
+        this.artHeaderId = artHeaderId;
+    }
+
+    public String getArtHeaderProviderId() {
+        return artHeaderProviderId;
+    }
+
+    public void setArtHeaderProviderId(String artHeaderProviderId) {
+        this.artHeaderProviderId = artHeaderProviderId;
+    }
 }
 
 

@@ -221,7 +221,7 @@ public class FilterMakerFragment extends Fragment {
     private ArrayList<String> getDateList() {
 
         ArrayList<String> filterList = new ArrayList<>();
-        filterList.add("All");
+        filterList.add(res.getString(R.string.all));
         for(int i = 0; i < 15; i++){ // i < 21
             filterList.add(String.valueOf(21-i));
         }
@@ -235,7 +235,7 @@ public class FilterMakerFragment extends Fragment {
         }
         */
         ArrayList<String> filterList = new ArrayList<>();
-        filterList.add("All");
+        filterList.add(res.getString(R.string.all));
         String filter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         for(int i = 0; i < filter.length(); i++){
             filterList.add(String.valueOf(filter.charAt(i)));

@@ -32,16 +32,16 @@ import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.shareSca
 
 public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHolder> {
 
-    private String artMaker, artistBio, artHeaderImageUrl, makerWikiDescription;
+    private Maker globalMaker;
     private Context context;
     private OnArtClickListener onArtClickListener;
-    private int displayWidth, displayHeight, artWidth, artHeight;
+    private int displayWidth, displayHeight;
     private MakerViewModel makerViewModel;
     private double k = 0.4;
 
 
     public MakerAdapter(MakerViewModel makerViewModel, Context context, OnArtClickListener onArtClickListener,
-                        int displayWidth, int displayHeight, String artMaker, String artistBio, String artHeaderImageUrl, int artWidth, int artHeight) {
+                        int displayWidth, int displayHeight, Maker maker) {
         super(itemDiffUtilCallback);
         this.context = context;
         this.makerViewModel = makerViewModel;
@@ -49,11 +49,7 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
         this.displayWidth = displayWidth;
         this.displayHeight = displayHeight;
 
-        this.artMaker = artMaker;
-        this.artistBio = artistBio;
-        this.artHeaderImageUrl = artHeaderImageUrl;
-        this.artWidth = artWidth;
-        this.artHeight = artHeight;
+        this.globalMaker = maker;
     }
 
     @Override
@@ -175,27 +171,26 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
 
             if (position == 0) {
 
-                maker_name.setText(artMaker);
-                maker_bio.setText(artistBio);
+                maker_name.setText(globalMaker.getArtMaker());
+                maker_bio.setText(globalMaker.getArtMaker());
 
-                if (artWidth > 0) {
+                if (globalMaker.getArtWidth() > 0) {
                     int imgWidth = displayWidth;
-                    int imgHeight = (artHeight * imgWidth) / artWidth;
+                    int imgHeight = (globalMaker.getArtHeight() * imgWidth) / globalMaker.getArtWidth();
                     if (imgHeight <= art_image_header.getMaxHeight()) {
                         art_image_header.getLayoutParams().height = imgHeight;
                     } else {
                         art_image_header.getLayoutParams().height = art_image_header.getMaxHeight();
                     }
-                    Picasso.get().load(artHeaderImageUrl).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image_header);
+                    Picasso.get().load(globalMaker.getArtHeaderImageUrl()).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image_header);
                 } else {
-                    Picasso.get().load(artHeaderImageUrl).placeholder(R.color.colorSilver).into(art_image_header);
+                    Picasso.get().load(globalMaker.getArtHeaderImageUrl()).placeholder(R.color.colorSilver).into(art_image_header);
                 }
 
                 makerViewModel.getMakerFirstTime().observe(this, new Observer<Maker>() {
                     @Override
                     public void onChanged(Maker maker) {
 
-                        makerWikiDescription = maker.getMakerWikiDescription();
                         if (maker.getMakerWikiDescription() != null) {
                             maker_description.setVisibility(View.VISIBLE);
                             wikipedia.setVisibility(View.VISIBLE);
@@ -338,7 +333,8 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
                 }
 
             } else if (v.getId() == maker_like.getId()) {
-                Maker maker = new Maker (artMaker, artistBio, artHeaderImageUrl, artWidth, artHeight, makerWikiDescription, makerWikiImageUrl);
+                Maker maker = new Maker (globalMaker.getArtMaker(), globalMaker.getArtistBio(), globalMaker.getArtHeaderImageUrl(),
+                        globalMaker.getArtWidth(), globalMaker.getArtHeight(), makerWikiImageUrl, globalMaker.getArtHeaderId(), globalMaker.getArtHeaderProviderId());
                 onArtClickListener.onMakerLikeClick(maker);
 
             }

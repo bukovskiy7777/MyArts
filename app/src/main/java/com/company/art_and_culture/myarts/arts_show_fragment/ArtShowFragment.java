@@ -222,7 +222,7 @@ public class ArtShowFragment extends Fragment {
                 } else {
                     artImgUrl= art.getArtImgUrl();
                 }
-                Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), artImgUrl, art.getArtWidth(), art.getArtHeight());
+                Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), artImgUrl, art.getArtWidth(), art.getArtHeight(), art.getArtId(), art.getArtProviderId());
                 //artShowEventListener.makerClickEvent(maker);
                 showPopupMenu(art, view);
             }

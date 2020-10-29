@@ -205,7 +205,7 @@ public class SearchFragment extends Fragment {
                 } else {
                     artImgUrl= art.getArtImgUrl();
                 }
-                Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), artImgUrl, art.getArtWidth(), art.getArtHeight());
+                Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), artImgUrl, art.getArtWidth(), art.getArtHeight(), art.getArtId(), art.getArtProviderId());
                 searchEventListener.searchMakerClickEvent(maker);
             }
 

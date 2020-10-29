@@ -117,9 +117,9 @@ public class DateAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             String text;
             if(tryParseInt(date)) {
                 if (Integer.parseInt(date)>20) {
-                    text = "Now";
+                    text = context.getResources().getString(R.string.now);
                 } else {
-                    text = date + "00";
+                    text = date + context.getString(R.string.zero_zero_date_filter);
                 }
             } else {
                 text = date;

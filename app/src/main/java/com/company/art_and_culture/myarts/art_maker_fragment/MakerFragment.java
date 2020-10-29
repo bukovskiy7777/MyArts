@@ -96,7 +96,7 @@ public class MakerFragment extends Fragment {
 
         makerViewModel.setArtMaker(maker);
 
-        initRecyclerView(makerViewModel, displayWidth, displayHeight, maker.getArtMaker(), maker.getArtistBio(), maker.getArtHeaderImageUrl(), maker.getArtWidth(), maker.getArtHeight());
+        initRecyclerView(makerViewModel, displayWidth, displayHeight, maker);
         initSwipeRefreshLayout();
         subscribeObservers();
         initDownloadViews(root);
@@ -186,7 +186,7 @@ public class MakerFragment extends Fragment {
         });
     }
 
-    private void initRecyclerView(final MakerViewModel makerViewModel, int displayWidth, int displayHeight, String artMaker, String artistBio, String artHeaderImageUrl, int artWidth, int artHeight){
+    private void initRecyclerView(final MakerViewModel makerViewModel, int displayWidth, int displayHeight, Maker maker){
 
         MakerAdapter.OnArtClickListener onArtClickListener = new MakerAdapter.OnArtClickListener() {
 
@@ -278,7 +278,7 @@ public class MakerFragment extends Fragment {
 
         };
 
-        makerAdapter = new MakerAdapter(makerViewModel,getContext(), onArtClickListener, displayWidth, displayHeight, artMaker, artistBio, artHeaderImageUrl, artWidth, artHeight);
+        makerAdapter = new MakerAdapter(makerViewModel,getContext(), onArtClickListener, displayWidth, displayHeight, maker);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         makerRecyclerView.setLayoutManager(layoutManager);
         makerRecyclerView.setAdapter(makerAdapter);
