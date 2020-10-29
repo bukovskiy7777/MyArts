@@ -15,25 +15,25 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class DateAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
-    private OnFilterClickListener onFilterClickListener;
+    private OnDateClickListener onDateClickListener;
     private int displayWidth, displayHeight;
     private int filterSpanCount;
-    private double k = 0.8;
+    private double k = 0.5;
     private ArrayList<String> itemsList = new ArrayList<>();
 
-    public FilterAdapter(Context context, OnFilterClickListener onFilterClickListener, int displayWidth, int displayHeight, int filterSpanCount) {
+    public DateAdapter(Context context, OnDateClickListener onDateClickListener, int displayWidth, int displayHeight, int filterSpanCount) {
         this.context = context;
-        this.onFilterClickListener = onFilterClickListener;
+        this.onDateClickListener = onDateClickListener;
         this.displayWidth = displayWidth;
         this.displayHeight = displayHeight;
         this.filterSpanCount = filterSpanCount;
     }
 
-    public interface OnFilterClickListener {
-        void onFilterClick(String item, int position);
+    public interface OnDateClickListener {
+        void onDateClick(String item, int position);
     }
 
     public void setItems(Collection<String> items){
@@ -65,19 +65,19 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         if (viewType == 0) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_filter_all, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_date_all, parent, false);
         } else {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_filter, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_date, parent, false);
         }
         return new ArtistsViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        String filter = itemsList.get(position);
-        if (filter != null) {
+        String date = itemsList.get(position);
+        if (date != null) {
             ArtistsViewHolder viewHolder = (ArtistsViewHolder) holder;
-            viewHolder.bind(filter, position);
+            viewHolder.bind(date, position);
         } else {
             // Null defines a placeholder item - PagedListAdapter will automatically invalidate
             // this row when the actual object is loaded from the database
@@ -96,9 +96,9 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     class ArtistsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private String filter;
+        private String date;
         private int position;
-        private TextView filter_text;
+        private TextView date_text;
 
         ArtistsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -107,19 +107,38 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             itemView.getLayoutParams().width = displayWidth / filterSpanCount;
             itemView.setOnClickListener(this);
 
-            filter_text = itemView.findViewById(R.id.filter_text);
+            date_text = itemView.findViewById(R.id.date_text);
         }
 
-        void bind(String filter, int position) {
-            this.filter = filter;
+        void bind(String date, int position) {
+            this.date = date;
             this.position = position;
 
-            filter_text.setText(filter);
+            String text;
+            if(tryParseInt(date)) {
+                if (Integer.parseInt(date)>20) {
+                    text = "Now";
+                } else {
+                    text = date + "00";
+                }
+            } else {
+                text = date;
+            }
+            date_text.setText(text);
+        }
+
+        boolean tryParseInt(String value) {
+            try {
+                Integer.parseInt(value);
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
         }
 
         @Override
         public void onClick(View v) {
-            onFilterClickListener.onFilterClick(filter, position);
+            onDateClickListener.onDateClick(date, position);
         }
     }
 

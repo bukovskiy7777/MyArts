@@ -12,6 +12,8 @@ public class ServerResponse {
     private ArrayList<ExploreObject> listExplore;
     private Maker artMaker;
     private ArrayList<Maker> listMakers;
+    private String filter;
+    private String century;
 
     public ArrayList<Art> getListArts() {
         return listArts;
@@ -45,5 +47,12 @@ public class ServerResponse {
         return listExplore;
     }
 
+    public String getFilter() {
+        return filter;
+    }
+
+    public String getCentury() {
+        return century;
+    }
 
 }

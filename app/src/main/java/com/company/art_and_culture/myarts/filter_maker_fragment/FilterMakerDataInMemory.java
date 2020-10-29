@@ -10,7 +10,7 @@ class FilterMakerDataInMemory {
 
     private static FilterMakerDataInMemory instance;
     private ArrayList<Maker> listMakers = new ArrayList<>();
-    private String filter;
+    private String filter, date;
 
     public static FilterMakerDataInMemory getInstance(){
         if(instance == null){
@@ -19,16 +19,20 @@ class FilterMakerDataInMemory {
         return instance;
     }
 
-    public void setFilter(String filter) {
+    public void setFilter(String filter, String date) {
         this.filter = filter;
+        this.date = date;
     }
 
     public void refresh() {
         instance = null;
     }
 
-    public void addData(ArrayList<Maker> data) {
-        if (data.get(0).getArtMaker().startsWith(filter)) listMakers.addAll(data);
+    public void addData(ArrayList<Maker> data, String filter, String century) {
+
+        if (filter.equals(this.filter) && century.equals(this.date))
+            listMakers.addAll(data);
+
     }
 
     public List<Maker> getInitialData() {

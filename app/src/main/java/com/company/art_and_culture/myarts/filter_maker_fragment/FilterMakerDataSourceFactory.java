@@ -12,27 +12,29 @@ import androidx.paging.PageKeyedDataSource;
 class FilterMakerDataSourceFactory extends DataSource.Factory<Integer, Maker> {
 
     private Application application;
-    private String filter = "";
+    private String filter = "", date = "";
     private FilterMakerDataSource filterMakerDataSource;
     private MutableLiveData<PageKeyedDataSource<Integer, Maker>> filterMakerDataSourceMutableLiveData = new MutableLiveData<>();
 
-    public FilterMakerDataSourceFactory(Application application, String filter) {
+    public FilterMakerDataSourceFactory(Application application, String filter, String date) {
         this.filter = filter;
+        this.date = date;
         this.application = application;
-        filterMakerDataSource = new FilterMakerDataSource(application, filter);
+        filterMakerDataSource = new FilterMakerDataSource(application, filter, date);
     }
 
     @NonNull
     @Override
     public DataSource<Integer, Maker> create() {
-        if (filterMakerDataSource.isInvalid()) filterMakerDataSource = new FilterMakerDataSource(application, filter);
+        if (filterMakerDataSource.isInvalid()) filterMakerDataSource = new FilterMakerDataSource(application, filter, date);
         filterMakerDataSourceMutableLiveData.postValue(filterMakerDataSource);
 
         return filterMakerDataSource;
     }
 
-    public void setFilter(String filter) {
+    public void setFilter(String filter, String date) {
         this.filter = filter;
+        this.date = date;
         filterMakerDataSource.refresh();
     }
 }

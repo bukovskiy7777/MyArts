@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements
     private int homePosition = 0;
     private int favoritesPosition = 0;
     private FavoritesFragment.Sort sort_type = FavoritesFragment.Sort.by_date;
-    private int filterExploreFilterPosition = 0;
+    private int filterMakerPosition = 0, dateMakerPosition = 0;
 
     private Collection<Art> listArtsForArtShowFragment;
     private int clickPositionForArtShowFragment;
@@ -518,8 +518,24 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void exploreClick(String type) {
         if(type.equals(Constants.ART_MAKER)) {
+            Timer timer=new Timer();
+            final long DELAY = 500; // milliseconds
+            final Handler handler = new Handler();
+            timer.cancel();
+            timer = new Timer();
+            timer.schedule(
+                    new TimerTask() {
+                        @Override
+                        public void run() {
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    showFilterMakerFragment();
+                                }
+                            });
+                        }
+                    }, DELAY);
 
-            showFilterMakerFragment();
         }
 
     }
@@ -553,13 +569,18 @@ public class MainActivity extends AppCompatActivity implements
         showMakerFragment();
     }
     @Override
-    public void filterMakerOnPauseEvent(int position) {
-        this.filterExploreFilterPosition = position;
+    public void filterMakerOnPauseEvent(int filterPosition, int datePosition) {
+        this.filterMakerPosition = filterPosition;
+        this.dateMakerPosition = datePosition;
     }
 
 
-    public int getFilterExploreFilterPosition() {
-        return filterExploreFilterPosition;
+    public int getFilterMakerPosition() {
+        return filterMakerPosition;
+    }
+
+    public int getDateMakerPosition() {
+        return dateMakerPosition;
     }
 
     public int getHomePosition() {

@@ -33,8 +33,8 @@ public class FilterMakerViewModel extends AndroidViewModel {
         return makerList;
     }
 
-    public void setFilter(String filter) {
-        filterMakerRepository = FilterMakerRepository.getInstance(application, filter).setFilter(filter);
+    public void setFilter(String filter, String date) {
+        filterMakerRepository = FilterMakerRepository.getInstance(application, filter, date).setFilter(filter, date);
         makerList = filterMakerRepository.getExploreList();
     }
 

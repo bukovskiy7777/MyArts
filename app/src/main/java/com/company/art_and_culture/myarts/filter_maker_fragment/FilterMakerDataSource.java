@@ -19,13 +19,14 @@ import retrofit2.Response;
 class FilterMakerDataSource extends PageKeyedDataSource<Integer, Maker> {
 
     private Application application;
-    private String filter = "";
+    private String filter = "", date = "";
     private MutableLiveData<Boolean> isInitialLoaded = new MutableLiveData<>();
 
-    public FilterMakerDataSource(Application application, String filter) {
+    public FilterMakerDataSource(Application application, String filter, String date) {
         this.filter = filter;
+        this.date = date;
         this.application = application;
-        FilterMakerDataInMemory.getInstance().setFilter(filter);
+        FilterMakerDataInMemory.getInstance().setFilter(filter, date);
     }
 
 
@@ -39,6 +40,7 @@ class FilterMakerDataSource extends PageKeyedDataSource<Integer, Maker> {
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.GET_FILTER_MAKERS_OPERATION);
         request.setSearchQuery(filter);
+        request.setArtQuery(date);
         request.setPageNumber(1);
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
         request.setUserUniqueId(userUniqueId);
@@ -51,11 +53,9 @@ class FilterMakerDataSource extends PageKeyedDataSource<Integer, Maker> {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
-                        if (resp.getListMakers().get(0).getArtMaker().startsWith(filter)) {
-                            FilterMakerDataInMemory.getInstance().addData(resp.getListMakers());
-                            callback.onResult(FilterMakerDataInMemory.getInstance().getInitialData(),null, 2);
-                            updateIsInitialLoaded (true);
-                        }
+                        FilterMakerDataInMemory.getInstance().addData(resp.getListMakers(), resp.getFilter(), resp.getCentury());
+                        callback.onResult(FilterMakerDataInMemory.getInstance().getInitialData(),null, 2);
+                        updateIsInitialLoaded (true);
 
                     } else {
 
@@ -88,6 +88,7 @@ class FilterMakerDataSource extends PageKeyedDataSource<Integer, Maker> {
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.GET_FILTER_MAKERS_OPERATION);
         request.setSearchQuery(filter);
+        request.setArtQuery(date);
         request.setPageNumber(params.key);
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
         request.setUserUniqueId(userUniqueId);
@@ -100,11 +101,8 @@ class FilterMakerDataSource extends PageKeyedDataSource<Integer, Maker> {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
-                        if (resp.getListMakers().get(0).getArtMaker().startsWith(filter)) {
-                            FilterMakerDataInMemory.getInstance().addData(resp.getListMakers());
-                            callback.onResult(FilterMakerDataInMemory.getInstance().getAfterData(params.key), params.key + 1);                    } else {
-                        }
-
+                        FilterMakerDataInMemory.getInstance().addData(resp.getListMakers(), resp.getFilter(), resp.getCentury());
+                        callback.onResult(FilterMakerDataInMemory.getInstance().getAfterData(params.key), params.key + 1);
                     }
                 } else {
 
