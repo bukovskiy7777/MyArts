@@ -14,6 +14,7 @@ public class ServerResponse {
     private ArrayList<Maker> listMakers;
     private String filter;
     private String century;
+    private ArrayList<Attribute> listAttribute;
 
     public ArrayList<Art> getListArts() {
         return listArts;
@@ -53,6 +54,10 @@ public class ServerResponse {
 
     public String getCentury() {
         return century;
+    }
+
+    public ArrayList<Attribute> getListAttribute() {
+        return listAttribute;
     }
 
 }

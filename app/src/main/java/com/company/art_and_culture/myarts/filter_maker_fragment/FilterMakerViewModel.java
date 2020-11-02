@@ -35,7 +35,7 @@ public class FilterMakerViewModel extends AndroidViewModel {
 
     public void setFilter(String filter, String date) {
         filterMakerRepository = FilterMakerRepository.getInstance(application, filter, date).setFilter(filter, date);
-        makerList = filterMakerRepository.getExploreList();
+        makerList = filterMakerRepository.getMakerList();
     }
 
 }

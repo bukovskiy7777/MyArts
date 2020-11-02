@@ -74,6 +74,7 @@ public class HomeFragment extends Fragment {
     private MainActivity activity;
     private Target target;
     private int bottomInitialMargin = 0, leftInitialMargin = 0;
+    private android.content.res.Resources res;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -86,7 +87,7 @@ public class HomeFragment extends Fragment {
 
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
-        android.content.res.Resources res = getResources();
+        res = getResources();
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
@@ -434,7 +435,7 @@ public class HomeFragment extends Fragment {
 
     private File getFile(Art art) {
         File pictureFolder = Environment.getExternalStorageDirectory();
-        File mainFolder = new File(pictureFolder, "My Arts Pictures");
+        File mainFolder = new File(pictureFolder, res.getString(R.string.folder_my_arts_pictures));
         if (!mainFolder.exists()) {
             mainFolder.mkdirs();
         }

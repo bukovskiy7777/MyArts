@@ -172,7 +172,7 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
             if (position == 0) {
 
                 maker_name.setText(globalMaker.getArtMaker());
-                maker_bio.setText(globalMaker.getArtMaker());
+                maker_bio.setText(globalMaker.getArtistBio());
 
                 if (globalMaker.getArtWidth() > 0) {
                     int imgWidth = displayWidth;

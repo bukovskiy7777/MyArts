@@ -357,7 +357,7 @@ public class MakerFragment extends Fragment {
 
     private File getFile(Art art) {
         File pictureFolder = Environment.getExternalStorageDirectory();
-        File mainFolder = new File(pictureFolder, "My Arts Pictures");
+        File mainFolder = new File(pictureFolder, res.getString(R.string.folder_my_arts_pictures));
         if (!mainFolder.exists()) {
             mainFolder.mkdirs();
         }

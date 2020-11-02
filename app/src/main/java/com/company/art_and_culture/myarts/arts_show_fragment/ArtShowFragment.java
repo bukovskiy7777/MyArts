@@ -72,6 +72,7 @@ public class ArtShowFragment extends Fragment {
     private ProgressBar download_progress;
     private MainActivity activity;
     private ArtShowEventListener artShowEventListener;
+    private android.content.res.Resources res;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -82,7 +83,7 @@ public class ArtShowFragment extends Fragment {
 
         artShowViewModel =new ViewModelProvider(this).get(ArtShowViewModel.class);
 
-        android.content.res.Resources res = getResources();
+        res = getResources();
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
@@ -259,7 +260,7 @@ public class ArtShowFragment extends Fragment {
 
     private File getFile(Art art) {
         File pictureFolder = Environment.getExternalStorageDirectory();
-        File mainFolder = new File(pictureFolder, "My Arts Pictures");
+        File mainFolder = new File(pictureFolder, res.getString(R.string.folder_my_arts_pictures));
         if (!mainFolder.exists()) {
             mainFolder.mkdirs();
         }

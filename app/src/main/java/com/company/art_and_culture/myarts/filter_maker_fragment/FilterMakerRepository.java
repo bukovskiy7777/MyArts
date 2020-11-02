@@ -50,7 +50,7 @@ public class FilterMakerRepository {
         return filterMakerDataSource.getIsInitialLoaded();
     }
 
-    public LiveData<PagedList<Maker>> getExploreList(){
+    public LiveData<PagedList<Maker>> getMakerList(){
         return makerList;
     }
 

@@ -21,7 +21,7 @@ import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class FilterMakerAdapter extends PagedListAdapter<Maker, FilterMakerAdapter.FilterExploreViewHolder> {
+public class FilterMakerAdapter extends PagedListAdapter<Maker, FilterMakerAdapter.FilterMakerViewHolder> {
 
     private Context context;
     private OnMakerClickListener onMakerClickListener;
@@ -44,13 +44,13 @@ public class FilterMakerAdapter extends PagedListAdapter<Maker, FilterMakerAdapt
 
     @NonNull
     @Override
-    public FilterExploreViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public FilterMakerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_filter_maker, parent, false);
-        return new FilterExploreViewHolder(view);
+        return new FilterMakerViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FilterExploreViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull FilterMakerViewHolder holder, int position) {
         Maker maker = getItem(position);
         if (maker != null) {
             holder.bind(maker, position);
@@ -75,7 +75,7 @@ public class FilterMakerAdapter extends PagedListAdapter<Maker, FilterMakerAdapt
         }
     }
 
-    class FilterExploreViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class FilterMakerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private Maker maker;
         private int position;
@@ -94,7 +94,7 @@ public class FilterMakerAdapter extends PagedListAdapter<Maker, FilterMakerAdapt
             public void onPrepareLoad(Drawable placeHolderDrawable) { }
         };
 
-        FilterExploreViewHolder(@NonNull View itemView) {
+        FilterMakerViewHolder(@NonNull View itemView) {
             super(itemView);
             itemView.getLayoutParams().width = displayWidth/spanCount;
             itemView.getLayoutParams().height = displayWidth/spanCount;

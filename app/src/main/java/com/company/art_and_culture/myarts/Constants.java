@@ -20,6 +20,7 @@ public class Constants {
     public static final String ART_CLASSIFICATION = "artClassification";
     public static final String ART_MEDIUM = "artMedium";
     public static final String ART_CULTURE = "artCulture";
+    public static final String ART_TAG = "artTag";
     //public static final String ART_CENTURY = "artCentury";
 
 
@@ -40,8 +41,11 @@ public class Constants {
     public static final String GET_MAKER_OBJECT = "getMakerObject";
     public static final String MAKER_LIKE_OPERATION = "makerLike";
     public static final String GET_MY_FAVORITES_ARTISTS_OPERATION = "getMyFavoritesArtists";
-
     public static final String GET_FILTER_MAKERS_OPERATION = "getFilterMakers";
 
+
+    public static final String GET_LIST_CULTURE_OPERATION = "getCultureList";
+    public static final String GET_LIST_MEDIUM_OPERATION = "getMediumList";
+    public static final String GET_LIST_CLASSIFICATION_OPERATION = "getClassificationList";
 }
 

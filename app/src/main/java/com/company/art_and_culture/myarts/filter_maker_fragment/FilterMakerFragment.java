@@ -103,9 +103,9 @@ public class FilterMakerFragment extends Fragment {
 
         filterMakerViewModel.getMakerList().observe(this, new Observer<PagedList<Maker>>() {
             @Override
-            public void onChanged(PagedList<Maker> exploreObjects) {
+            public void onChanged(PagedList<Maker> makers) {
                 //Log.i("filterExploreViewModel", exploreObjects.size()+"  fd");
-                filterMakerAdapter.submitList(exploreObjects);
+                filterMakerAdapter.submitList(makers);
             }
         });
         filterMakerViewModel.getIsInitialLoaded().observe(this, new Observer<Boolean>() {
@@ -119,13 +119,13 @@ public class FilterMakerFragment extends Fragment {
 
     private void initMakerRecyclerView(int displayWidth, int displayHeight) {
 
-        FilterMakerAdapter.OnMakerClickListener onExploreClickListener = new FilterMakerAdapter.OnMakerClickListener() {
+        FilterMakerAdapter.OnMakerClickListener onMakerClickListener = new FilterMakerAdapter.OnMakerClickListener() {
             @Override
             public void onMakerClick(Maker maker, int position) {
                 filterMakerEventListener.filterMakerClickEvent(maker);
             }
         };
-        filterMakerAdapter = new FilterMakerAdapter(getContext(), onExploreClickListener, displayWidth, displayHeight, spanCount);
+        filterMakerAdapter = new FilterMakerAdapter(getContext(), onMakerClickListener, displayWidth, displayHeight, spanCount);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
         recycler_view_maker.setLayoutManager(layoutManager);
         recycler_view_maker.setAdapter(filterMakerAdapter);
