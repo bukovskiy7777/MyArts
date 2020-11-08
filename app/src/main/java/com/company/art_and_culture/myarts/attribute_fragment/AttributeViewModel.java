@@ -18,6 +18,7 @@ public class AttributeViewModel extends AndroidViewModel {
     private Application application;
     private AttributeRepository attributeRepository;
     private LiveData<PagedList<Attribute>> attributeList;
+    private LiveData<Boolean> isLoading;
 
     public AttributeViewModel(@NonNull Application application) {
         super(application);
@@ -29,6 +30,10 @@ public class AttributeViewModel extends AndroidViewModel {
         return attributeList;
     }
 
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+
     public void setAttributeType(String attributeType) {
 
         attributeRepository = AttributeRepository.getInstance(application, attributeType);
@@ -36,6 +41,7 @@ public class AttributeViewModel extends AndroidViewModel {
             attributeRepository = attributeRepository.setAttributeType(attributeType);
         }
         attributeList = attributeRepository.getAttributeList();
+        isLoading = attributeRepository.getIsLoading();
 
     }
 

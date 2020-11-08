@@ -140,8 +140,13 @@ public class ArtistsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             maker_name.setText(maker.getArtMaker());
             maker_bio.setText(maker.getArtistBio());
-            String count = maker.getArtCount() +" "+ context.getResources().getString(R.string.artworks);
-            maker_art_count.setText(count);
+            if (maker.getArtCount() > 0) {
+                maker_art_count.setVisibility(View.VISIBLE);
+                String count = maker.getArtCount() +" "+ context.getResources().getString(R.string.artworks);
+                maker_art_count.setText(count);
+            } else {
+                maker_art_count.setVisibility(View.INVISIBLE);
+            }
         }
 
         @Override

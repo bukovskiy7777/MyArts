@@ -120,8 +120,14 @@ public class AttributeAdapter extends PagedListAdapter<Attribute, AttributeAdapt
             }
 
             attribute_text.setText(attribute.getText());
-            String text = attribute.getItemsCount()+" "+context.getResources().getString(R.string.items);
-            art_count.setText(text);
+            if (attribute.getItemsCount() > 0) {
+                art_count.setVisibility(View.VISIBLE);
+                String text = attribute.getItemsCount()+" "+context.getResources().getString(R.string.items);
+                art_count.setText(text);
+            } else {
+                art_count.setVisibility(View.INVISIBLE);
+            }
+
 
         }
 

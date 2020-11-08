@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.company.art_and_culture.myarts.Constants;
@@ -46,6 +47,7 @@ public class AttributeFragment extends Fragment {
     private AttributeViewModel attributeViewModel;
     private FrameLayout title_layout;
     private TextView title_tv;
+    private ProgressBar download_progress;
     private AttributeAdapter attributeAdapter;
     private int spanCount = 3;
     private android.content.res.Resources res;
@@ -61,14 +63,13 @@ public class AttributeFragment extends Fragment {
         title_layout = root.findViewById(R.id.title_layout);
         title_tv = root.findViewById(R.id.title);
         recycler_view_attribute = root.findViewById(R.id.recycler_view_attribute);
+        download_progress = root.findViewById(R.id.download_progress);
 
         res = getResources();
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
         attributeViewModel = new ViewModelProvider(this).get(AttributeViewModel.class);
-
-        initAttributeRecyclerView(displayWidth, displayHeight);
 
         MainActivity activity = (MainActivity) getActivity();
         attributeType = activity.getTypeForAttributeFragment();
@@ -80,7 +81,17 @@ public class AttributeFragment extends Fragment {
             title_tv.setText(res.getString(R.string.art_mediums));
         } else if (attributeType.equals(Constants.ART_CLASSIFICATION)) {
             title_tv.setText(res.getString(R.string.art_classifications));
+        } else if (attributeType.equals(Constants.ART_TAG)) {
+            title_tv.setText(res.getString(R.string.art_tags));
         }
+
+        if(attributeType.equals(Constants.ART_CLASSIFICATION)) {
+            spanCount = 1;
+        } else {
+            spanCount = 3;
+        }
+
+        initAttributeRecyclerView(displayWidth, displayHeight, spanCount, attributeType);
 
         subscribeObservers();
 
@@ -95,9 +106,15 @@ public class AttributeFragment extends Fragment {
                 attributeAdapter.submitList(attributes);
             }
         });
+        attributeViewModel.getIsLoading().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) { download_progress.setVisibility(View.VISIBLE); } else { download_progress.setVisibility(View.GONE); }
+            }
+        });
     }
 
-    private void initAttributeRecyclerView(int displayWidth, int displayHeight) {
+    private void initAttributeRecyclerView(int displayWidth, int displayHeight, int spanCount, String attributeType) {
 
         AttributeAdapter.OnAttributeClickListener onAttributeClickListener = new AttributeAdapter.OnAttributeClickListener() {
             @Override
@@ -109,6 +126,16 @@ public class AttributeFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
         recycler_view_attribute.setLayoutManager(layoutManager);
         recycler_view_attribute.setAdapter(attributeAdapter);
+
+        int paddingBottom = 0;
+        if(attributeType.equals(Constants.ART_CLASSIFICATION)) {
+            paddingBottom = 0;
+        } else {
+            paddingBottom = (int) (displayWidth / spanCount);
+        }
+
+        int paddingTop = recycler_view_attribute.getPaddingTop();
+        recycler_view_attribute.setPadding(0,paddingTop, 0,paddingBottom);
 
     }
 

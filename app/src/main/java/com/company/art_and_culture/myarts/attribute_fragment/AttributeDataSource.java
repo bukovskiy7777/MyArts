@@ -21,11 +21,20 @@ class AttributeDataSource extends PageKeyedDataSource<Integer, Attribute> {
 
     private Application application;
     private String attributeType = "";
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
     public AttributeDataSource(Application application, String attributeType) {
         this.attributeType = attributeType;
         this.application = application;
         //AttributeDataInMemory.getInstance();
+    }
+
+    private void updateIsLoadingState(Boolean state) {
+        isLoading.postValue(state);
+    }
+
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
     }
 
 
@@ -36,6 +45,8 @@ class AttributeDataSource extends PageKeyedDataSource<Integer, Attribute> {
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull final LoadInitialCallback<Integer, Attribute> callback) {
 
+        updateIsLoadingState (true);
+
         ServerRequest request = new ServerRequest();
         request.setPageNumber(1);
 
@@ -45,6 +56,8 @@ class AttributeDataSource extends PageKeyedDataSource<Integer, Attribute> {
             request.setOperation(Constants.GET_LIST_CLASSIFICATION_OPERATION);
         } else if (attributeType != null && attributeType.equals(Constants.ART_CULTURE)) {
             request.setOperation(Constants.GET_LIST_CULTURE_OPERATION);
+        } else if (attributeType != null && attributeType.equals(Constants.ART_TAG)) {
+            request.setOperation(Constants.GET_LIST_TAG_OPERATION);
         }
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
@@ -55,20 +68,21 @@ class AttributeDataSource extends PageKeyedDataSource<Integer, Attribute> {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
+                        updateIsLoadingState (false);
                         AttributeDataInMemory.getInstance().addData(resp.getListAttribute());
                         callback.onResult(AttributeDataInMemory.getInstance().getInitialData(),null, 2);
 
                     } else {
-
+                        updateIsLoadingState (false);
                     }
                 } else {
-
+                    updateIsLoadingState (false);
                 }
             }
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
-
+                updateIsLoadingState (false);
             }
         });
     }
@@ -76,6 +90,8 @@ class AttributeDataSource extends PageKeyedDataSource<Integer, Attribute> {
 
     @Override
     public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Attribute> callback) {
+
+        updateIsLoadingState (true);
 
         ServerRequest request = new ServerRequest();
         request.setPageNumber(params.key);
@@ -86,6 +102,8 @@ class AttributeDataSource extends PageKeyedDataSource<Integer, Attribute> {
             request.setOperation(Constants.GET_LIST_CLASSIFICATION_OPERATION);
         } else if (attributeType != null && attributeType.equals(Constants.ART_CULTURE)) {
             request.setOperation(Constants.GET_LIST_CULTURE_OPERATION);
+        } else if (attributeType != null && attributeType.equals(Constants.ART_TAG)) {
+            request.setOperation(Constants.GET_LIST_TAG_OPERATION);
         }
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
@@ -96,17 +114,20 @@ class AttributeDataSource extends PageKeyedDataSource<Integer, Attribute> {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
+                        updateIsLoadingState (false);
                         AttributeDataInMemory.getInstance().addData(resp.getListAttribute());
                         callback.onResult(AttributeDataInMemory.getInstance().getAfterData(params.key), params.key + 1);
+                    } else {
+                        updateIsLoadingState (false);
                     }
                 } else {
-
+                    updateIsLoadingState (false);
                 }
             }
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
-
+                updateIsLoadingState (false);
             }
         });
     }
@@ -115,4 +136,5 @@ class AttributeDataSource extends PageKeyedDataSource<Integer, Attribute> {
         AttributeDataInMemory.getInstance().refresh();
         invalidate();
     }
+
 }

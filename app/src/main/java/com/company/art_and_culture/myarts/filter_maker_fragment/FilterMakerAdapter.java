@@ -125,8 +125,13 @@ public class FilterMakerAdapter extends PagedListAdapter<Maker, FilterMakerAdapt
             }
 
             maker_name.setText(maker.getArtMaker());
-            String text = maker.getArtCount()+" "+context.getResources().getString(R.string.items);
-            art_count.setText(text);
+            if (maker.getArtCount() > 0) {
+                art_count.setVisibility(View.VISIBLE);
+                String text = maker.getArtCount()+" "+context.getResources().getString(R.string.items);
+                art_count.setText(text);
+            } else {
+                art_count.setVisibility(View.INVISIBLE);
+            }
 
         }
 

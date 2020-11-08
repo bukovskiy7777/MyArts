@@ -35,8 +35,8 @@ public class FilterMakerRepository {
 
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
-                .setPageSize(Constants.PAGE_SIZE_SMALL)
-                .setInitialLoadSizeHint(Constants.PAGE_SIZE_SMALL)
+                .setPageSize(Constants.PAGE_SIZE)
+                .setInitialLoadSizeHint(Constants.PAGE_SIZE)
                 .build();
 
         filterMakerDataSourceFactory = new FilterMakerDataSourceFactory(application, filter, date);

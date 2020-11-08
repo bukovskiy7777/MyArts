@@ -539,6 +539,12 @@ public class MainActivity extends AppCompatActivity implements
                                 } else if (type.equals(Constants.ART_MEDIUM)) {
                                     typeForAttributeFragment = type;
                                     showAttributeFragment();
+                                } else if (type.equals(Constants.ART_CLASSIFICATION)) {
+                                    typeForAttributeFragment = type;
+                                    showAttributeFragment();
+                                }  else if (type.equals(Constants.ART_TAG)) {
+                                    typeForAttributeFragment = type;
+                                    showAttributeFragment();
                                 }
                             }
                         });

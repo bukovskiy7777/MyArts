@@ -131,6 +131,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
 
                 if (arts == null) {
                     favoritesAdapter.clearItems();
+                    listArts.clear();
                 } else {
 
                     ArrayList<Art> newList = new ArrayList<>(arts);
@@ -186,7 +187,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
     private void setAnimationRecyclerView(ArrayList<Art> arts) {
 
         boolean animate = false;
-        if (listArts.size() > 0) {
+        if (favoritesAdapter.getItemCount() > 0) {
 
             if (arts.size() != favoritesAdapter.getItemCount()) {
                 animate = true;
@@ -332,7 +333,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
 
     public int getTargetScrollPosition () {
 
-        if (listArts.size() > 0) {
+        if (favoritesRecyclerView.getAdapter().getItemCount() > 0) {
 
             final int firstPosition = ((LinearLayoutManager) favoritesRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
             final int lastPosition = ((LinearLayoutManager) favoritesRecyclerView.getLayoutManager()).findLastVisibleItemPosition();

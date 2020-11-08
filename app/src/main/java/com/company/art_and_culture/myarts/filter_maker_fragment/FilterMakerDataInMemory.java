@@ -40,8 +40,8 @@ class FilterMakerDataInMemory {
         ArrayList<Maker> outputData = new ArrayList<>();
 
         int lastPosition;
-        if (listMakers.size() >= Constants.PAGE_SIZE_SMALL) {
-            lastPosition = Constants.PAGE_SIZE_SMALL;
+        if (listMakers.size() >= Constants.PAGE_SIZE) {
+            lastPosition = Constants.PAGE_SIZE;
         } else if (listMakers.size() > 0){
             lastPosition = listMakers.size();
         } else {
@@ -56,14 +56,14 @@ class FilterMakerDataInMemory {
 
     public List<Maker> getAfterData(Integer key) {
 
-        int startPosition = (key - 1) * Constants.PAGE_SIZE_SMALL;
+        int startPosition = (key - 1) * Constants.PAGE_SIZE;
         int lastPosition;
-        if (listMakers.size() >= key * Constants.PAGE_SIZE_SMALL) {
-            lastPosition = key * Constants.PAGE_SIZE_SMALL;
-        } else if (listMakers.size() > (key - 1) * Constants.PAGE_SIZE_SMALL){
+        if (listMakers.size() >= key * Constants.PAGE_SIZE) {
+            lastPosition = key * Constants.PAGE_SIZE;
+        } else if (listMakers.size() > (key - 1) * Constants.PAGE_SIZE){
             lastPosition = listMakers.size();
         } else {
-            lastPosition = (key - 1) * Constants.PAGE_SIZE_SMALL;
+            lastPosition = (key - 1) * Constants.PAGE_SIZE;
         }
 
         ArrayList<Maker> outputData = new ArrayList<>();

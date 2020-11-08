@@ -13,6 +13,7 @@ public class AttributeRepository {
 
     private static AttributeRepository instance;
     private LiveData<PagedList<Attribute>> attributeList;
+    private LiveData<Boolean> isLoading;
     private AttributeDataSourceFactory attributeDataSourceFactory;
     private String attributeType = "";
     private Application application;
@@ -33,15 +34,15 @@ public class AttributeRepository {
 
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
-                .setPageSize(Constants.PAGE_SIZE_SMALL)
-                .setInitialLoadSizeHint(Constants.PAGE_SIZE_SMALL)
+                .setPageSize(Constants.PAGE_SIZE)
+                .setInitialLoadSizeHint(Constants.PAGE_SIZE)
                 .build();
 
         attributeDataSourceFactory = new AttributeDataSourceFactory(application, attributeType);
         attributeList = new LivePagedListBuilder<>(attributeDataSourceFactory, config).build();
 
         attributeDataSource = (AttributeDataSource) attributeDataSourceFactory.create();//if remove this line artLike will not working after refresh
-
+        isLoading = attributeDataSource.getIsLoading();
     }
 
 
@@ -59,5 +60,9 @@ public class AttributeRepository {
 
     public String getAttributeType() {
         return attributeType;
+    }
+
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
     }
 }

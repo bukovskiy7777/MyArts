@@ -35,5 +35,6 @@
     <string name="artist_culture">Artist culture</string>
     <string name="art_mediums">Art mediums</string>
     <string name="art_classifications">Art classifications</string>
+    <string name="art_tags">Art tags</string>
 
 </resources>
