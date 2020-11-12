@@ -94,6 +94,7 @@ public class SearchFragment extends Fragment {
 
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
         if (activity != null) searchQuery = activity.getSearchQuery();
+        if (activity != null) searchEventListener = activity.getNavFragments();
 
         searchViewModel.setSearchQuery(searchQuery);
 
@@ -128,7 +129,7 @@ public class SearchFragment extends Fragment {
             @Override
             public boolean onKey( View v, int keyCode, KeyEvent event ) {
 
-                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getArtShowFragment() == null ) {
+                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getNavFragments().getArtShowFragment() == null ) {
                     int scrollPosition = 0;
                     if (searchAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
                     if (scrollPosition > 4) {
@@ -428,16 +429,6 @@ public class SearchFragment extends Fragment {
         void searchArtClickEvent(Collection<Art> arts, int position);
         void searchMakerClickEvent(Maker maker);
         void searchClassificationClickEvent(String artClassification, String queryType);
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            searchEventListener = (SearchEventListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement onSomeEventListener");
-        }
     }
 
     private int getTargetScrollPosition () {

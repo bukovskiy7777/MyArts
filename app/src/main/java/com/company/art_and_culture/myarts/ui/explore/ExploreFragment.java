@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.ExploreObject;
 import com.company.art_and_culture.myarts.pojo.Maker;
@@ -58,6 +59,9 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
         initRecyclerView(displayWidth, displayHeight);
+
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null) exploreEventListener = activity.getNavFragments();
 
         initSwipeRefreshLayout();
         subscribeObservers();
@@ -171,17 +175,5 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
     public interface ExploreEventListener {
         void exploreClick(String type);
     }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            exploreEventListener = (ExploreEventListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement onSomeEventListener");
-        }
-    }
-
-
 
 }

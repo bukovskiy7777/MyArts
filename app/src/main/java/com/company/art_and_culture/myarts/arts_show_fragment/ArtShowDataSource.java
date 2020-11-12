@@ -11,6 +11,7 @@ import com.company.art_and_culture.myarts.art_maker_fragment.MakerRepository;
 import com.company.art_and_culture.myarts.art_medium_fragment.MediumDataInMemory;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.Maker;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
 import com.company.art_and_culture.myarts.art_search_fragment.SearchDataInMemory;
@@ -44,7 +45,7 @@ class ArtShowDataSource {
         this.application = application;
     }
 
-    public void likeArt(Art art, final int position, String userUniqueId) {
+    public void likeArt(final Art art, final int position, String userUniqueId) {
 
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.ART_LIKE_OPERATION);
@@ -67,7 +68,9 @@ class ArtShowDataSource {
                         HomeRepository.getInstance(application).getHomeDataSource().updateArt(resp.getArt());
                         HomeDataInMemory.getInstance().updateSingleItem(resp.getArt());
 
-                        MakerRepository.getInstance(application).getMakerDataSource().updateArt(resp.getArt());
+                        Maker artMaker = new Maker(art.getArtMaker(), art.getArtistBio(), art.getArtImgUrl(),
+                                art.getArtWidth(), art.getArtHeight(),art.getArtId(), art.getArtProviderId());
+                        MakerRepository.getInstance(application, artMaker).getMakerDataSource().updateArt(resp.getArt());
                         MakerDataInMemory.getInstance().updateSingleItem(resp.getArt());
 
                         //MediumRepository.getInstance(application).getMediumDataSource().updateArt(resp.getArt());

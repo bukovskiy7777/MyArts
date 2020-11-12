@@ -94,9 +94,10 @@ public class HomeFragment extends Fragment {
         initRecyclerView(homeViewModel, displayWidth, displayHeight);
 
         activity = (MainActivity) getActivity();
-        if (activity != null) scrollPosition = activity.getHomePosition();
+        if (activity != null) scrollPosition = activity.getNavFragments().getHomePosition();
         if (scrollPosition >= 0) homeRecyclerView.scrollToPosition(scrollPosition);
 
+        if (activity != null) homeEventListener = activity.getNavFragments();
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
         getUserUniqueId();
 
@@ -131,7 +132,7 @@ public class HomeFragment extends Fragment {
             @Override
             public boolean onKey( View v, int keyCode, KeyEvent event ) {
 
-                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getArtShowFragment() == null && !activity.isSearchLayoutOpen()) {
+                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getNavFragments().getArtShowFragment() == null && !activity.isSearchLayoutOpen()) {
                     if (homeAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
                     if (scrollPosition > 4) {
                         homeRecyclerView.smoothScrollToPosition(0);
@@ -463,16 +464,6 @@ public class HomeFragment extends Fragment {
         void homeArtClickEvent(Collection<Art> arts, int position);
         void homeMakerClickEvent(Maker maker);
         void homeClassificationClickEvent(String artClassification, String queryType);
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            homeEventListener = (HomeEventListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement onSomeEventListener");
-        }
     }
 
     @Override

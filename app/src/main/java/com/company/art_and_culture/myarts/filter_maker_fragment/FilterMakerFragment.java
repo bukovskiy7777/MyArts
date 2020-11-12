@@ -88,11 +88,13 @@ public class FilterMakerFragment extends Fragment {
         dateAdapter.setItems(dateList);
 
         MainActivity activity = (MainActivity) getActivity();
-        filterPosition = activity.getFilterMakerPosition();
-        datePosition = activity.getDateMakerPosition();
+        filterPosition = activity.getNavFragments().getFilterMakerPosition();
+        datePosition = activity.getNavFragments().getDateMakerPosition();
         filterMakerViewModel.setFilter(filterList.get(filterPosition), dateList.get(datePosition));
         recycler_view_filter.scrollToPosition(filterPosition);
         recycler_view_date.scrollToPosition(datePosition);
+
+        filterMakerEventListener = activity.getNavFragments();
 
         subscribeObservers();
 
@@ -206,16 +208,6 @@ public class FilterMakerFragment extends Fragment {
     public interface FilterMakerEventListener {
         void filterMakerClickEvent(Maker maker);
         void filterMakerOnPauseEvent(int filterPosition, int datePosition);
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            filterMakerEventListener = (FilterMakerEventListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement onSomeEventListener");
-        }
     }
 
     private ArrayList<String> getDateList() {

@@ -83,13 +83,15 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
         activity = (MainActivity) getActivity();
 
         Sort sort_type = Sort.by_date;
-        if (activity != null) sort_type = activity.getSort_type();
+        if (activity != null) sort_type = activity.getNavFragments().getSort_type();
         if (!sort_type.equals(Sort.by_date)) spanCount = 1;
         initRecyclerView(displayWidth, displayHeight, sort_type, spanCount);
 
         int scrollPosition = 0;
-        if (activity != null) scrollPosition = activity.getFavoritesPosition();
+        if (activity != null) scrollPosition = activity.getNavFragments().getFavoritesPosition();
         if (scrollPosition >= 0) favoritesRecyclerView.scrollToPosition(scrollPosition);
+
+        if (activity != null) favoritesEventListener = activity.getNavFragments();
 
         initSwipeRefreshLayout();
         subscribeObservers();
@@ -319,16 +321,6 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
     public interface FavoritesEventListener {
         void favoritesScrollEvent(int position, Sort sort_type);
         void favoritesClickEvent(Collection<Art> art, int position);
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            favoritesEventListener = (FavoritesEventListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement onSomeEventListener");
-        }
     }
 
     public int getTargetScrollPosition () {

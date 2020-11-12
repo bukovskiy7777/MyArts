@@ -3,8 +3,6 @@ package com.company.art_and_culture.myarts.art_maker_fragment;
 import android.app.Application;
 
 import com.company.art_and_culture.myarts.Constants;
-import com.company.art_and_culture.myarts.art_search_fragment.SearchDataSource;
-import com.company.art_and_culture.myarts.art_search_fragment.SearchDataSourceFactory;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
 
@@ -20,23 +18,27 @@ public class MakerRepository {
     private MakerDataSourceFactory makerDataSourceFactory;
     private LiveData<Art> art;
     private Maker artMaker;
+    private Application application;
 
 
-    public static MakerRepository getInstance(Application application){
+    public static MakerRepository getInstance(Application application, Maker artMaker){
         if(instance == null){
-            instance = new MakerRepository(application);
+            instance = new MakerRepository(application, artMaker);
         }
         return instance;
     }
 
-    public MakerRepository(Application application) {
+    public MakerRepository(Application application, Maker artMaker) {
+
+        this.application = application;
+        this.artMaker = artMaker;
 
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setPageSize(Constants.PAGE_SIZE)
                 .setInitialLoadSizeHint(Constants.PAGE_SIZE)
                 .build();
-        makerDataSourceFactory = new MakerDataSourceFactory(application);
+        makerDataSourceFactory = new MakerDataSourceFactory(application, artMaker);
         artList = new LivePagedListBuilder<>(makerDataSourceFactory, config).build();
 
         makerDataSource = (MakerDataSource) makerDataSourceFactory.create();//if remove this line artLike will not working after refresh
@@ -89,14 +91,11 @@ public class MakerRepository {
         makerDataSource.writeDimentionsOnServer(art);
     }
 
-    public MakerRepository finish(Application application) {
-        MakerDataInMemory.getInstance().refresh();
-        instance = new MakerRepository(application);
-        return instance;
-    }
+    public MakerRepository setArtMaker(Maker artMaker) {
+        makerDataSourceFactory.setArtMaker(artMaker);
+        instance = new MakerRepository(application, artMaker);
 
-    public void setArtMaker(Maker artMaker) {
-        this.artMaker = artMaker;
+        return instance;
     }
 
     public Maker getArtMaker() {

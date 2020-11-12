@@ -56,6 +56,7 @@ public class ArtistsFragment extends Fragment {
         displayHeight = res.getDisplayMetrics().heightPixels;
 
         activity = (MainActivity) getActivity();
+        if (activity != null) artistsEventListener = activity.getNavFragments();
 
         initRecyclerView(displayWidth, displayHeight);
         initSwipeRefreshLayout();
@@ -164,16 +165,6 @@ public class ArtistsFragment extends Fragment {
 
     public interface ArtistsEventListener {
         void artistsClickEvent(Maker maker);
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            artistsEventListener = (ArtistsEventListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement onSomeEventListener");
-        }
     }
 
     private void showProgressBar(){

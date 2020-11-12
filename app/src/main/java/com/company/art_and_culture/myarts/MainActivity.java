@@ -27,28 +27,12 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.company.art_and_culture.myarts.art_maker_fragment.MakerFragment;
-import com.company.art_and_culture.myarts.art_medium_fragment.MediumFragment;
-import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
-import com.company.art_and_culture.myarts.attribute_fragment.AttributeFragment;
-import com.company.art_and_culture.myarts.filter_maker_fragment.FilterMakerFragment;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
-import com.company.art_and_culture.myarts.pojo.Art;
-import com.company.art_and_culture.myarts.pojo.Attribute;
-import com.company.art_and_culture.myarts.pojo.ExploreObject;
-import com.company.art_and_culture.myarts.pojo.Maker;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
 import com.company.art_and_culture.myarts.pojo.Suggest;
-import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
-import com.company.art_and_culture.myarts.ui.explore.ExploreFragment;
-import com.company.art_and_culture.myarts.ui.favorites.Artists.ArtistsFragment;
-import com.company.art_and_culture.myarts.ui.favorites.Favorites.FavoritesFragment;
-import com.company.art_and_culture.myarts.ui.home.HomeFragment;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -56,8 +40,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -67,38 +49,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements
-        HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
-        MakerFragment.MakerEventListener, View.OnClickListener, ExploreFragment.ExploreEventListener, MediumFragment.MediumEventListener,
-        ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener, FilterMakerFragment.FilterMakerEventListener,
-        AttributeFragment.AttributeEventListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private int homePosition = 0;
-    private int favoritesPosition = 0;
-    private FavoritesFragment.Sort sort_type = FavoritesFragment.Sort.by_date;
-    private int filterMakerPosition = 0, dateMakerPosition = 0;
-
-    private Collection<Art> listArtsForArtShowFragment;
-    private int clickPositionForArtShowFragment;
-
-    private AppBarLayout app_bar_main;
     private Toolbar toolbar;
-    private ArtShowFragment artShowFragment;
     private ImageView search_btn, search_back, search_clear;
     private ConstraintLayout search_layout;
     private EditText search_edit_text;
     private RecyclerView suggestions_recycler_view;
     private SuggestAdapter suggestAdapter;
     private ProgressBar suggestions_progress;
-    private SearchFragment searchFragment;
-    private MakerFragment makerFragment;
-    private String artQueryForMediumFragment, queryTypeForMediumFragment, typeForAttributeFragment;
-    private Maker makerForMakerFragment;
     private SharedPreferences preferences;
-    private FilterMakerFragment filterMakerFragment;
-    private AttributeFragment attributeFragment;
-    private MediumFragment mediumFragment;
     private BottomNavigationView navView;
+    private NavFragments navFragments;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -113,8 +75,9 @@ public class MainActivity extends AppCompatActivity implements
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
+        navFragments = new NavFragments(this);
+
         toolbar = findViewById(R.id.toolbar_main);
-        app_bar_main = findViewById(R.id.app_bar_main);
         search_btn = findViewById(R.id.search_btn);
         search_layout = findViewById(R.id.search_layout);
         search_back = findViewById(R.id.search_back);
@@ -173,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    showSearchFragment();
+                    navFragments.showSearchFragment();
                     hideSoftKeyboard(MainActivity.this);
                     return true;
                 }
@@ -184,14 +147,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    if (searchFragment != null) {
-                        FragmentManager fragmentManager = getSupportFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-                        fragmentTransaction.remove(searchFragment).commit();
-                        searchFragment.finish();
-                        searchFragment = null;
-                    }
+                    navFragments.finishSearchFragment();
                 }
                 return false;
             }
@@ -278,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onSuggestClick(Suggest suggest, int position) {
                 search_edit_text.setText(suggest.getSuggestStr());
-                showSearchFragment();
+                navFragments.showSearchFragment();
                 hideSoftKeyboard(MainActivity.this);
             }
 
@@ -367,25 +323,11 @@ public class MainActivity extends AppCompatActivity implements
             set.addListener(fadeOutListener(search_layout, suggestions_recycler_view));
             set.start();
 
-            if (searchFragment != null) {
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-                fragmentTransaction.remove(searchFragment).commit();
-                searchFragment.finish();
-                searchFragment = null;
-            }
+            navFragments.finishSearchFragment();
 
         } else if (v.getId() == search_clear.getId()) {
             search_edit_text.setText("");
-            if (searchFragment != null) {
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-                fragmentTransaction.remove(searchFragment).commit();
-                searchFragment.finish();
-                searchFragment = null;
-            }
+            navFragments.finishSearchFragment();
         }
     }
 
@@ -437,272 +379,18 @@ public class MainActivity extends AppCompatActivity implements
         return y < displayHeight;
     }
 
-
-
-
-    @Override
-    public void homeScrollEvent(int position) {
-        this.homePosition = position;
-    }
-    @Override
-    public void homeArtClickEvent(Collection<Art> arts, int position) {
-        this.listArtsForArtShowFragment = arts;
-        this.clickPositionForArtShowFragment = position;
-        showArtFragment();
-    }
-    @Override
-    public void homeMakerClickEvent(Maker maker) {
-        this.makerForMakerFragment = maker;
-        showMakerFragment();
-    }
-    @Override
-    public void homeClassificationClickEvent(String artClassification, String queryType) {
-        this.artQueryForMediumFragment = artClassification;
-        this.queryTypeForMediumFragment = queryType;
-        showMediumFragment();
-    }
-
-
-
-    @Override
-    public void favoritesScrollEvent(int position, FavoritesFragment.Sort sort_type) {
-        this.favoritesPosition = position;
-        this.sort_type = sort_type;
-    }
-    @Override
-    public void favoritesClickEvent(Collection<Art> listArts, int position) {
-        this.listArtsForArtShowFragment = listArts;
-        this.clickPositionForArtShowFragment = position;
-        showArtFragment();
-    }
-
-
-
-    @Override
-    public void searchArtClickEvent(Collection<Art> arts, int position) {
-        this.listArtsForArtShowFragment = arts;
-        this.clickPositionForArtShowFragment = position;
-        showArtFragment();
-    }
-    @Override
-    public void searchMakerClickEvent(Maker maker) {
-        this.makerForMakerFragment = maker;
-        showMakerFragment();
-    }
-    @Override
-    public void searchClassificationClickEvent(String artClassification, String queryType) {
-        this.artQueryForMediumFragment = artClassification;
-        this.queryTypeForMediumFragment = queryType;
-        showMediumFragment();
-    }
-
-
-
-    @Override
-    public void makerArtClickEvent(Collection<Art> arts, int position) {
-        this.listArtsForArtShowFragment = arts;
-        this.clickPositionForArtShowFragment = position;
-        showArtFragment();
-    }
-
-
-
-
-    @Override
-    public void mediumArtClickEvent(Collection<Art> arts, int position) {
-        this.listArtsForArtShowFragment = arts;
-        this.clickPositionForArtShowFragment = position;
-        showArtFragment();
-    }
-
-
-
-
-    @Override
-    public void exploreClick(final String type) {
-        Timer timer=new Timer();
-        final long DELAY = 500; // milliseconds
-        final Handler handler = new Handler();
-        timer.cancel();
-        timer = new Timer();
-        timer.schedule( new TimerTask() {
-                    @Override
-                    public void run() {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(type.equals(Constants.ART_MAKER)) {
-                                    showFilterMakerFragment();
-                                } else if (type.equals(Constants.ART_CULTURE)) {
-                                    typeForAttributeFragment = type;
-                                    showAttributeFragment();
-                                } else if (type.equals(Constants.ART_MEDIUM)) {
-                                    typeForAttributeFragment = type;
-                                    showAttributeFragment();
-                                } else if (type.equals(Constants.ART_CLASSIFICATION)) {
-                                    typeForAttributeFragment = type;
-                                    showAttributeFragment();
-                                }  else if (type.equals(Constants.ART_TAG)) {
-                                    typeForAttributeFragment = type;
-                                    showAttributeFragment();
-                                }
-                            }
-                        });
-                    }
-                }, DELAY);
-
-    }
-
-
-
-    @Override
-    public void artistsClickEvent(Maker maker) {
-        this.makerForMakerFragment = maker;
-        showMakerFragment();
-    }
-
-
-
-
-    @Override
-    public void makerClickEvent(Maker maker) {
-        this.makerForMakerFragment = maker;
-        showMakerFragment();
-    }
-
-
-
-
-    @Override
-    public void filterMakerClickEvent(Maker maker) {
-        this.makerForMakerFragment = maker;
-        showMakerFragment();
-    }
-    @Override
-    public void filterMakerOnPauseEvent(int filterPosition, int datePosition) {
-        this.filterMakerPosition = filterPosition;
-        this.dateMakerPosition = datePosition;
-    }
-
-
-
-    @Override
-    public void attributeClickEvent(Attribute attribute) {
-            queryTypeForMediumFragment = attribute.getType();
-            artQueryForMediumFragment = attribute.getText();
-            showMediumFragment();
-    }
-
-
-
-
-    public int getFilterMakerPosition() {
-        return filterMakerPosition;
-    }
-
-    public int getDateMakerPosition() {
-        return dateMakerPosition;
-    }
-
-    public int getHomePosition() {
-        return homePosition;
-    }
-
-    public int getFavoritesPosition() {
-        return favoritesPosition;
-    }
-
-    public FavoritesFragment.Sort getSort_type() {
-        return sort_type;
-    }
-
-    public Collection<Art> getListArtsForArtShowFragment() {
-        return listArtsForArtShowFragment;
-    }
-
-    public int getClickPositionForArtShowFragment() {
-        return clickPositionForArtShowFragment;
-    }
-
-    public ArtShowFragment getArtShowFragment() {
-        return artShowFragment;
-    }
-
     public String getSearchQuery() {
         return search_edit_text.getText().toString();
     }
 
-    public String getArtQueryForMediumFragment() {
-        return artQueryForMediumFragment;
-    }
-
-    public String getQueryTypeForMediumFragment() {
-        return queryTypeForMediumFragment;
-    }
-
-    public Maker getMakerForMakerFragment() {
-        return makerForMakerFragment;
-    }
-
-    public String getTypeForAttributeFragment() {
-        return typeForAttributeFragment;
+    public NavFragments getNavFragments() {
+        return navFragments;
     }
 
     @Override
     public void onBackPressed() {
 
-        if (artShowFragment != null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
-            fragmentTransaction.remove(artShowFragment).commit();
-            artShowFragment = artShowFragment.finish();
-
-        } else if (makerFragment != null) {
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-            fragmentTransaction.remove(makerFragment).commit();
-            makerFragment.finish();
-            makerFragment = null;
-
-        } else if (mediumFragment != null) {
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-            fragmentTransaction.remove(mediumFragment).commit();
-            mediumFragment.finish();
-            mediumFragment = null;
-
-        } else if (searchFragment != null) {
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-            fragmentTransaction.remove(searchFragment).commit();
-            searchFragment.finish();
-            searchFragment = null;
-
-        } else if (filterMakerFragment != null) {
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
-            fragmentTransaction.remove(filterMakerFragment).commit();
-            //filterExploreFragment.finish();
-            filterMakerFragment = null;
-
-        } else if (attributeFragment != null) {
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
-            fragmentTransaction.remove(attributeFragment).commit();
-            attributeFragment = null;
-
-        } else {
+        if (navFragments.isFragmentsClosed()) {
             if (isSearchLayoutOpen()) {
 
                 search_edit_text.setText("");
@@ -718,73 +406,6 @@ public class MainActivity extends AppCompatActivity implements
             } else {
                 super.onBackPressed();
             }
-        }
-
-    }
-
-    private void showArtFragment() {
-        if (artShowFragment == null) {
-            artShowFragment = new ArtShowFragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
-            //fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.add(R.id.frame_container_common, artShowFragment, "favoritesShowFragment").commit();
-        }
-    }
-
-    private void showSearchFragment() {
-        if (searchFragment == null) {
-            searchFragment = new SearchFragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-            //fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.add(R.id.frame_container_search, searchFragment, "searchFragment").commit();
-        }
-    }
-
-    private void showMediumFragment() {
-        if (mediumFragment == null) {
-            mediumFragment = new MediumFragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-            //fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.add(R.id.frame_container_common, mediumFragment, "mediumFragment").commit();
-        }
-    }
-
-    private void showMakerFragment() {
-        if (makerFragment == null) {
-            makerFragment = new MakerFragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-            //fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.add(R.id.frame_container_common, makerFragment, "makerFragment").commit();
-        }
-    }
-
-    private void showFilterMakerFragment() {
-        if (filterMakerFragment == null) {
-            filterMakerFragment = new FilterMakerFragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
-            //fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.add(R.id.frame_container_common, filterMakerFragment, "filterMakerFragment").commit();
-        }
-    }
-
-    private void showAttributeFragment() {
-        if (attributeFragment == null) {
-            attributeFragment = new AttributeFragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
-            //fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.add(R.id.frame_container_common, attributeFragment, "attributeFragment").commit();
         }
     }
 

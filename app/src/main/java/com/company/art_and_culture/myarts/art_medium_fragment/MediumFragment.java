@@ -61,8 +61,9 @@ public class MediumFragment extends Fragment {
 
         activity = (MainActivity) getActivity();
 
-        if (activity != null) artQuery = activity.getArtQueryForMediumFragment();
-        if (activity != null) queryType = activity.getQueryTypeForMediumFragment();
+        if (activity != null) artQuery = activity.getNavFragments().getArtQueryForMediumFragment();
+        if (activity != null) queryType = activity.getNavFragments().getQueryTypeForMediumFragment();
+        if (activity != null) mediumEventListener = activity.getNavFragments();
         appbar_medium.setText(artQuery);
 
         mediumViewModel.setArtQueryAndType(artQuery, queryType);
@@ -82,7 +83,7 @@ public class MediumFragment extends Fragment {
             @Override
             public boolean onKey( View v, int keyCode, KeyEvent event ) {
 
-                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getArtShowFragment() == null ) {
+                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getNavFragments().getArtShowFragment() == null ) {
                     int scrollPosition = 0;
                     if (mediumAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
                     if (scrollPosition > 4) {
@@ -178,15 +179,6 @@ public class MediumFragment extends Fragment {
         void mediumArtClickEvent(Collection<Art> arts, int position);
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            mediumEventListener = (MediumEventListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement onSomeEventListener");
-        }
-    }
 
     private int getTargetScrollPosition () {
 

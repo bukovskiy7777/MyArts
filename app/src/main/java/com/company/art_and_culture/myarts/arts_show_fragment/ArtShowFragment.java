@@ -93,8 +93,10 @@ public class ArtShowFragment extends Fragment {
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
 
         if (activity != null) {
-            Collection<Art> listArts = activity.getListArtsForArtShowFragment();
-            int artClickPosition = activity.getClickPositionForArtShowFragment();
+            artShowEventListener = activity.getNavFragments();
+
+            Collection<Art> listArts = activity.getNavFragments().getListArtsForArtShowFragment();
+            int artClickPosition = activity.getNavFragments().getClickPositionForArtShowFragment();
 
             if (listArts == null) {
                 artShowAdapter.clearItems();
@@ -426,16 +428,5 @@ public class ArtShowFragment extends Fragment {
     public interface ArtShowEventListener {
         void makerClickEvent(Maker maker);
     }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            artShowEventListener = (ArtShowEventListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement onSomeEventListener");
-        }
-    }
-
 
 }

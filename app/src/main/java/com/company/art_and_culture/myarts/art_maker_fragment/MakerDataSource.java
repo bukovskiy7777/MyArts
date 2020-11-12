@@ -35,9 +35,11 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
     private MutableLiveData<Maker> makerFirstTime = new MutableLiveData<>();
     private MutableLiveData<Art> art = new MutableLiveData<>();
     private Application application;
+    private Maker artMaker;
 
-    public MakerDataSource(Application application) {
+    public MakerDataSource(Application application, Maker artMaker) {
         this.application = application;
+        this.artMaker = artMaker;
     }
 
     @Override
@@ -51,10 +53,9 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
         getMakerObject();
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        String artMaker = MakerRepository.getInstance(application).getArtMaker().getArtMaker();
 
         ServerRequest request = new ServerRequest();
-        request.setArtQuery(artMaker);
+        request.setArtQuery(artMaker.getArtMaker());
         request.setPageNumber(1);
         request.setUserUniqueId(userUniqueId);
         request.setOperation(Constants.GET_ARTS_LIST_MAKER_OPERATION);
@@ -92,10 +93,9 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
     public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Art> callback) {
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        String artMaker = MakerRepository.getInstance(application).getArtMaker().getArtMaker();
 
         ServerRequest request = new ServerRequest();
-        request.setArtQuery(artMaker);
+        request.setArtQuery(artMaker.getArtMaker());
         request.setPageNumber(params.key);
         request.setUserUniqueId(userUniqueId);
         request.setOperation(Constants.GET_ARTS_LIST_MAKER_OPERATION);
@@ -244,7 +244,6 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
     private void getMakerObject() {
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        Maker artMaker = MakerRepository.getInstance(application).getArtMaker();
         ServerRequest request = new ServerRequest();
         request.setUserUniqueId(userUniqueId);
         request.setMaker(artMaker);

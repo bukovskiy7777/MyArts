@@ -89,10 +89,9 @@ public class MakerFragment extends Fragment {
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
         activity = (MainActivity) getActivity();
-        if (activity != null) {
-            maker = activity.getMakerForMakerFragment();
-        }
+        if (activity != null) maker = activity.getNavFragments().getMakerForMakerFragment();
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
+        if (activity != null) makerEventListener = activity.getNavFragments();
 
         makerViewModel.setArtMaker(maker);
 
@@ -128,7 +127,7 @@ public class MakerFragment extends Fragment {
             @Override
             public boolean onKey( View v, int keyCode, KeyEvent event ) {
 
-                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getArtShowFragment() == null ) {
+                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getNavFragments().getArtShowFragment() == null ) {
                     int scrollPosition = 0;
                     if (makerAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
                     if (scrollPosition > 4) {
@@ -304,16 +303,6 @@ public class MakerFragment extends Fragment {
         void makerArtClickEvent(Collection<Art> arts, int position);
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            makerEventListener = (MakerEventListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement onSomeEventListener");
-        }
-    }
-
     private int getTargetScrollPosition () {
 
         int targetPosition = 0;
@@ -349,10 +338,6 @@ public class MakerFragment extends Fragment {
             }
         }
         return targetPosition;
-    }
-
-    public void finish() {
-        makerViewModel.finish ();
     }
 
     private File getFile(Art art) {

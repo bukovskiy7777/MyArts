@@ -27,13 +27,7 @@ public class MakerViewModel extends AndroidViewModel {
         super(application);
 
         this.application = application;
-        makerRepository = MakerRepository.getInstance(application);
-        artList = makerRepository.getArtList();
-        isLoading = makerRepository.getIsLoading();
-        isListEmpty = makerRepository.getIsListEmpty();
-        maker = makerRepository.getMaker();
-        makerFirstTime = makerRepository.getMakerFirstTime();
-        art = makerRepository.getArt();
+
     }
 
     public LiveData<PagedList<Art>> getArtList(){
@@ -72,12 +66,17 @@ public class MakerViewModel extends AndroidViewModel {
         makerRepository.writeDimentionsOnServer(art);
     }
 
-    public void finish() {
-        makerRepository = makerRepository.finish (application);
-    }
-
     public void setArtMaker(Maker artMaker) {
-        makerRepository.setArtMaker(artMaker);
+        makerRepository = MakerRepository.getInstance(application, artMaker);
+        if(!makerRepository.getArtMaker().getArtMaker().equals(artMaker.getArtMaker())) {
+            makerRepository = makerRepository.setArtMaker(artMaker);
+        }
+        artList = makerRepository.getArtList();
+        isLoading = makerRepository.getIsLoading();
+        isListEmpty = makerRepository.getIsListEmpty();
+        maker = makerRepository.getMaker();
+        makerFirstTime = makerRepository.getMakerFirstTime();
+        art = makerRepository.getArt();
     }
 
     public boolean likeMaker(Maker maker, String userUniqueId) {

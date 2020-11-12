@@ -92,7 +92,7 @@ public class BlankFragment extends Fragment {
             @Override
             public boolean onKey( View v, int keyCode, KeyEvent event ) {
                 Log.i("BlankScrollEvent", "");
-                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getArtShowFragment() == null && !activity.isSearchLayoutOpen()) {
+                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getNavFragments().getArtShowFragment() == null && !activity.isSearchLayoutOpen()) {
                     int scrollPosition = 0;
                     int spanCount = 3;
                     if (blankAdapter.getFavoritesFragment()!=null) {
