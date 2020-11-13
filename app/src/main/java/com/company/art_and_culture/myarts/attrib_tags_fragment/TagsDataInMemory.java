@@ -1,32 +1,35 @@
-package com.company.art_and_culture.myarts.attribute_fragment;
+package com.company.art_and_culture.myarts.attrib_tags_fragment;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.pojo.Attribute;
-import com.company.art_and_culture.myarts.pojo.Maker;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class AttributeDataInMemory {
+class TagsDataInMemory {
 
-    private static AttributeDataInMemory instance;
-    private ArrayList<Attribute> listAttribute = new ArrayList<>();
+    private static TagsDataInMemory instance;
+    private ArrayList<Attribute> listTags = new ArrayList<>();
+    private String filter;
 
-    public static AttributeDataInMemory getInstance(){
+    public static TagsDataInMemory getInstance(){
         if(instance == null){
-            instance = new AttributeDataInMemory();
+            instance = new TagsDataInMemory();
         }
         return instance;
     }
 
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
 
     public void refresh() {
         instance = null;
     }
 
-    public void addData(ArrayList<Attribute> data) {
+    public void addData(ArrayList<Attribute> data, String filter) {
 
-        listAttribute.addAll(data);
+        if (filter.equals(this.filter)) listTags.addAll(data);
 
     }
 
@@ -35,16 +38,16 @@ class AttributeDataInMemory {
         ArrayList<Attribute> outputData = new ArrayList<>();
 
         int lastPosition;
-        if (listAttribute.size() >= Constants.PAGE_SIZE) {
+        if (listTags.size() >= Constants.PAGE_SIZE) {
             lastPosition = Constants.PAGE_SIZE;
-        } else if (listAttribute.size() > 0){
-            lastPosition = listAttribute.size();
+        } else if (listTags.size() > 0){
+            lastPosition = listTags.size();
         } else {
             lastPosition = 0;
         }
 
         for(int i = 0; i < lastPosition; i++) {
-            outputData.add(listAttribute.get(i));
+            outputData.add(listTags.get(i));
         }
         return outputData;
     }
@@ -53,10 +56,10 @@ class AttributeDataInMemory {
 
         int startPosition = (key - 1) * Constants.PAGE_SIZE;
         int lastPosition;
-        if (listAttribute.size() >= key * Constants.PAGE_SIZE) {
+        if (listTags.size() >= key * Constants.PAGE_SIZE) {
             lastPosition = key * Constants.PAGE_SIZE;
-        } else if (listAttribute.size() > (key - 1) * Constants.PAGE_SIZE){
-            lastPosition = listAttribute.size();
+        } else if (listTags.size() > (key - 1) * Constants.PAGE_SIZE){
+            lastPosition = listTags.size();
         } else {
             lastPosition = (key - 1) * Constants.PAGE_SIZE;
         }
@@ -64,7 +67,7 @@ class AttributeDataInMemory {
         ArrayList<Attribute> outputData = new ArrayList<>();
 
         for(int i = startPosition; i < lastPosition; i++) {
-            outputData.add(listAttribute.get(i));
+            outputData.add(listTags.get(i));
         }
         return outputData;
     }

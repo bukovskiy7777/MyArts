@@ -1,11 +1,10 @@
-package com.company.art_and_culture.myarts.attribute_fragment;
+package com.company.art_and_culture.myarts.attrib_tags_fragment;
 
 import android.app.Application;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Attribute;
-import com.company.art_and_culture.myarts.pojo.Maker;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
 
@@ -17,16 +16,16 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-class AttributeDataSource extends PageKeyedDataSource<Integer, Attribute> {
+class TagsDataSource extends PageKeyedDataSource<Integer, Attribute> {
 
     private Application application;
-    private String attributeType = "";
+    private String filter = "";
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
-    public AttributeDataSource(Application application, String attributeType) {
-        this.attributeType = attributeType;
+    public TagsDataSource(Application application, String filter) {
+        this.filter = filter;
         this.application = application;
-        //AttributeDataInMemory.getInstance();
+        TagsDataInMemory.getInstance().setFilter(filter);
     }
 
     private void updateIsLoadingState(Boolean state) {
@@ -49,14 +48,8 @@ class AttributeDataSource extends PageKeyedDataSource<Integer, Attribute> {
 
         ServerRequest request = new ServerRequest();
         request.setPageNumber(1);
-
-        if (attributeType != null && attributeType.equals(Constants.ART_MEDIUM)) {
-            request.setOperation(Constants.GET_LIST_MEDIUM_OPERATION);
-        } else if (attributeType != null && attributeType.equals(Constants.ART_CLASSIFICATION)) {
-            request.setOperation(Constants.GET_LIST_CLASSIFICATION_OPERATION);
-        } else if (attributeType != null && attributeType.equals(Constants.ART_CULTURE)) {
-            request.setOperation(Constants.GET_LIST_CULTURE_OPERATION);
-        }
+        request.setSearchQuery(filter);
+        request.setOperation(Constants.GET_LIST_TAG_OPERATION);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
         response.enqueue(new Callback<ServerResponse>() {
@@ -67,8 +60,8 @@ class AttributeDataSource extends PageKeyedDataSource<Integer, Attribute> {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsLoadingState (false);
-                        AttributeDataInMemory.getInstance().addData(resp.getListAttribute());
-                        callback.onResult(AttributeDataInMemory.getInstance().getInitialData(),null, 2);
+                        TagsDataInMemory.getInstance().addData(resp.getListAttribute(), resp.getFilter());
+                        callback.onResult(TagsDataInMemory.getInstance().getInitialData(),null, 2);
 
                     } else {
                         updateIsLoadingState (false);
@@ -93,14 +86,8 @@ class AttributeDataSource extends PageKeyedDataSource<Integer, Attribute> {
 
         ServerRequest request = new ServerRequest();
         request.setPageNumber(params.key);
-
-        if (attributeType != null && attributeType.equals(Constants.ART_MEDIUM)) {
-            request.setOperation(Constants.GET_LIST_MEDIUM_OPERATION);
-        } else if (attributeType != null && attributeType.equals(Constants.ART_CLASSIFICATION)) {
-            request.setOperation(Constants.GET_LIST_CLASSIFICATION_OPERATION);
-        } else if (attributeType != null && attributeType.equals(Constants.ART_CULTURE)) {
-            request.setOperation(Constants.GET_LIST_CULTURE_OPERATION);
-        }
+        request.setSearchQuery(filter);
+        request.setOperation(Constants.GET_LIST_TAG_OPERATION);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
         response.enqueue(new Callback<ServerResponse>() {
@@ -111,8 +98,8 @@ class AttributeDataSource extends PageKeyedDataSource<Integer, Attribute> {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsLoadingState (false);
-                        AttributeDataInMemory.getInstance().addData(resp.getListAttribute());
-                        callback.onResult(AttributeDataInMemory.getInstance().getAfterData(params.key), params.key + 1);
+                        TagsDataInMemory.getInstance().addData(resp.getListAttribute(), resp.getFilter());
+                        callback.onResult(TagsDataInMemory.getInstance().getAfterData(params.key), params.key + 1);
                     } else {
                         updateIsLoadingState (false);
                     }
@@ -129,7 +116,7 @@ class AttributeDataSource extends PageKeyedDataSource<Integer, Attribute> {
     }
 
     public void refresh() {
-        AttributeDataInMemory.getInstance().refresh();
+        TagsDataInMemory.getInstance().refresh();
         invalidate();
     }
 

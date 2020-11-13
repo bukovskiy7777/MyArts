@@ -45,6 +45,4 @@ public class AttributeViewModel extends AndroidViewModel {
 
     }
 
-    public void setFilter(String s) {
-    }
 }

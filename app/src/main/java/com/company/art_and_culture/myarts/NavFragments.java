@@ -6,6 +6,7 @@ import com.company.art_and_culture.myarts.art_maker_fragment.MakerFragment;
 import com.company.art_and_culture.myarts.art_medium_fragment.MediumFragment;
 import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
 import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
+import com.company.art_and_culture.myarts.attrib_tags_fragment.TagsFragment;
 import com.company.art_and_culture.myarts.attribute_fragment.AttributeFragment;
 import com.company.art_and_culture.myarts.filter_maker_fragment.FilterMakerFragment;
 import com.company.art_and_culture.myarts.pojo.Art;
@@ -27,7 +28,7 @@ public class NavFragments implements
         HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
         MakerFragment.MakerEventListener, ExploreFragment.ExploreEventListener, MediumFragment.MediumEventListener,
         ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener, FilterMakerFragment.FilterMakerEventListener,
-        AttributeFragment.AttributeEventListener {
+        AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener {
 
     private MainActivity activity;
     private ArtShowFragment artShowFragment;
@@ -36,6 +37,7 @@ public class NavFragments implements
     private FilterMakerFragment filterMakerFragment;
     private AttributeFragment attributeFragment;
     private SearchFragment searchFragment;
+    private TagsFragment tagsFragment;
 
     private Collection<Art> listArtsForArtShowFragment;
     private int clickPositionForArtShowFragment;
@@ -53,6 +55,7 @@ public class NavFragments implements
 
     private int homePosition = 0;
 
+    private int filterPositionForTagsFragment= 0;
 
 
     public NavFragments(MainActivity mainActivity) {
@@ -111,6 +114,17 @@ public class NavFragments implements
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
             //fragmentTransaction.addToBackStack("attributeFragment");
             fragmentTransaction.add(R.id.frame_container_common, attributeFragment, "attributeFragment").commit();
+        }
+    }
+
+    private void showTagsFragment() {
+        if (tagsFragment == null) {
+            tagsFragment = new TagsFragment();
+            FragmentManager fragmentManager = activity.getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
+            //fragmentTransaction.addToBackStack("attributeFragment");
+            fragmentTransaction.add(R.id.frame_container_common, tagsFragment, "tagsFragment").commit();
         }
     }
 
@@ -188,6 +202,13 @@ public class NavFragments implements
             attributeFragment = null;
             return false;
 
+        } else if (tagsFragment != null) {
+            FragmentManager fragmentManager = activity.getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
+            fragmentTransaction.remove(tagsFragment).commit();
+            tagsFragment = null;
+            return false;
         } else {
             return true;
         }
@@ -250,6 +271,19 @@ public class NavFragments implements
 
 
 
+
+    @Override
+    public void tagClickEvent(Attribute attribute) {
+        queryTypeForMediumFragment = attribute.getType();
+        artQueryForMediumFragment = attribute.getText();
+        showMediumFragment();
+    }
+    @Override
+    public void tagFilterPositionEvent(int position) {
+        filterPositionForTagsFragment = position;
+    }
+
+
     @Override
     public void filterMakerClickEvent(Maker maker) {
         this.makerForMakerFragment = maker;
@@ -288,8 +322,7 @@ public class NavFragments implements
                             typeForAttributeFragment = type;
                             showAttributeFragment();
                         }  else if (type.equals(Constants.ART_TAG)) {
-                            typeForAttributeFragment = type;
-                            showAttributeFragment();
+                            showTagsFragment();
                         }
                     }
                 });
@@ -391,5 +424,8 @@ public class NavFragments implements
         return homePosition;
     }
 
+    public int getFilterPositionForTagsFragment() {
+        return filterPositionForTagsFragment;
+    }
 
 }

@@ -26,7 +26,7 @@
         <TextView
             android:layout_gravity="bottom|center"
             android:layout_marginTop="60dp"
-            android:text="@string/artists"
+            android:text="@string/art_tags"
             android:textColor="@color/colorBlack"
             android:fontFamily="@string/font_sans_serif"
             android:textSize="26sp"
@@ -55,5 +55,41 @@
         app:layout_constraintTop_toTopOf="parent"
         android:indeterminate="true"
         />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="30dp"
+        android:layout_marginRight="15dp"
+        android:id="@+id/floating_button"
+        app:backgroundTint="@color/colorPrimary"
+        android:src="@drawable/ic_apps_black_100dp"
+        android:elevation="8dp"
+        app:fabCustomSize="50dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"/>
+
+    <View
+        android:elevation="8dp"
+        android:id="@+id/background_view"
+        android:background="@drawable/filter_layout_background"
+        app:layout_constraintBottom_toBottomOf="@id/recycler_view_filter"
+        app:layout_constraintTop_toTopOf="@id/recycler_view_filter"
+        app:layout_constraintLeft_toLeftOf="@id/recycler_view_filter"
+        app:layout_constraintRight_toRightOf="@id/recycler_view_filter"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:elevation="8dp"
+        android:id="@+id/recycler_view_filter"
+        app:layout_constraintBottom_toBottomOf="@+id/floating_button"
+        app:layout_constraintRight_toLeftOf="@id/floating_button"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:clipToPadding="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
