@@ -7,9 +7,9 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/circle_filter_view"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="#88d8d8d8"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="#883366BB"
         app:layout_constraintLeft_toLeftOf="@+id/filter_text"
         app:layout_constraintRight_toRightOf="@+id/filter_text"
         app:layout_constraintTop_toTopOf="@+id/filter_text"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_margin="6dp"
+        android:layout_margin="10dp"
         android:text="All"
         android:textStyle="italic"
         android:gravity="center"

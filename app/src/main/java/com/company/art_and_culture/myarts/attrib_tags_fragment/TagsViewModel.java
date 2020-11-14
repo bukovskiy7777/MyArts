@@ -2,7 +2,6 @@ package com.company.art_and_culture.myarts.attrib_tags_fragment;
 
 import android.app.Application;
 
-import com.company.art_and_culture.myarts.attribute_fragment.AttributeRepository;
 import com.company.art_and_culture.myarts.pojo.Attribute;
 
 import androidx.annotation.NonNull;

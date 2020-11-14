@@ -53,7 +53,6 @@ public class TagsRepository {
     public TagsRepository setFilter(String filter) {
 
         if (!this.filter.equals(filter)) tagsDataSourceFactory.setFilter(filter);
-
         this.filter = filter;
 
         return instance;
