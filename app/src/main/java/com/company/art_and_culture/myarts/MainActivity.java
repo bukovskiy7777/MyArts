@@ -183,10 +183,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void refreshSuggests () {
-        getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,""));
-    }
-
     private void getSuggests(String suggestQuery, String userUniqueId) {
 
         suggestions_progress.setVisibility(View.VISIBLE);

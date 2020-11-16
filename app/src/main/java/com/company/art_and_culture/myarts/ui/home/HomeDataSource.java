@@ -6,8 +6,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.art_maker_fragment.MakerDataInMemory;
+import com.company.art_and_culture.myarts.art_maker_fragment.MakerRepository;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.Maker;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
 import com.company.art_and_culture.myarts.ui.favorites.Favorites.FavoritesRepository;
@@ -137,7 +140,7 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
         return art;
     }
 
-    public void likeArt(Art art, final int position, String userUniqueId) {
+    public void likeArt(final Art art, final int position, String userUniqueId) {
 
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.ART_LIKE_OPERATION);
@@ -153,6 +156,11 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
 
                         updateArt(resp.getArt());
                         HomeDataInMemory.getInstance().updateSingleItem(resp.getArt());
+
+                        Maker artMaker = new Maker(art.getArtMaker(), art.getArtistBio(), art.getArtImgUrl(),
+                                art.getArtWidth(), art.getArtHeight(),art.getArtId(), art.getArtProviderId());
+                        MakerRepository.getInstance(application, artMaker).getMakerDataSource().updateArt(resp.getArt());
+                        MakerDataInMemory.getInstance().updateSingleItem(resp.getArt());
 
                         FavoritesRepository favoritesRepository = FavoritesRepository.getInstance(application);
                         favoritesRepository.refresh();

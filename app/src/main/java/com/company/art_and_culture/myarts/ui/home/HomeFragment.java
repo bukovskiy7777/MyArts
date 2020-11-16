@@ -153,8 +153,6 @@ public class HomeFragment extends Fragment {
                 if (!networkState) {
                     Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
                     swipeRefreshLayout.setRefreshing(false);
-                } else {
-                    activity.refreshSuggests();
                 }
             }
         });
