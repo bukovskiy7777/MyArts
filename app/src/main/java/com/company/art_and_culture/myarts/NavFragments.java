@@ -1,6 +1,8 @@
 package com.company.art_and_culture.myarts;
 
 import android.os.Handler;
+import android.util.Log;
+import android.view.KeyEvent;
 
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerFragment;
 import com.company.art_and_culture.myarts.art_medium_fragment.MediumFragment;
@@ -16,6 +18,7 @@ import com.company.art_and_culture.myarts.ui.explore.ExploreFragment;
 import com.company.art_and_culture.myarts.ui.favorites.Artists.ArtistsFragment;
 import com.company.art_and_culture.myarts.ui.favorites.Favorites.FavoritesFragment;
 import com.company.art_and_culture.myarts.ui.home.HomeFragment;
+import com.company.art_and_culture.myarts.web_view_fragment.WebViewFragment;
 
 import java.util.Collection;
 import java.util.Timer;
@@ -38,6 +41,7 @@ public class NavFragments implements
     private AttributeFragment attributeFragment;
     private SearchFragment searchFragment;
     private TagsFragment tagsFragment;
+    private WebViewFragment webViewFragment;
 
     private Collection<Art> listArtsForArtShowFragment;
     private int clickPositionForArtShowFragment;
@@ -56,6 +60,8 @@ public class NavFragments implements
     private int homePosition = 0;
 
     private int filterPositionForTagsFragment= 0;
+
+    private String urlForWebFragment;
 
 
     public NavFragments(MainActivity mainActivity) {
@@ -128,6 +134,17 @@ public class NavFragments implements
         }
     }
 
+    private void showWebFragment() {
+        if (webViewFragment == null) {
+            webViewFragment = new WebViewFragment();
+            FragmentManager fragmentManager = activity.getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
+            //fragmentTransaction.addToBackStack("attributeFragment");
+            fragmentTransaction.add(R.id.frame_container_common, webViewFragment, "webFragment").commit();
+        }
+    }
+
     public void showSearchFragment() {
         if (searchFragment == null) {
             searchFragment = new SearchFragment();
@@ -152,7 +169,16 @@ public class NavFragments implements
 
 
     public boolean isFragmentsClosed() {
-        if (artShowFragment != null) {
+
+        if (webViewFragment != null) {
+            FragmentManager fragmentManager = activity.getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
+            fragmentTransaction.remove(webViewFragment).commit();
+            webViewFragment = null;
+            return false;
+
+        } else if (artShowFragment != null) {
             FragmentManager fragmentManager = activity.getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
@@ -222,7 +248,11 @@ public class NavFragments implements
         this.clickPositionForArtShowFragment = position;
         showArtFragment();
     }
-
+    @Override
+    public void makerWikiClick(String makerWikiPageUrl) {
+        this.urlForWebFragment = makerWikiPageUrl;
+        showWebFragment();
+    }
 
 
     @Override
@@ -258,6 +288,11 @@ public class NavFragments implements
     public void makerClickEvent(Maker maker) {
         this.makerForMakerFragment = maker;
         showMakerFragment();
+    }
+    @Override
+    public void logoClickEvent(String artLink) {
+        this.urlForWebFragment = artLink;
+        showWebFragment();
     }
 
 
@@ -400,10 +435,6 @@ public class NavFragments implements
         return typeForAttributeFragment;
     }
 
-    public ArtShowFragment getArtShowFragment() {
-        return artShowFragment;
-    }
-
     public int getFavoritesPosition() {
         return favoritesPosition;
     }
@@ -427,5 +458,15 @@ public class NavFragments implements
     public int getFilterPositionForTagsFragment() {
         return filterPositionForTagsFragment;
     }
+
+    public String getUrlForWebFragment() {
+        return urlForWebFragment;
+    }
+
+    public ArtShowFragment getArtShowFragment() {
+        return artShowFragment;
+    }
+
+
 
 }

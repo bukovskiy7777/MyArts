@@ -5,7 +5,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -275,6 +274,28 @@ public class MakerFragment extends Fragment {
                 }
             }
 
+            @Override
+            public void onMakerShareClick(String makerName, String makerBio, String makerWikiPageUrl, String artHeaderImageUrl) {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                String text;
+                if (makerWikiPageUrl != null) {
+                    text = makerName+" - "+makerBio + System.getProperty ("line.separator") + makerWikiPageUrl;
+                } else {
+                    text = makerName+" - "+makerBio + System.getProperty ("line.separator") + artHeaderImageUrl;
+                }
+                //String text = art.getArtLink();
+                sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+                sendIntent.setType("text/plain");
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+                startActivity(shareIntent);
+            }
+
+            @Override
+            public void onMakerWikiClick(String makerWikiPageUrl) {
+                makerEventListener.makerWikiClick(makerWikiPageUrl);
+            }
+
         };
 
         makerAdapter = new MakerAdapter(makerViewModel,getContext(), onArtClickListener, displayWidth, displayHeight, maker);
@@ -301,6 +322,7 @@ public class MakerFragment extends Fragment {
 
     public interface MakerEventListener {
         void makerArtClickEvent(Collection<Art> arts, int position);
+        void makerWikiClick(String makerWikiPageUrl);
     }
 
     private int getTargetScrollPosition () {

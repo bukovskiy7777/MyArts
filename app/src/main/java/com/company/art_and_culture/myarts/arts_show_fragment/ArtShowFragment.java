@@ -214,7 +214,7 @@ public class ArtShowFragment extends Fragment {
 
             @Override
             public void onLogoClick(Art art) {
-
+                artShowEventListener.logoClickEvent(art.getArtLink());
             }
 
             @Override
@@ -427,6 +427,7 @@ public class ArtShowFragment extends Fragment {
 
     public interface ArtShowEventListener {
         void makerClickEvent(Maker maker);
+        void logoClickEvent(String artLink);
     }
 
 }

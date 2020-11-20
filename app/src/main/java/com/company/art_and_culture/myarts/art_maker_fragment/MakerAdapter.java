@@ -1,12 +1,13 @@
 package com.company.art_and_culture.myarts.art_maker_fragment;
 
 import android.animation.AnimatorSet;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -70,6 +71,8 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
         void onArtShareClick(Art art);
         void onArtDownloadClick(Art art, int x, int y, int viewWidth, int viewHeight);
         void onMakerLikeClick(Maker maker);
+        void onMakerShareClick(String makerName, String makerBio, String makerWikiPageUrl, String artHeaderImageUrl);
+        void onMakerWikiClick(String makerWikiPageUrl);
     }
 
     @Override
@@ -105,14 +108,14 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
         }
     }
 
-    class MakerViewHolder extends LifecycleViewHolder implements View.OnClickListener {
+    class MakerViewHolder extends LifecycleViewHolder implements View.OnClickListener, View.OnTouchListener {
 
         private Art art;
         private int position;
         private ImageView art_image, art_image_header, maker_image;
         private TextView art_title, art_maker, maker_name, maker_bio, maker_description, read_more, wikipedia, art_count;
         private ImageButton art_share, art_download, art_like, maker_like, maker_share;
-        private String artImgUrl, makerWikiImageUrl;
+        private String artImgUrl, makerWikiImageUrl, makerWikiPageUrl;
         private final Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -147,6 +150,7 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
                 read_more.setOnClickListener(this);
                 read_more.setVisibility(View.GONE);
                 wikipedia.setOnClickListener(this);
+                wikipedia.setOnTouchListener(this);
                 wikipedia.setVisibility(View.GONE);
             }
             art_title = itemView.findViewById(R.id.art_title);
@@ -223,6 +227,8 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
 
                         String artCount = context.getResources().getString(R.string.artworks_count) +" "+ maker.getArtCount();
                         art_count.setText(artCount);
+
+                        makerWikiPageUrl = maker.getMakerWikiPageUrl();
                     }
                 });
 
@@ -337,9 +343,33 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
                         globalMaker.getArtWidth(), globalMaker.getArtHeight(), makerWikiImageUrl, globalMaker.getArtHeaderId(), globalMaker.getArtHeaderProviderId());
                 onArtClickListener.onMakerLikeClick(maker);
 
+            } else if(v.getId() == maker_share.getId()) {
+                onArtClickListener.onMakerShareClick(globalMaker.getArtMaker(), globalMaker.getArtistBio(), makerWikiPageUrl, globalMaker.getArtHeaderImageUrl());
+                AnimatorSet set = new AnimatorSet();
+                set.playSequentially(shareScaleUp(maker_share), shareScaleDown(maker_share));
+                set.start();
+
+            } else if(v.getId() == wikipedia.getId()) {
+                onArtClickListener.onMakerWikiClick(makerWikiPageUrl);
             }
         }
 
+        @SuppressLint("ClickableViewAccessibility")
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (view.getId() == wikipedia.getId()) {
+                switch(motionEvent.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        ((TextView)view).setTextColor(context.getResources().getColor(R.color.colorBlack));
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_UP:
+                        ((TextView)view).setTextColor(context.getResources().getColor(R.color.colorText));
+                        break;
+                }
+            }
+            return false;
+        }
     }
 
     private static DiffUtil.ItemCallback<Art> itemDiffUtilCallback = new DiffUtil.ItemCallback<Art>() {
