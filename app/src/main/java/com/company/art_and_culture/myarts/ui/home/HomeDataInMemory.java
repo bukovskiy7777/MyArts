@@ -3,9 +3,12 @@ package com.company.art_and_culture.myarts.ui.home;
 import android.util.Log;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import java.util.ArrayList;
+
+import androidx.lifecycle.Observer;
 
 public class HomeDataInMemory {
 
@@ -62,5 +65,14 @@ public class HomeDataInMemory {
 
     public Art getSingleItem(int position) {
         return listArts.get(position);
+    }
+
+    public void setArtObserver(MainActivity activity) {
+        activity.getArt().observe(activity, new Observer<Art>() {
+            @Override
+            public void onChanged(Art art) {
+                updateSingleItem(art);
+            }
+        });
     }
 }

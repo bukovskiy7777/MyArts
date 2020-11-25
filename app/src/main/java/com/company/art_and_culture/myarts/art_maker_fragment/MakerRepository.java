@@ -3,6 +3,7 @@ package com.company.art_and_culture.myarts.art_maker_fragment;
 import android.app.Application;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
 
@@ -16,7 +17,6 @@ public class MakerRepository {
     private LiveData<PagedList<Art>> artList;
     private MakerDataSource makerDataSource;
     private MakerDataSourceFactory makerDataSourceFactory;
-    private LiveData<Art> art;
     private Maker artMaker;
     private Application application;
 
@@ -42,8 +42,6 @@ public class MakerRepository {
         artList = new LivePagedListBuilder<>(makerDataSourceFactory, config).build();
 
         makerDataSource = (MakerDataSource) makerDataSourceFactory.create();//if remove this line artLike will not working after refresh
-
-        art = makerDataSource.getArt();
     }
 
     public LiveData<PagedList<Art>> getArtList(){
@@ -66,10 +64,6 @@ public class MakerRepository {
         return makerDataSource.getMakerFirstTime();
     }
 
-    public LiveData<Art> getArt() {
-        return art;
-    }
-
     public boolean likeArt(Art art, int position, String userUniqueId) {
 
         boolean isConnected = makerDataSource.isNetworkAvailable();
@@ -77,10 +71,6 @@ public class MakerRepository {
             makerDataSource.likeArt(art, position, userUniqueId);
         }
         return isConnected;
-    }
-
-    public MakerDataSource getMakerDataSource() {
-        return makerDataSource;
     }
 
     public boolean refresh() {
@@ -109,5 +99,9 @@ public class MakerRepository {
             makerDataSource.likeMaker(maker, userUniqueId);
         }
         return isConnected;
+    }
+
+    public void setActivity(MainActivity activity) {
+        makerDataSource.setActivity(activity);
     }
 }

@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
@@ -277,7 +278,8 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);
             }
 
-            makerViewModel.getArt().observe(this, new Observer<Art>() {
+            MainActivity activity = (MainActivity) context;
+            activity.getArt().observe(this, new Observer<Art>() {
                 @Override
                 public void onChanged(Art newArt) {
                     if (newArt.getArtId().equals(art.getArtId()) && newArt.getArtProvider().equals(art.getArtProvider())) {

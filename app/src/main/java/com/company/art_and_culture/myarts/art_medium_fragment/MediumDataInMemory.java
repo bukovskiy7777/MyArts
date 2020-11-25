@@ -1,9 +1,12 @@
 package com.company.art_and_culture.myarts.art_medium_fragment;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import java.util.ArrayList;
+
+import androidx.lifecycle.Observer;
 
 public class MediumDataInMemory {
 
@@ -92,5 +95,14 @@ public class MediumDataInMemory {
 
     public ArrayList<Art> getAllData() {
         return listArts;
+    }
+
+    public void setArtObserver(MainActivity activity) {
+        activity.getArt().observe(activity, new Observer<Art>() {
+            @Override
+            public void onChanged(Art art) {
+                updateSingleItem(art);
+            }
+        });
     }
 }

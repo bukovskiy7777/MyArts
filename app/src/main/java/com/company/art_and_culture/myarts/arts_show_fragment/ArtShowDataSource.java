@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerDataInMemory;
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerRepository;
 import com.company.art_and_culture.myarts.art_medium_fragment.MediumDataInMemory;
@@ -29,9 +30,9 @@ import retrofit2.Response;
 class ArtShowDataSource {
 
     private Application application;
-    private MutableLiveData<Art> art = new MutableLiveData<>();
 
     private static ArtShowDataSource instance;
+    private MainActivity activity;
 
     public static ArtShowDataSource getInstance(Application application){
         if(instance == null){
@@ -39,7 +40,6 @@ class ArtShowDataSource {
         }
         return instance;
     }
-
 
     public ArtShowDataSource(Application application) {
         this.application = application;
@@ -59,22 +59,7 @@ class ArtShowDataSource {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
-                        updateArt(resp.getArt());
-                        ArtShowDataInMemory.getInstance().updateSingleItem(resp.getArt());
-
-                        SearchRepository.getInstance(application).getSearchDataSource().updateArt(resp.getArt());
-                        SearchDataInMemory.getInstance().updateSingleItem(resp.getArt());
-
-                        HomeRepository.getInstance(application).getHomeDataSource().updateArt(resp.getArt());
-                        HomeDataInMemory.getInstance().updateSingleItem(resp.getArt());
-
-                        Maker artMaker = new Maker(art.getArtMaker(), art.getArtistBio(), art.getArtImgUrl(),
-                                art.getArtWidth(), art.getArtHeight(),art.getArtId(), art.getArtProviderId());
-                        MakerRepository.getInstance(application, artMaker).getMakerDataSource().updateArt(resp.getArt());
-                        MakerDataInMemory.getInstance().updateSingleItem(resp.getArt());
-
-                        //MediumRepository.getInstance(application).getMediumDataSource().updateArt(resp.getArt());
-                        MediumDataInMemory.getInstance().updateSingleItem(resp.getArt());
+                        activity.postNewArt(resp.getArt());
 
                         FavoritesRepository favoritesRepository = FavoritesRepository.getInstance(application);
                         favoritesRepository.refresh();
@@ -94,14 +79,6 @@ class ArtShowDataSource {
         });
     }
 
-    private void updateArt(Art newArt) {
-        art.postValue(newArt);
-    }
-
-    public LiveData<Art> getArt() {
-        return art;
-    }
-
     public boolean isNetworkAvailable() {
         ConnectivityManager manager =
                 (ConnectivityManager) application.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -119,4 +96,8 @@ class ArtShowDataSource {
         instance = null;
     }
 
+    public void setActivity(MainActivity activity) {
+        this.activity = activity;
+        ArtShowDataInMemory.getInstance().setArtObserver(activity);
+    }
 }

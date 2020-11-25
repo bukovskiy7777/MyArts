@@ -2,6 +2,7 @@ package com.company.art_and_culture.myarts.art_search_fragment;
 
 import android.app.Application;
 
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ public class SearchViewModel extends AndroidViewModel {
     private LiveData<PagedList<Art>> artList;
     private LiveData<Boolean> isLoading;
     private LiveData<Boolean> isListEmpty;
-    private LiveData<Art> art;
     private SearchRepository searchRepository;
     private android.content.res.Resources res;
     private Application application;
@@ -26,11 +26,10 @@ public class SearchViewModel extends AndroidViewModel {
         super(application);
 
         this.application = application;
-        searchRepository = SearchRepository.getInstance(application);
+        searchRepository = SearchRepository.getInstance(application, "");
         artList = searchRepository.getArtList();
         isLoading = searchRepository.getIsLoading();
         isListEmpty = searchRepository.getIsListEmpty();
-        art = searchRepository.getArt();
     }
 
     public LiveData<PagedList<Art>> getArtList(){
@@ -45,10 +44,6 @@ public class SearchViewModel extends AndroidViewModel {
         return isListEmpty;
     }
 
-    public LiveData<Art> getArt() {
-        return art;
-    }
-
     public boolean likeArt(Art art, int position, String userUniqueId) {
         return searchRepository.likeArt (art, position, userUniqueId);
     }
@@ -61,11 +56,12 @@ public class SearchViewModel extends AndroidViewModel {
         searchRepository.writeDimentionsOnServer(art);
     }
 
-    public void finish() {
-        searchRepository = searchRepository.finish (application);
+    public void setSearchQuery(String searchQuery) {
+        searchRepository.setSearchQuery(searchQuery); // = SearchRepository.getInstance(application, searchQuery)
+
     }
 
-    public void setSearchQuery(String searchQuery) {
-        searchRepository.setSearchQuery(searchQuery);
+    public void setActivity(MainActivity activity) {
+        searchRepository.setActivity(activity);
     }
 }

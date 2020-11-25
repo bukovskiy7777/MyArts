@@ -2,6 +2,7 @@ package com.company.art_and_culture.myarts.art_medium_fragment;
 
 import android.app.Application;
 
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import androidx.annotation.NonNull;
@@ -55,5 +56,9 @@ public class MediumViewModel extends AndroidViewModel {
 
     public void setArtQueryAndType(String artQuery, String queryType) {
         mediumRepository.setArtQueryAndType(artQuery, queryType);
+    }
+
+    public void setActivity(MainActivity activity) {
+        mediumRepository.setActivity(activity);
     }
 }

@@ -108,6 +108,8 @@ public class ArtShowFragment extends Fragment {
             }
         }
 
+        artShowViewModel.setActivity(activity);
+
         initDownloadViews(root);
 
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
@@ -119,6 +121,7 @@ public class ArtShowFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        artShowViewModel.finish ();
     }
 
     private void initDownloadViews(View root) {
@@ -226,8 +229,8 @@ public class ArtShowFragment extends Fragment {
                     artImgUrl= art.getArtImgUrl();
                 }
                 Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), artImgUrl, art.getArtWidth(), art.getArtHeight(), art.getArtId(), art.getArtProviderId());
-                //artShowEventListener.makerClickEvent(maker);
-                showPopupMenu(art, view);
+                artShowEventListener.makerClickEvent(maker);
+                //showPopupMenu(art, view);
             }
         };
 
@@ -237,27 +240,6 @@ public class ArtShowFragment extends Fragment {
         artRecyclerView.setAdapter(artShowAdapter);
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(artRecyclerView);
-    }
-
-    private void showPopupMenu(final Art art, View view) {
-
-        PopupMenu popupMenu = new PopupMenu(getContext(), view);
-        popupMenu.inflate(R.menu.copy_text_pop_up_menu);
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.copy_text:
-                        ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText("text_to_be_copied", art.getArtMaker());
-                        clipboard.setPrimaryClip(clip);
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
-        popupMenu.show();
     }
 
     private File getFile(Art art) {
@@ -418,11 +400,6 @@ public class ArtShowFragment extends Fragment {
             }
         }
 
-    }
-
-    public ArtShowFragment finish() {
-        artShowViewModel.finish ();
-        return null;
     }
 
     public interface ArtShowEventListener {

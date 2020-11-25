@@ -13,7 +13,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:clipToPadding="false"
-            android:paddingBottom="0dp"
+            android:paddingBottom="50dp"
             android:id="@+id/recycler_view_artists"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
@@ -32,10 +32,11 @@
             android:text="@string/nothing_to_show"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            android:gravity="center_horizontal" />
 
         <ProgressBar
-            android:layout_marginBottom="144dp"
+            android:layout_marginBottom="0dp"
             android:indeterminateTint="@color/colorBlue"
             android:id="@+id/progress_bar_artists"
             android:layout_width="wrap_content"

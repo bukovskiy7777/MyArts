@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
@@ -26,11 +27,13 @@ public class SearchDataSource extends PageKeyedDataSource<Integer, Art> {
 
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
-    private MutableLiveData<Art> art = new MutableLiveData<>();
     private Application application;
+    private String searchQuery;
+    private MainActivity activity;
 
-    public SearchDataSource(Application application) {
+    public SearchDataSource(Application application, String searchQuery) {
         this.application = application;
+        this.searchQuery = searchQuery;
     }
 
     @Override
@@ -43,7 +46,6 @@ public class SearchDataSource extends PageKeyedDataSource<Integer, Art> {
         updateIsListEmptyState(false);
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        String searchQuery = SearchRepository.getInstance(application).getSearchQuery();
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.GET_ARTS_LIST_SEARCH_OPERATION);
         request.setSearchQuery(searchQuery);
@@ -83,7 +85,6 @@ public class SearchDataSource extends PageKeyedDataSource<Integer, Art> {
     public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Art> callback) {
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        String searchQuery = SearchRepository.getInstance(application).getSearchQuery();
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.GET_ARTS_LIST_SEARCH_OPERATION);
         request.setSearchQuery(searchQuery);
@@ -127,20 +128,12 @@ public class SearchDataSource extends PageKeyedDataSource<Integer, Art> {
         isListEmpty.postValue(state);
     }
 
-    public void updateArt(Art newArt) {
-        art.postValue(newArt);
-    }
-
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
     }
 
     public LiveData<Boolean> getIsListEmpty() {
         return isListEmpty;
-    }
-
-    public LiveData<Art> getArt() {
-        return art;
     }
 
     public void likeArt(Art art, final int position, String userUniqueId) {
@@ -157,11 +150,7 @@ public class SearchDataSource extends PageKeyedDataSource<Integer, Art> {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
-                        updateArt(resp.getArt());
-                        SearchDataInMemory.getInstance().updateSingleItem(resp.getArt());
-
-                        HomeRepository.getInstance(application).getHomeDataSource().updateArt(resp.getArt());
-                        HomeDataInMemory.getInstance().updateSingleItem(resp.getArt());
+                        activity.postNewArt(resp.getArt());
 
                         FavoritesRepository favoritesRepository = FavoritesRepository.getInstance(application);
                         favoritesRepository.refresh();
@@ -210,5 +199,10 @@ public class SearchDataSource extends PageKeyedDataSource<Integer, Art> {
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) { }
         });
+    }
+
+    public void setActivity(MainActivity activity) {
+        this.activity = activity;
+        SearchDataInMemory.getInstance().setArtObserver(activity);
     }
 }

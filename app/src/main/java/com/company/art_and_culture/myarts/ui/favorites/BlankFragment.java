@@ -16,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.company.art_and_culture.myarts.MainActivity;
@@ -27,12 +28,14 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
-public class BlankFragment extends Fragment {
+public class BlankFragment extends Fragment implements View.OnClickListener {
 
     private MainActivity activity;
     private ViewPager2 viewPager;
     private BlankAdapter blankAdapter;
     private TabLayout tabLayout;
+    private ImageView search_btn;
+    private BlankEventListener blankEventListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,8 +43,12 @@ public class BlankFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_favorites_blank, container, false);
 
         viewPager = root.findViewById(R.id.favorite_view_pager);
+        search_btn = root.findViewById(R.id.search_btn);
+        search_btn.setOnClickListener(this);
 
         activity = (MainActivity) getActivity();
+
+        if (activity != null) blankEventListener = activity.getNavFragments();
 
         blankAdapter = new BlankAdapter(activity);
         viewPager.setAdapter(blankAdapter);
@@ -92,7 +99,7 @@ public class BlankFragment extends Fragment {
             @Override
             public boolean onKey( View v, int keyCode, KeyEvent event ) {
                 Log.i("BlankScrollEvent", "");
-                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getNavFragments().getArtShowFragment() == null && !activity.isSearchLayoutOpen()) {
+                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getNavFragments().getArtShowFragment() == null ) { // && !activity.isSearchLayoutOpen()
                     int scrollPosition = 0;
                     int spanCount = 3;
                     if (blankAdapter.getFavoritesFragment()!=null) {
@@ -120,4 +127,14 @@ public class BlankFragment extends Fragment {
         if (blankAdapter.getFavoritesFragment()!=null) blankAdapter.getFavoritesFragment().postScrollDataToMainActivity();
     }
 
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == search_btn.getId()) {
+            blankEventListener.blankSearchClickEvent();
+        }
+    }
+
+    public interface BlankEventListener {
+        void blankSearchClickEvent();
+    }
 }

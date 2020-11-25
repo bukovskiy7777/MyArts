@@ -2,6 +2,7 @@ package com.company.art_and_culture.myarts.arts_show_fragment;
 
 import android.app.Application;
 
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import androidx.annotation.NonNull;
@@ -10,7 +11,6 @@ import androidx.lifecycle.LiveData;
 
 public class ArtShowViewModel extends AndroidViewModel {
 
-    private LiveData<Art> art;
     private ArtShowRepository artShowRepository;
     private Application application;
 
@@ -18,11 +18,6 @@ public class ArtShowViewModel extends AndroidViewModel {
         super(application);
         this.application = application;
         artShowRepository = ArtShowRepository.getInstance(application);
-        art = artShowRepository.getArt();
-    }
-
-    public LiveData<Art> getArt() {
-        return art;
     }
 
     public boolean likeArt(Art art, int position, String userUniqueId) {
@@ -31,5 +26,9 @@ public class ArtShowViewModel extends AndroidViewModel {
 
     public void finish() {
         artShowRepository = artShowRepository.finish (application);
+    }
+
+    public void setActivity(MainActivity activity) {
+        artShowRepository.setActivity(activity);
     }
 }

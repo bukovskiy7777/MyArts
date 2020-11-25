@@ -6,26 +6,87 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/favorite_tab"
+        <com.google.android.material.appbar.AppBarLayout
             app:layout_constraintTop_toTopOf="parent"
-            app:tabIndicatorHeight="1dp"
-            app:tabIndicatorColor="@color/colorBlueLight"
+            android:id="@+id/app_bar_home"
             android:layout_width="match_parent"
-            android:layout_height="44dp"/>
+            android:layout_height="wrap_content">
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:layout_marginTop="44dp"
-            android:id="@+id/favorite_view_pager"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar_home"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                app:layout_scrollFlags="scroll|enterAlways|snap">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/toolbar_logo"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        android:src="@drawable/logo"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"/>
+
+                    <TextView
+                        android:id="@+id/toolbar_title"
+                        android:layout_marginLeft="15dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintLeft_toRightOf="@id/toolbar_logo"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="20sp"
+                        android:fontFamily="@string/font_sans_serif"
+                        android:text="@string/app_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <ImageView
+                        android:id="@+id/search_btn"
+                        android:layout_marginRight="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:src="@drawable/ic_search_black_100dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <FrameLayout
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/favorite_tab" />
+            android:layout_height="match_parent">
 
-    </FrameLayout>
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/favorite_tab"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tabIndicatorHeight="1dp"
+                app:tabIndicatorColor="@color/colorBlueLight"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"/>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:layout_marginTop="44dp"
+                android:id="@+id/favorite_view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/favorite_tab" />
+
+        </FrameLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

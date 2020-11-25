@@ -1,9 +1,12 @@
 package com.company.art_and_culture.myarts.art_maker_fragment;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import java.util.ArrayList;
+
+import androidx.lifecycle.Observer;
 
 public class MakerDataInMemory {
 
@@ -81,5 +84,14 @@ public class MakerDataInMemory {
 
     public ArrayList<Art> getAllData() {
         return listArts;
+    }
+
+    public void setArtObserver(MainActivity activity) {
+        activity.getArt().observe(activity, new Observer<Art>() {
+            @Override
+            public void onChanged(Art art) {
+                updateSingleItem(art);
+            }
+        });
     }
 }

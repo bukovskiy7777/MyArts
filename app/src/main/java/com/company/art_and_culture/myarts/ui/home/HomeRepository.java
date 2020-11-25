@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ public class HomeRepository {
 
     private static HomeRepository instance;
     private LiveData<PagedList<Art>> artList;
-    private LiveData<Art> art;
     private LiveData<Boolean> isLoading;
     private LiveData<Boolean> isListEmpty;
     private HomeDataSource homeDataSource;
@@ -43,7 +43,6 @@ public class HomeRepository {
 
         homeDataSource = (HomeDataSource) homeDataSourceFactory.create();//if remove this line artLike will not working after refresh
 
-        art = homeDataSource.getArt();
         isLoading = homeDataSource.getIsLoading();
         isListEmpty = homeDataSource.getIsListEmpty();
     }
@@ -60,10 +59,6 @@ public class HomeRepository {
         return isListEmpty;
     }
 
-    public LiveData<Art> getArt() {
-        return art;
-    }
-
     public boolean likeArt(Art art, int position, String userUniqueId) {
 
         boolean isConnected = homeDataSource.isNetworkAvailable();
@@ -77,11 +72,11 @@ public class HomeRepository {
         return homeDataSourceFactory.refresh();
     }
 
-    public HomeDataSource getHomeDataSource() {
-        return homeDataSource;
-    }
-
     public void writeDimentionsOnServer(Art art) {
         homeDataSource.writeDimentionsOnServer(art);
+    }
+
+    public void setActivity(MainActivity activity) {
+        homeDataSource.setActivity(activity);
     }
 }

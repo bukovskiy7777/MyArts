@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerDataInMemory;
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerRepository;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
@@ -27,8 +28,8 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
 
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
-    private MutableLiveData<Art> art = new MutableLiveData<>();
     private Application application;
+    private MainActivity activity;
 
     public HomeDataSource(Application application) {
         this.application = application;
@@ -124,20 +125,12 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
         isListEmpty.postValue(state);
     }
 
-    public void updateArt(Art newArt) {
-        art.postValue(newArt);
-    }
-
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
     }
 
     public LiveData<Boolean> getIsListEmpty() {
         return isListEmpty;
-    }
-
-    public LiveData<Art> getArt() {
-        return art;
     }
 
     public void likeArt(final Art art, final int position, String userUniqueId) {
@@ -154,13 +147,7 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
-                        updateArt(resp.getArt());
-                        HomeDataInMemory.getInstance().updateSingleItem(resp.getArt());
-
-                        Maker artMaker = new Maker(art.getArtMaker(), art.getArtistBio(), art.getArtImgUrl(),
-                                art.getArtWidth(), art.getArtHeight(),art.getArtId(), art.getArtProviderId());
-                        MakerRepository.getInstance(application, artMaker).getMakerDataSource().updateArt(resp.getArt());
-                        MakerDataInMemory.getInstance().updateSingleItem(resp.getArt());
+                        activity.postNewArt(resp.getArt());
 
                         FavoritesRepository favoritesRepository = FavoritesRepository.getInstance(application);
                         favoritesRepository.refresh();
@@ -211,5 +198,10 @@ public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) { }
         });
+    }
+
+    public void setActivity(MainActivity activity) {
+        this.activity = activity;
+        HomeDataInMemory.getInstance().setArtObserver(activity);
     }
 }

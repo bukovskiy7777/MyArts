@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerDataInMemory;
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerRepository;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
@@ -188,4 +189,7 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
         });
     }
 
+    public void setActivity(MainActivity activity) {
+        MediumDataInMemory.getInstance().setArtObserver(activity);
+    }
 }

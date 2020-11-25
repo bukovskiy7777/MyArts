@@ -14,18 +14,20 @@ public class SearchDataSourceFactory extends DataSource.Factory<Integer, Art> {
     private MutableLiveData<PageKeyedDataSource<Integer, Art>> searchDataSourceMutableLiveData = new MutableLiveData<>();
     private Application application;
     private SearchDataSource searchDataSource;
+    private String searchQuery;
 
 
-    public SearchDataSourceFactory(Application application) {
+    public SearchDataSourceFactory(Application application, String searchQuery) {
         this.application = application;
-        searchDataSource = new SearchDataSource(application);
+        this.searchQuery = searchQuery;
+        searchDataSource = new SearchDataSource(application, searchQuery);
     }
 
     @NonNull
     @Override
     public DataSource<Integer, Art> create() {
 
-        if (searchDataSource.isInvalid()) searchDataSource = new SearchDataSource(application);
+        if (searchDataSource.isInvalid()) searchDataSource = new SearchDataSource(application, searchQuery);
         searchDataSourceMutableLiveData.postValue(searchDataSource);
 
         return searchDataSource;
@@ -37,6 +39,11 @@ public class SearchDataSourceFactory extends DataSource.Factory<Integer, Art> {
             searchDataSource.refresh();
         }
         return isConnected;
+    }
+
+    public void setSearchQuery(String searchQuery) {
+        this.searchQuery = searchQuery;
+        searchDataSource.refresh();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.company.art_and_culture.myarts;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -16,6 +17,7 @@ import com.company.art_and_culture.myarts.pojo.Attribute;
 import com.company.art_and_culture.myarts.pojo.Maker;
 import com.company.art_and_culture.myarts.ui.explore.ExploreFragment;
 import com.company.art_and_culture.myarts.ui.favorites.Artists.ArtistsFragment;
+import com.company.art_and_culture.myarts.ui.favorites.BlankFragment;
 import com.company.art_and_culture.myarts.ui.favorites.Favorites.FavoritesFragment;
 import com.company.art_and_culture.myarts.ui.home.HomeFragment;
 import com.company.art_and_culture.myarts.web_view_fragment.WebViewFragment;
@@ -24,16 +26,22 @@ import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.navigation.Navigation;
 
 public class NavFragments implements
         HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
         MakerFragment.MakerEventListener, ExploreFragment.ExploreEventListener, MediumFragment.MediumEventListener,
         ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener, FilterMakerFragment.FilterMakerEventListener,
-        AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener {
+        AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener, BlankFragment.BlankEventListener {
 
     private MainActivity activity;
+    private NavController navController;
     private ArtShowFragment artShowFragment;
     private MakerFragment makerFragment;
     private MediumFragment mediumFragment;
@@ -64,8 +72,24 @@ public class NavFragments implements
     private String urlForWebFragment;
 
 
-    public NavFragments(MainActivity mainActivity) {
+    public NavFragments(MainActivity mainActivity, NavController navController) {
         activity = mainActivity;
+        this.navController = navController;
+        visibilityNavElements(navController);
+    }
+
+    private void visibilityNavElements(NavController navController) {
+        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+            @Override
+            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+                if(destination.getId() == R.id.navigation_home || destination.getId() == R.id.navigation_explore ||
+                        destination.getId() == R.id.navigation_favorites || destination.getId() == R.id.navigation_notifications) {
+                    activity.setNavViewVisible();
+                } else {
+                    activity.goneNavView();
+                }
+            }
+        });
     }
 
     private void showArtFragment() {
@@ -134,43 +158,18 @@ public class NavFragments implements
         }
     }
 
-    private void showWebFragment() {
-        if (webViewFragment == null) {
-            webViewFragment = new WebViewFragment();
-            FragmentManager fragmentManager = activity.getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
-            //fragmentTransaction.addToBackStack("attributeFragment");
-            fragmentTransaction.add(R.id.frame_container_common, webViewFragment, "webFragment").commit();
-        }
+
+
+
+    public void popBackStack() {
+        navController.popBackStack();
     }
 
-    public void showSearchFragment() {
-        if (searchFragment == null) {
-            searchFragment = new SearchFragment();
-            FragmentManager fragmentManager = activity.getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-            //fragmentTransaction.addToBackStack("searchFragment");
-            fragmentTransaction.add(R.id.frame_container_search, searchFragment, "searchFragment").commit();
-        }
-    }
-
-    public void finishSearchFragment() {
-        if (searchFragment != null) {
-            FragmentManager fragmentManager = activity.getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
-            fragmentTransaction.remove(searchFragment).commit();
-            searchFragment.finish();
-            searchFragment = null;
-        }
-    }
 
 
     public boolean isFragmentsClosed() {
 
-        if (webViewFragment != null) {
+        /*  if (webViewFragment != null) {
             FragmentManager fragmentManager = activity.getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
@@ -194,7 +193,7 @@ public class NavFragments implements
             makerFragment = null;
             return false;
 
-        } else if (mediumFragment != null) {
+        } else */ if (mediumFragment != null) {
             FragmentManager fragmentManager = activity.getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
@@ -208,7 +207,7 @@ public class NavFragments implements
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom);
             fragmentTransaction.remove(searchFragment).commit();
-            searchFragment.finish();
+            //searchFragment.finish();
             searchFragment = null;
             return false;
 
@@ -246,12 +245,14 @@ public class NavFragments implements
     public void makerArtClickEvent(Collection<Art> arts, int position) {
         this.listArtsForArtShowFragment = arts;
         this.clickPositionForArtShowFragment = position;
-        showArtFragment();
+        //showArtFragment();
+        navController.navigate(R.id.action_makerFragment_to_artShowFragment);
     }
     @Override
     public void makerWikiClick(String makerWikiPageUrl) {
         this.urlForWebFragment = makerWikiPageUrl;
-        showWebFragment();
+        //showWebFragment();
+        navController.navigate(R.id.action_makerFragment_to_webViewFragment);
     }
 
 
@@ -268,12 +269,14 @@ public class NavFragments implements
     public void searchArtClickEvent(Collection<Art> arts, int position) {
         this.listArtsForArtShowFragment = arts;
         this.clickPositionForArtShowFragment = position;
-        showArtFragment();
+        //showArtFragment();
+        navController.navigate(R.id.action_searchFragment_to_artShowFragment);
     }
     @Override
     public void searchMakerClickEvent(Maker maker) {
         this.makerForMakerFragment = maker;
-        showMakerFragment();
+        //showMakerFragment();
+        navController.navigate(R.id.action_searchFragment_to_makerFragment);
     }
     @Override
     public void searchClassificationClickEvent(String artClassification, String queryType) {
@@ -287,12 +290,14 @@ public class NavFragments implements
     @Override
     public void makerClickEvent(Maker maker) {
         this.makerForMakerFragment = maker;
-        showMakerFragment();
+        //showMakerFragment();
+        navController.navigate(R.id.action_artShowFragment_to_makerFragment);
     }
     @Override
     public void logoClickEvent(String artLink) {
         this.urlForWebFragment = artLink;
-        showWebFragment();
+        //showWebFragment();
+        navController.navigate(R.id.action_artShowFragment_to_webViewFragment);
     }
 
 
@@ -364,13 +369,28 @@ public class NavFragments implements
             }
         }, DELAY);
     }
+    @Override
+    public void exploreSearchClickEvent() {
+        navController.navigate(R.id.action_navigation_explore_to_searchFragment);
+    }
+
+
+
+
+    @Override
+    public void blankSearchClickEvent() {
+        navController.navigate(R.id.action_navigation_favorites_to_searchFragment);
+    }
+
+
 
 
 
     @Override
     public void artistsClickEvent(Maker maker) {
         this.makerForMakerFragment = maker;
-        showMakerFragment();
+        //showMakerFragment();
+        navController.navigate(R.id.action_navigation_favorites_to_makerFragment);
     }
     @Override
     public void favoritesScrollEvent(int position, FavoritesFragment.Sort sort_type) {
@@ -381,7 +401,8 @@ public class NavFragments implements
     public void favoritesClickEvent(Collection<Art> listArts, int position) {
         this.listArtsForArtShowFragment = listArts;
         this.clickPositionForArtShowFragment = position;
-        showArtFragment();
+        //showArtFragment();
+        navController.navigate(R.id.action_navigation_favorites_to_artShowFragment);
     }
 
 
@@ -394,12 +415,14 @@ public class NavFragments implements
     public void homeArtClickEvent(Collection<Art> arts, int position) {
         this.listArtsForArtShowFragment = arts;
         this.clickPositionForArtShowFragment = position;
-        showArtFragment();
+        //showArtFragment();
+        navController.navigate(R.id.action_navigation_home_to_artShowFragment);
     }
     @Override
     public void homeMakerClickEvent(Maker maker) {
         this.makerForMakerFragment = maker;
-        showMakerFragment();
+        //showMakerFragment();
+        navController.navigate(R.id.action_navigation_home_to_makerFragment);
 
     }
     @Override
@@ -408,7 +431,10 @@ public class NavFragments implements
         this.queryTypeForMediumFragment = queryType;
         showMediumFragment();
     }
-
+    @Override
+    public void homeSearchClickEvent() {
+        navController.navigate(R.id.action_navigation_home_to_searchFragment);
+    }
 
 
     public Collection<Art> getListArtsForArtShowFragment() {
@@ -466,7 +492,6 @@ public class NavFragments implements
     public ArtShowFragment getArtShowFragment() {
         return artShowFragment;
     }
-
 
 
 }

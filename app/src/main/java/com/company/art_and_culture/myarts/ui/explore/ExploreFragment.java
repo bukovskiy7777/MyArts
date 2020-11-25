@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +41,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
     private SwipeRefreshLayout swipeRefreshLayout;
     private android.content.res.Resources res;
     private ExploreEventListener exploreEventListener;
+    private ImageView search_btn;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -53,6 +55,8 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
         exploreRecyclerView = root.findViewById(R.id.exploreRecyclerView);
         exploreProgressBar = root.findViewById(R.id.progress_bar_explore);
         swipeRefreshLayout = root.findViewById(R.id.explore_swipeRefreshLayout);
+        search_btn = root.findViewById(R.id.search_btn);
+        search_btn.setOnClickListener(this);
 
         res = getResources();
         int displayWidth = res.getDisplayMetrics().widthPixels;
@@ -164,7 +168,11 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
     }
 
     @Override
-    public void onClick(View v) { }
+    public void onClick(View v) {
+        if (v.getId() == search_btn.getId()) {
+            exploreEventListener.exploreSearchClickEvent();
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -174,6 +182,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
 
     public interface ExploreEventListener {
         void exploreClick(String type);
+        void exploreSearchClickEvent();
     }
 
 }

@@ -1,12 +1,10 @@
 package com.company.art_and_culture.myarts.art_search_fragment;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
-
-import java.util.ArrayList;
 
 import androidx.lifecycle.LiveData;
 import androidx.paging.LivePagedListBuilder;
@@ -16,31 +14,31 @@ public class SearchRepository {
 
     private static SearchRepository instance;
     private LiveData<PagedList<Art>> artList;
-    private LiveData<Art> art;
     private SearchDataSource searchDataSource;
     private SearchDataSourceFactory searchDataSourceFactory;
     private String searchQuery;
 
 
-    public static SearchRepository getInstance(Application application){
+    public static SearchRepository getInstance(Application application, String searchQuery){
         if(instance == null){
-            instance = new SearchRepository(application);
+            instance = new SearchRepository(application, searchQuery);
         }
         return instance;
     }
 
-    public SearchRepository(Application application) {
+    public SearchRepository(Application application, String searchQuery) {
+
+        this.searchQuery = searchQuery;
 
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setPageSize(Constants.PAGE_SIZE)
                 .setInitialLoadSizeHint(Constants.PAGE_SIZE)
                 .build();
-        searchDataSourceFactory = new SearchDataSourceFactory(application);
+        searchDataSourceFactory = new SearchDataSourceFactory(application, searchQuery);
         artList = new LivePagedListBuilder<>(searchDataSourceFactory, config).build();
 
         searchDataSource = (SearchDataSource) searchDataSourceFactory.create();//if remove this line artLike will not working after refresh
-        art = searchDataSource.getArt();
     }
 
     public LiveData<PagedList<Art>> getArtList(){
@@ -53,10 +51,6 @@ public class SearchRepository {
 
     public LiveData<Boolean> getIsListEmpty() {
         return searchDataSource.getIsListEmpty();
-    }
-
-    public LiveData<Art> getArt() {
-        return art;
     }
 
     public boolean likeArt(Art art, int position, String userUniqueId) {
@@ -76,21 +70,13 @@ public class SearchRepository {
         searchDataSource.writeDimentionsOnServer(art);
     }
 
-    public SearchRepository finish(Application application) {
-        SearchDataInMemory.getInstance().refresh();
-        instance = new SearchRepository(application);
+    public SearchRepository setSearchQuery(String searchQuery) {
+        if (!this.searchQuery.equals(searchQuery)) searchDataSourceFactory.setSearchQuery(searchQuery);
+        this.searchQuery = searchQuery;
         return instance;
     }
 
-    public SearchDataSource getSearchDataSource() {
-        return searchDataSource;
-    }
-
-    public void setSearchQuery(String searchQuery) {
-        this.searchQuery = searchQuery;
-    }
-
-    public String getSearchQuery() {
-        return searchQuery;
+    public void setActivity(MainActivity activity) {
+        searchDataSource.setActivity(activity);
     }
 }

@@ -93,6 +93,7 @@ public class MakerFragment extends Fragment {
         if (activity != null) makerEventListener = activity.getNavFragments();
 
         makerViewModel.setArtMaker(maker);
+        makerViewModel.setActivity(activity);
 
         initRecyclerView(makerViewModel, displayWidth, displayHeight, maker);
         initSwipeRefreshLayout();
@@ -126,7 +127,7 @@ public class MakerFragment extends Fragment {
             @Override
             public boolean onKey( View v, int keyCode, KeyEvent event ) {
 
-                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getNavFragments().getArtShowFragment() == null ) {
+                if( keyCode == KeyEvent.KEYCODE_BACK ) { // && activity.getNavFragments().getArtShowFragment() == null
                     int scrollPosition = 0;
                     if (makerAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
                     if (scrollPosition > 4) {

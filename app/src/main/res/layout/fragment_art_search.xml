@@ -1,111 +1,204 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/search_swipeRefreshLayout"
+    android:background="@color/colorPrimary"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/app_bar_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar_search"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                app:layout_scrollFlags="scroll|enterAlways|snap">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/search_layout"
+                    android:background="@color/colorPrimary"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/search_back"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        android:src="@drawable/ic_keyboard_backspace_black_100dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"/>
+
+                    <EditText
+                        android:id="@+id/search_edit_text"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginRight="10dp"
+                        android:textColor="@color/colorBlack"
+                        android:hint="@string/search_artworks"
+                        android:background="@null"
+                        android:imeOptions="actionSearch"
+                        android:inputType="text"
+                        app:layout_constraintLeft_toRightOf="@+id/search_back"
+                        app:layout_constraintRight_toLeftOf="@+id/search_clear"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"/>
+
+                    <ImageView
+                        android:id="@+id/search_clear"
+                        android:layout_marginRight="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:src="@drawable/ic_clear_black_100dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"/>
+
+                    <ProgressBar
+                        android:id="@+id/suggestions_progress"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:maxHeight="5dp"
+                        android:minHeight="5dp"
+                        app:layout_constraintRight_toLeftOf="@+id/search_clear"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:indeterminate="true"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:id="@+id/search_swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="50dp"
+        android:background="@color/colorPrimary"
+        android:id="@+id/suggestions_recycler_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/text_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="58dp"
+        android:layout_marginEnd="8dp"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:text="@string/nothing_to_show"
+        android:fontFamily="@string/font_sans_serif"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="center_horizontal" />
+
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/progress_bar_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+    </ProgressBar>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:src="@color/colorYellow"
+        android:elevation="7dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/add_view"
+        android:layout_width="26dp"
+        android:layout_height="26dp">
+    </de.hdodenhof.circleimageview.CircleImageView>
+
+    <View
+        android:elevation="8dp"
+        app:layout_constraintRight_toRightOf="@+id/download_linear"
+        app:layout_constraintLeft_toLeftOf="@+id/download_linear"
+        app:layout_constraintTop_toTopOf="@+id/download_linear"
+        app:layout_constraintBottom_toBottomOf="@+id/download_linear"
+        android:background="@drawable/ic_archive_black_100dp"
+        android:id="@+id/download_view"
+        android:layout_margin="20dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp">
+    </View>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="@color/colorPrimary"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <TextView
-            android:id="@+id/text_search"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:text="@string/nothing_to_show"
-            android:fontFamily="@string/font_sans_serif"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_search"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        android:orientation="vertical"
+        android:background="@drawable/download_round_corner"
+        android:elevation="6dp"
+        android:id="@+id/download_linear"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <ProgressBar
-            android:id="@+id/progress_bar_search"
-            android:layout_width="wrap_content"
+            android:id="@+id/download_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:maxHeight="10dp"
+            android:minHeight="10dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-        </ProgressBar>
+            app:layout_constraintTop_toBottomOf="@+id/done_view"
+            android:indeterminate="true"
+             />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:src="@color/colorYellow"
-            android:elevation="7dp"
+        <View
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:id="@+id/add_view"
-            android:layout_width="26dp"
-            android:layout_height="26dp">
-        </de.hdodenhof.circleimageview.CircleImageView>
-
-        <View
-            android:elevation="8dp"
-            app:layout_constraintRight_toRightOf="@+id/download_linear"
-            app:layout_constraintLeft_toLeftOf="@+id/download_linear"
-            app:layout_constraintTop_toTopOf="@+id/download_linear"
-            app:layout_constraintBottom_toBottomOf="@+id/download_linear"
-            android:background="@drawable/ic_archive_black_100dp"
-            android:id="@+id/download_view"
+            android:background="@drawable/ic_check_circle_black_100dp"
+            android:id="@+id/done_view"
             android:layout_margin="20dp"
             android:layout_width="50dp"
             android:layout_height="50dp">
         </View>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:orientation="vertical"
-            android:background="@drawable/download_round_corner"
-            android:elevation="6dp"
-            android:id="@+id/download_linear"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginLeft="20dp"
-            android:layout_marginBottom="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <ProgressBar
-                android:id="@+id/download_progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxHeight="10dp"
-                android:minHeight="10dp"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/done_view"
-                android:indeterminate="true"
-                 />
-
-            <View
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:background="@drawable/ic_check_circle_black_100dp"
-                android:id="@+id/done_view"
-                android:layout_margin="20dp"
-                android:layout_width="50dp"
-                android:layout_height="50dp">
-            </View>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -2,6 +2,7 @@ package com.company.art_and_culture.myarts.art_maker_fragment;
 
 import android.app.Application;
 
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.art_search_fragment.SearchRepository;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
@@ -21,7 +22,6 @@ public class MakerViewModel extends AndroidViewModel {
     private android.content.res.Resources res;
     private Application application;
     private LiveData<Maker> maker, makerFirstTime;
-    private LiveData<Art> art;
 
     public MakerViewModel(@NonNull Application application) {
         super(application);
@@ -50,10 +50,6 @@ public class MakerViewModel extends AndroidViewModel {
         return makerFirstTime;
     }
 
-    public LiveData<Art> getArt() {
-        return art;
-    }
-
     public boolean likeArt(Art art, int position, String userUniqueId) {
         return makerRepository.likeArt (art, position, userUniqueId);
     }
@@ -76,10 +72,13 @@ public class MakerViewModel extends AndroidViewModel {
         isListEmpty = makerRepository.getIsListEmpty();
         maker = makerRepository.getMaker();
         makerFirstTime = makerRepository.getMakerFirstTime();
-        art = makerRepository.getArt();
     }
 
     public boolean likeMaker(Maker maker, String userUniqueId) {
         return makerRepository.likeMaker(maker, userUniqueId);
+    }
+
+    public void setActivity(MainActivity activity) {
+        makerRepository.setActivity(activity);
     }
 }

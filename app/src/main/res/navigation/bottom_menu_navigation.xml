@@ -9,23 +9,136 @@
         android:id="@+id/navigation_home"
         android:name="com.company.art_and_culture.myarts.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_artShowFragment"
+            app:destination="@id/artShowFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+        <action
+            android:id="@+id/action_navigation_home_to_makerFragment"
+            app:destination="@id/makerFragment"
+            app:enterAnim="@anim/enter_from_bottom"
+            app:exitAnim="@anim/exit_to_top"
+            app:popEnterAnim="@anim/enter_from_top"
+            app:popExitAnim="@anim/exit_to_bottom" />
+        <action
+            android:id="@+id/action_navigation_home_to_searchFragment"
+            app:destination="@id/searchFragment"
+            app:enterAnim="@anim/enter_fade_in"
+            app:popExitAnim="@anim/exit_fade_out" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_explore"
         android:name="com.company.art_and_culture.myarts.ui.explore.ExploreFragment"
         android:label="@string/title_explore"
-        tools:layout="@layout/fragment_explore" />
+        tools:layout="@layout/fragment_explore" >
+        <action
+            android:id="@+id/action_navigation_explore_to_searchFragment"
+            app:destination="@id/searchFragment"
+            app:enterAnim="@anim/enter_fade_in"
+            app:popExitAnim="@anim/exit_fade_out" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_favorites"
         android:name="com.company.art_and_culture.myarts.ui.favorites.BlankFragment"
         android:label="@string/title_favorites"
-        tools:layout="@layout/fragment_favorites_blank" />
+        tools:layout="@layout/fragment_favorites_blank" >
+        <action
+            android:id="@+id/action_navigation_favorites_to_searchFragment"
+            app:destination="@id/searchFragment"
+            app:enterAnim="@anim/enter_fade_in"
+            app:popExitAnim="@anim/exit_fade_out" />
+        <action
+            android:id="@+id/action_navigation_favorites_to_makerFragment"
+            app:destination="@id/makerFragment"
+            app:enterAnim="@anim/enter_from_bottom"
+            app:exitAnim="@anim/exit_to_top"
+            app:popEnterAnim="@anim/enter_from_top"
+            app:popExitAnim="@anim/exit_to_bottom" />
+        <action
+            android:id="@+id/action_navigation_favorites_to_artShowFragment"
+            app:destination="@id/artShowFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="com.company.art_and_culture.myarts.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/makerFragment"
+        android:name="com.company.art_and_culture.myarts.art_maker_fragment.MakerFragment"
+        android:label="MakerFragment" >
+        <action
+            android:id="@+id/action_makerFragment_to_webViewFragment"
+            app:destination="@id/webViewFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+        <action
+            android:id="@+id/action_makerFragment_to_artShowFragment"
+            app:destination="@id/artShowFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"
+            app:popUpTo="@id/artShowFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/artShowFragment"
+        android:name="com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment"
+        android:label="fragment_art_show"
+        tools:layout="@layout/fragment_art_show" >
+        <action
+            android:id="@+id/action_artShowFragment_to_webViewFragment"
+            app:destination="@id/webViewFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+        <action
+            android:id="@+id/action_artShowFragment_to_makerFragment"
+            app:destination="@id/makerFragment"
+            app:enterAnim="@anim/enter_from_bottom"
+            app:exitAnim="@anim/exit_to_top"
+            app:popEnterAnim="@anim/enter_from_top"
+            app:popExitAnim="@anim/exit_to_bottom"
+            app:popUpTo="@id/makerFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/webViewFragment"
+        android:name="com.company.art_and_culture.myarts.web_view_fragment.WebViewFragment"
+        android:label="WebViewFragment" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.company.art_and_culture.myarts.art_search_fragment.SearchFragment"
+        android:label="SearchFragment" >
+        <action
+            android:id="@+id/action_searchFragment_to_artShowFragment"
+            app:destination="@id/artShowFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+        <action
+            android:id="@+id/action_searchFragment_to_makerFragment"
+            app:destination="@id/makerFragment"
+            app:enterAnim="@anim/enter_from_bottom"
+            app:exitAnim="@anim/exit_to_top"
+            app:popEnterAnim="@anim/enter_from_top"
+            app:popExitAnim="@anim/exit_to_bottom" />
+    </fragment>
 </navigation>

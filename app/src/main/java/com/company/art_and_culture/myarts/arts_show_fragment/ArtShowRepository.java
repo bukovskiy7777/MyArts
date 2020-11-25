@@ -2,6 +2,7 @@ package com.company.art_and_culture.myarts.arts_show_fragment;
 
 import android.app.Application;
 
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import androidx.lifecycle.LiveData;
@@ -24,10 +25,6 @@ public class ArtShowRepository {
         artShowDataSource = ArtShowDataSource.getInstance(application);
     }
 
-    public LiveData<Art> getArt() {
-        return artShowDataSource.getArt();
-    }
-
     public boolean likeArt(Art art, int position, String userUniqueId) {
 
         boolean isConnected = artShowDataSource.isNetworkAvailable();
@@ -39,9 +36,12 @@ public class ArtShowRepository {
 
 
     public ArtShowRepository finish(Application application) {
-
         ArtShowDataSource.getInstance(application).finish();
         instance = new ArtShowRepository(application);
         return instance;
+    }
+
+    public void setActivity(MainActivity activity) {
+        artShowDataSource.setActivity(activity);
     }
 }

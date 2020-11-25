@@ -67,6 +67,7 @@ public class MediumFragment extends Fragment {
         appbar_medium.setText(artQuery);
 
         mediumViewModel.setArtQueryAndType(artQuery, queryType);
+        mediumViewModel.setActivity(activity);
 
         initSwipeRefreshLayout();
         subscribeObservers();

@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.paging.PagedList;
 
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 
 
@@ -15,7 +16,6 @@ public class HomeViewModel extends AndroidViewModel {
     private LiveData<PagedList<Art>> artList;
     private LiveData<Boolean> isLoading;
     private LiveData<Boolean> isListEmpty;
-    private LiveData<Art> art;
     private HomeRepository homeRepository;
     private android.content.res.Resources res;
 
@@ -26,7 +26,6 @@ public class HomeViewModel extends AndroidViewModel {
         artList = homeRepository.getArtList();
         isLoading = homeRepository.getIsLoading();
         isListEmpty = homeRepository.getIsListEmpty();
-        art = homeRepository.getArt();
     }
 
     public LiveData<PagedList<Art>> getArtList(){
@@ -41,10 +40,6 @@ public class HomeViewModel extends AndroidViewModel {
         return isListEmpty;
     }
 
-    public LiveData<Art> getArt() {
-        return art;
-    }
-
     public boolean likeArt(Art art, int position, String userUniqueId) {
         return homeRepository.likeArt (art, position, userUniqueId);
     }
@@ -55,5 +50,9 @@ public class HomeViewModel extends AndroidViewModel {
 
     public void writeDimentionsOnServer(Art art) {
         homeRepository.writeDimentionsOnServer(art);
+    }
+
+    public void setActivity(MainActivity activity) {
+        homeRepository.setActivity(activity);
     }
 }

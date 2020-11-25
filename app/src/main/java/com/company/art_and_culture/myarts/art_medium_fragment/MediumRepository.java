@@ -3,6 +3,7 @@ package com.company.art_and_culture.myarts.art_medium_fragment;
 import android.app.Application;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerDataSource;
 import com.company.art_and_culture.myarts.art_maker_fragment.MakerDataSourceFactory;
 import com.company.art_and_culture.myarts.pojo.Art;
@@ -67,10 +68,6 @@ public class MediumRepository {
         return instance;
     }
 
-    public MediumDataSource getMediumDataSource() {
-        return mediumDataSource;
-    }
-
     public void setArtQueryAndType(String artQuery, String queryType) {
         this.artQuery = artQuery;
         this.queryType = queryType;
@@ -82,5 +79,9 @@ public class MediumRepository {
 
     public String getQueryType() {
         return queryType;
+    }
+
+    public void setActivity(MainActivity activity) {
+        mediumDataSource.setActivity(activity);
     }
 }

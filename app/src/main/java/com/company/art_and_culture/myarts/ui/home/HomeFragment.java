@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -16,16 +17,27 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -40,8 +52,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.SuggestAdapter;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
+import com.company.art_and_culture.myarts.pojo.ServerResponse;
+import com.company.art_and_culture.myarts.pojo.Suggest;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -51,13 +66,16 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
+import static com.company.art_and_culture.myarts.MainActivity.hideSoftKeyboard;
 import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.downloadFadeIn;
 import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.downloadFadeOut;
 import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.downloadTranslation;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private HomeViewModel homeViewModel;
     private RecyclerView homeRecyclerView;
@@ -75,7 +93,7 @@ public class HomeFragment extends Fragment {
     private Target target;
     private int bottomInitialMargin = 0, leftInitialMargin = 0;
     private android.content.res.Resources res;
-
+    private ImageView search_btn;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -84,6 +102,8 @@ public class HomeFragment extends Fragment {
         homeRecyclerView = root.findViewById(R.id.recycler_view_home);
         homeProgressBar = root.findViewById(R.id.progress_bar_home);
         swipeRefreshLayout = root.findViewById(R.id.home_swipeRefreshLayout);
+        search_btn = root.findViewById(R.id.search_btn);
+        search_btn.setOnClickListener(this);
 
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
@@ -99,7 +119,7 @@ public class HomeFragment extends Fragment {
 
         if (activity != null) homeEventListener = activity.getNavFragments();
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
-        getUserUniqueId();
+        homeViewModel.setActivity(activity);
 
         initSwipeRefreshLayout();
         subscribeObservers();
@@ -107,6 +127,13 @@ public class HomeFragment extends Fragment {
         setOnBackPressedListener(root);
 
         return root;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == search_btn.getId()) {
+            homeEventListener.homeSearchClickEvent();
+        }
     }
 
     private void initDownloadViews(View root) {
@@ -124,7 +151,7 @@ public class HomeFragment extends Fragment {
 
     }
 
-    private void setOnBackPressedListener(final View root) {
+    private void setOnBackPressedListener(View root) {
         //You need to add the following line for this solution to work; thanks skayred
         root.setFocusableInTouchMode(true);
         root.requestFocus();
@@ -132,7 +159,8 @@ public class HomeFragment extends Fragment {
             @Override
             public boolean onKey( View v, int keyCode, KeyEvent event ) {
 
-                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getNavFragments().getArtShowFragment() == null && !activity.isSearchLayoutOpen()) {
+                if( keyCode == KeyEvent.KEYCODE_BACK ) { //&& activity.getNavFragments().getArtShowFragment() == null // && !activity.isSearchLayoutOpen()
+
                     if (homeAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
                     if (scrollPosition > 4) {
                         homeRecyclerView.smoothScrollToPosition(0);
@@ -372,23 +400,14 @@ public class HomeFragment extends Fragment {
 
     private AnimatorSet startDownloadAnimation(int x, int y) {
 
-        int actionBarHeight = 0;
-        if (activity != null) actionBarHeight = activity.getToolbarHeight();
-
         add_view.setX(x);
-        if (activity.isToolbarOnScreen()) {
-            add_view.setY(y - actionBarHeight);
-        } else {
-            add_view.setY(y);
-        }
+        add_view.setY(y);
 
         ConstraintLayout.MarginLayoutParams marginLayoutParams = (ConstraintLayout.MarginLayoutParams) download_linear.getLayoutParams();
         bottomInitialMargin = marginLayoutParams.bottomMargin;
         leftInitialMargin = marginLayoutParams.leftMargin;
         int bottomMargin = bottomInitialMargin;
-        if (activity.isToolbarOnScreen()) {
-            bottomMargin = bottomMargin + actionBarHeight;
-        }
+
         if (activity.isNavViewOnScreen()) {
             int navViewHeight = activity.getNavViewHeight();
             bottomMargin = bottomMargin + navViewHeight;
@@ -401,15 +420,8 @@ public class HomeFragment extends Fragment {
         int x1 = location[0];
         int y1 = location[1];
         int targetX = x1 + download_view.getWidth()/2;
-        int targetY = y1;
-        if (activity.isToolbarOnScreen()) {
-            targetY = targetY - download_view.getHeight()/2;
-        } else {
-            targetY = targetY + download_view.getHeight()/2;
-        }
-        if (activity.isToolbarOnScreen()) {
-            targetY = targetY - actionBarHeight;
-        }
+        int targetY = y1 + download_view.getHeight()/2;
+
         if (activity.isNavViewOnScreen()) {
             int navViewHeight = activity.getNavViewHeight();
             targetY = targetY - navViewHeight;
@@ -462,6 +474,7 @@ public class HomeFragment extends Fragment {
         void homeArtClickEvent(Collection<Art> arts, int position);
         void homeMakerClickEvent(Maker maker);
         void homeClassificationClickEvent(String artClassification, String queryType);
+        void homeSearchClickEvent();
     }
 
     @Override
@@ -503,26 +516,6 @@ public class HomeFragment extends Fragment {
             }
         }
         return targetPosition;
-    }
-
-    private void getUserUniqueId() {
-
-        if (preferences.getString(Constants.USER_UNIQUE_ID,"").length()==0) {
-            String userUniqueId = randomString(23);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(Constants.USER_UNIQUE_ID, userUniqueId);
-            editor.apply();
-        }
-    }
-
-    private String randomString(int len){
-        String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        SecureRandom rnd = new SecureRandom();
-
-        StringBuilder sb = new StringBuilder( len );
-        for( int i = 0; i < len; i++ )
-            sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );
-        return sb.toString();
     }
 
     private ArrayList<String> checkPermission() {
@@ -575,8 +568,6 @@ public class HomeFragment extends Fragment {
         }
 
     }
-
-
 
 
 }
