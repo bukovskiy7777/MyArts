@@ -84,7 +84,7 @@ public class MediumFragment extends Fragment {
             @Override
             public boolean onKey( View v, int keyCode, KeyEvent event ) {
 
-                if( keyCode == KeyEvent.KEYCODE_BACK && activity.getNavFragments().getArtShowFragment() == null ) {
+                if( keyCode == KeyEvent.KEYCODE_BACK ) {
                     int scrollPosition = 0;
                     if (mediumAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
                     if (scrollPosition > 4) {

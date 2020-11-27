@@ -187,14 +187,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-
-        if (navFragments.isFragmentsClosed()) {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
