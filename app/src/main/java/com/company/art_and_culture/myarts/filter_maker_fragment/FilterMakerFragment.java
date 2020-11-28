@@ -103,14 +103,14 @@ public class FilterMakerFragment extends Fragment {
 
     private void subscribeObservers() {
 
-        filterMakerViewModel.getMakerList().observe(this, new Observer<PagedList<Maker>>() {
+        filterMakerViewModel.getMakerList().observe(getViewLifecycleOwner(), new Observer<PagedList<Maker>>() {
             @Override
             public void onChanged(PagedList<Maker> makers) {
                 //Log.i("filterExploreViewModel", exploreObjects.size()+"  fd");
                 filterMakerAdapter.submitList(makers);
             }
         });
-        filterMakerViewModel.getIsInitialLoaded().observe(this, new Observer<Boolean>() {
+        filterMakerViewModel.getIsInitialLoaded().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 //Log.i("filterExploreViewModel", aBoolean+"  fd");
@@ -149,7 +149,7 @@ public class FilterMakerFragment extends Fragment {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(dy > 20) {
+                if(dy > 10) {
 
                     AnimatorSet set = new AnimatorSet();
                     set.setDuration(500).playTogether(
@@ -163,7 +163,7 @@ public class FilterMakerFragment extends Fragment {
                     set.addListener(fadeOutListener());
                     set.start();
 
-                } else if (dy < -20) {
+                } else if (dy < -5) {
 
                     if (recycler_view_filter.getAlpha() == 0) {
 

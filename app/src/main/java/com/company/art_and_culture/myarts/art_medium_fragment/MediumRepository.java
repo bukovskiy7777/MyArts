@@ -4,8 +4,6 @@ import android.app.Application;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
-import com.company.art_and_culture.myarts.art_maker_fragment.MakerDataSource;
-import com.company.art_and_culture.myarts.art_maker_fragment.MakerDataSourceFactory;
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import androidx.lifecycle.LiveData;
@@ -22,21 +20,24 @@ public class MediumRepository {
     private String artQuery, queryType;
 
 
-    public static MediumRepository getInstance(Application application){
+    public static MediumRepository getInstance(Application application, String artQuery, String queryType){
         if(instance == null){
-            instance = new MediumRepository(application);
+            instance = new MediumRepository(application, artQuery, queryType);
         }
         return instance;
     }
 
-    public MediumRepository(Application application) {
+    public MediumRepository(Application application, String artQuery, String queryType) {
+
+        this.artQuery = artQuery;
+        this.queryType = queryType;
 
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setPageSize(Constants.PAGE_SIZE)
                 .setInitialLoadSizeHint(Constants.PAGE_SIZE)
                 .build();
-        mediumDataSourceFactory = new MediumDataSourceFactory(application);
+        mediumDataSourceFactory = new MediumDataSourceFactory(application, artQuery, queryType);
         artList = new LivePagedListBuilder<>(mediumDataSourceFactory, config).build();
 
         mediumDataSource = (MediumDataSource) mediumDataSourceFactory.create();//if remove this line artLike will not working after refresh
@@ -62,23 +63,10 @@ public class MediumRepository {
         mediumDataSource.writeDimentionsOnServer(art);
     }
 
-    public MediumRepository finish(Application application) {
-        MediumDataInMemory.getInstance().refresh();
-        instance = new MediumRepository(application);
-        return instance;
-    }
-
     public void setArtQueryAndType(String artQuery, String queryType) {
+        if (!this.artQuery.equals(artQuery) || !this.queryType.equals(queryType)) mediumDataSourceFactory.setArtQueryAndType(artQuery, queryType);
         this.artQuery = artQuery;
         this.queryType = queryType;
-    }
-
-    public String getArtQuery() {
-        return artQuery;
-    }
-
-    public String getQueryType() {
-        return queryType;
     }
 
     public void setActivity(MainActivity activity) {

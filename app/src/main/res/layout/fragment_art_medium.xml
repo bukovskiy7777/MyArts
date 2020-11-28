@@ -53,9 +53,11 @@
             android:fontFamily="@string/font_sans_serif"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/art_medium_appbar"/>
+            app:layout_constraintTop_toBottomOf="@id/art_medium_appbar"
+            android:gravity="center_horizontal" />
 
         <ProgressBar
+            android:visibility="gone"
             android:id="@+id/progress_bar_medium"
             android:indeterminateTint="@color/colorBlue"
             android:layout_width="wrap_content"

@@ -90,8 +90,11 @@ public class MediumFragment extends Fragment {
                     if (scrollPosition > 4) {
                         mediumRecyclerView.smoothScrollToPosition(0);
                         return true;
+                    } else {
+                        mediumViewModel.setArtQueryAndType ("", "");
+                        return false;
                     }
-                    return false;
+
                 }
                 return false;
             }
@@ -180,17 +183,11 @@ public class MediumFragment extends Fragment {
         void mediumArtClickEvent(Collection<Art> arts, int position);
     }
 
-
     private int getTargetScrollPosition () {
 
         int scrollPosition = ((StaggeredGridLayoutManager) mediumRecyclerView.getLayoutManager()).findFirstVisibleItemPositions(null)[0];
 
         return scrollPosition;
     }
-
-    public void finish() {
-        mediumViewModel.finish ();
-    }
-
 
 }

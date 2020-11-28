@@ -24,7 +24,7 @@ public class MediumViewModel extends AndroidViewModel {
         super(application);
 
         this.application = application;
-        mediumRepository = MediumRepository.getInstance(application);
+        mediumRepository = MediumRepository.getInstance(application, "", "");
         artList = mediumRepository.getArtList();
         isLoading = mediumRepository.getIsLoading();
         isListEmpty = mediumRepository.getIsListEmpty();
@@ -48,10 +48,6 @@ public class MediumViewModel extends AndroidViewModel {
 
     public void writeDimentionsOnServer(Art art) {
         mediumRepository.writeDimentionsOnServer(art);
-    }
-
-    public void finish() {
-        mediumRepository = mediumRepository.finish (application);
     }
 
     public void setArtQueryAndType(String artQuery, String queryType) {

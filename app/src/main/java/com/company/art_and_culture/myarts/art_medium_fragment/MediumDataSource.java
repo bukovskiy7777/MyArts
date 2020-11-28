@@ -7,8 +7,6 @@ import android.net.NetworkInfo;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
-import com.company.art_and_culture.myarts.art_maker_fragment.MakerDataInMemory;
-import com.company.art_and_culture.myarts.art_maker_fragment.MakerRepository;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
@@ -27,8 +25,11 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
     private Application application;
+    private String artQuery, queryType;
 
-    public MediumDataSource(Application application) {
+    public MediumDataSource(Application application, String artQuery, String queryType) {
+        this.artQuery = artQuery;
+        this.queryType = queryType;
         this.application = application;
     }
 
@@ -42,8 +43,6 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
         updateIsListEmptyState(false);
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        String artQuery = MediumRepository.getInstance(application).getArtQuery();
-        String queryType = MediumRepository.getInstance(application).getQueryType();
 
         ServerRequest request = new ServerRequest();
         request.setArtQuery(artQuery);
@@ -94,8 +93,6 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
     public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Art> callback) {
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        String artQuery = MediumRepository.getInstance(application).getArtQuery();
-        String queryType = MediumRepository.getInstance(application).getQueryType();
 
         ServerRequest request = new ServerRequest();
         request.setArtQuery(artQuery);
