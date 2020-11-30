@@ -7,17 +7,18 @@ import com.company.art_and_culture.myarts.art_maker_fragment.MakerFragment;
 import com.company.art_and_culture.myarts.art_medium_fragment.MediumFragment;
 import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
 import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
-import com.company.art_and_culture.myarts.attrib_tags_fragment.TagsFragment;
+import com.company.art_and_culture.myarts.tags_fragment.TagsFragment;
 import com.company.art_and_culture.myarts.attribute_fragment.AttributeFragment;
 import com.company.art_and_culture.myarts.filter_maker_fragment.FilterMakerFragment;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Attribute;
 import com.company.art_and_culture.myarts.pojo.Maker;
-import com.company.art_and_culture.myarts.ui.explore.ExploreFragment;
-import com.company.art_and_culture.myarts.ui.favorites.Artists.ArtistsFragment;
-import com.company.art_and_culture.myarts.ui.favorites.BlankFragment;
-import com.company.art_and_culture.myarts.ui.favorites.Favorites.FavoritesFragment;
-import com.company.art_and_culture.myarts.ui.home.HomeFragment;
+import com.company.art_and_culture.myarts.bottom_menu.explore.ExploreFragment;
+import com.company.art_and_culture.myarts.bottom_menu.favorites.Artists.ArtistsFragment;
+import com.company.art_and_culture.myarts.bottom_menu.favorites.BlankFragment;
+import com.company.art_and_culture.myarts.bottom_menu.favorites.Favorites.FavoritesFragment;
+import com.company.art_and_culture.myarts.bottom_menu.favorites.Folders.FoldersFragment;
+import com.company.art_and_culture.myarts.bottom_menu.home.HomeFragment;
 
 import java.util.Collection;
 import java.util.Timer;
@@ -32,7 +33,7 @@ public class NavFragments implements
         HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
         MakerFragment.MakerEventListener, ExploreFragment.ExploreEventListener, MediumFragment.MediumEventListener,
         ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener, FilterMakerFragment.FilterMakerEventListener,
-        AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener, BlankFragment.BlankEventListener {
+        AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener, BlankFragment.BlankEventListener, FoldersFragment.FoldersEventListener {
 
     private MainActivity activity;
     private NavController navController;
@@ -241,7 +242,14 @@ public class NavFragments implements
         this.clickPositionForArtShowFragment = position;
         navController.navigate(R.id.action_navigation_favorites_to_artShowFragment);
     }
+    @Override
+    public void folderClick(String folderUniqueId, String userUniqueId) {
 
+    }
+    @Override
+    public void createFolderClick() {
+
+    }
 
 
     @Override

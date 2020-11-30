@@ -8,10 +8,7 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -33,10 +30,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -55,9 +50,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
-import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.downloadFadeIn;
-import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.downloadFadeOut;
-import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.downloadTranslation;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadFadeIn;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadFadeOut;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadTranslation;
 
 public class ArtShowFragment extends Fragment {
 

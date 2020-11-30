@@ -11,7 +11,7 @@ public class Constants {
     public static final String SUCCESS = "success";
 
     public static final int PAGE_SIZE = 30;
-    public static final int PAGE_SIZE_SMALL = 9;
+    //public static final int PAGE_SIZE_SMALL = 9;
 
 
     public static final int PERMISSION_REQUEST_CODE = 1;
@@ -42,6 +42,7 @@ public class Constants {
     public static final String MAKER_LIKE_OPERATION = "makerLike";
     public static final String GET_MY_FAVORITES_ARTISTS_OPERATION = "getMyFavoritesArtists";
     public static final String GET_FILTER_MAKERS_OPERATION = "getFilterMakers";
+    public static final String GET_FOLDERS_LIST_OPERATION = "getFoldersList";
 
 
     public static final String GET_LIST_CULTURE_OPERATION = "getCultureList";

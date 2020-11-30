@@ -1,6 +1,7 @@
-package com.company.art_and_culture.myarts.art_search_fragment;
+package com.company.art_and_culture.myarts.bottom_menu.home;
 
 import android.animation.AnimatorSet;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -12,48 +13,47 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.company.art_and_culture.myarts.MainActivity;
-import com.company.art_and_culture.myarts.R;
-import com.company.art_and_culture.myarts.pojo.Art;
-import com.company.art_and_culture.myarts.bottom_menu.home.LifecycleViewHolder;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
+
+import com.company.art_and_culture.myarts.MainActivity;
+import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.pojo.Art;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeFadeIn;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeScaleDown;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleDown;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleUp;
 
-public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchViewHolder> {
+public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolder> {
 
     private Context context;
     private OnArtClickListener onArtClickListener;
     private int displayWidth, displayHeight;
-    private SearchViewModel searchViewModel;
+    private HomeViewModel homeViewModel;
 
 
-    public SearchAdapter(SearchViewModel searchViewModel, Context context, OnArtClickListener onArtClickListener, int displayWidth, int displayHeight) {
+    public HomeAdapter(HomeViewModel homeViewModel, Context context, OnArtClickListener onArtClickListener, int displayWidth, int displayHeight) {
         super(itemDiffUtilCallback);
         this.context = context;
-        this.searchViewModel = searchViewModel;
+        this.homeViewModel = homeViewModel;
         this.onArtClickListener = onArtClickListener;
         this.displayWidth = displayWidth;
         this.displayHeight = displayHeight;
     }
 
     @Override
-    public void onViewAttachedToWindow(@NonNull SearchViewHolder holder) {
+    public void onViewAttachedToWindow(@NonNull HomeViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         holder.onAttached();
     }
 
     @Override
-    public void onViewDetachedFromWindow(@NonNull SearchViewHolder holder) {
+    public void onViewDetachedFromWindow(@NonNull HomeViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
         holder.onDetached();
     }
@@ -70,26 +70,26 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
 
     @NonNull
     @Override
-    public SearchViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_search, parent, false);
-        return new SearchViewHolder(view);
+    public HomeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_home, parent, false);
+        return new HomeViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull HomeViewHolder holder, int position) {
         Art art = getItem(position);
         if (art != null) {
             holder.bind(art, position);
         } else {
             // Null defines a placeholder item - PagedListAdapter will automatically invalidate
             // this row when the actual object is loaded from the database
-            //holder.clear();
+            // holder.clear();
         }
     }
 
-    class SearchViewHolder extends LifecycleViewHolder implements View.OnClickListener, View.OnTouchListener {
+    class HomeViewHolder extends LifecycleViewHolder implements View.OnClickListener, View.OnTouchListener {
 
-        private Art art;
+        private Art art = new Art();
         private int position;
         private ImageView art_image, logo_image;
         private TextView art_maker, art_title, art_classification, logo_text;
@@ -107,7 +107,7 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
                 }
                 art.setArtWidth(bitmap.getWidth());
                 art.setArtHeight(bitmap.getHeight());
-                searchViewModel.writeDimentionsOnServer(art);
+                homeViewModel.writeDimentionsOnServer(art);
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(art_image);
             }
             @Override
@@ -116,7 +116,8 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
             public void onPrepareLoad(Drawable placeHolderDrawable) { }
         };
 
-        SearchViewHolder(@NonNull View itemView) {
+        @SuppressLint("ClickableViewAccessibility")
+        HomeViewHolder(@NonNull View itemView) {
             super(itemView);
             art_image = itemView.findViewById(R.id.art_image);
             art_maker = itemView.findViewById(R.id.art_maker);
@@ -142,7 +143,7 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
 
         }
 
-        void bind(final Art art, final int position) {
+        void bind(final Art art, int position) {
             this.art = art;
             this.position = position;
 
@@ -153,7 +154,7 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
 
             Picasso.get().load(art.getArtLogoUrl()).into(logo_image);
 
-            if(SearchDataInMemory.getInstance().getSingleItem(position).getIsLiked()){
+            if(HomeDataInMemory.getInstance().getSingleItem(position).getIsLiked()){
                 art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
                 art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
             } else {
@@ -203,6 +204,7 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
                     }
                 }
             });
+
         }
 
         @Override
@@ -238,6 +240,7 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
             }
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if (v.getId() == art_maker.getId()) {
@@ -264,6 +267,7 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
 
             return false;
         }
+
     }
 
     private static DiffUtil.ItemCallback<Art> itemDiffUtilCallback = new DiffUtil.ItemCallback<Art>() {

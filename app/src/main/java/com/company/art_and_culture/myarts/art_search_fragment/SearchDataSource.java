@@ -11,9 +11,7 @@ import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
-import com.company.art_and_culture.myarts.ui.favorites.Favorites.FavoritesRepository;
-import com.company.art_and_culture.myarts.ui.home.HomeDataInMemory;
-import com.company.art_and_culture.myarts.ui.home.HomeRepository;
+import com.company.art_and_culture.myarts.bottom_menu.favorites.Favorites.FavoritesRepository;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;

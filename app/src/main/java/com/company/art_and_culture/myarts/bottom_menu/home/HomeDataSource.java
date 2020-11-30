@@ -1,19 +1,16 @@
-package com.company.art_and_culture.myarts.art_maker_fragment;
+package com.company.art_and_culture.myarts.bottom_menu.home;
 
 import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
-import com.company.art_and_culture.myarts.pojo.Maker;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
-import com.company.art_and_culture.myarts.bottom_menu.favorites.Artists.ArtistsRepository;
 import com.company.art_and_culture.myarts.bottom_menu.favorites.Favorites.FavoritesRepository;
 
 import androidx.annotation.NonNull;
@@ -24,19 +21,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
+public class HomeDataSource extends PageKeyedDataSource<Integer, Art> {
 
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
-    private MutableLiveData<Maker> maker = new MutableLiveData<>();
-    private MutableLiveData<Maker> makerFirstTime = new MutableLiveData<>();
     private Application application;
-    private Maker artMaker;
     private MainActivity activity;
 
-    public MakerDataSource(Application application, Maker artMaker) {
+    public HomeDataSource(Application application) {
         this.application = application;
-        this.artMaker = artMaker;
     }
 
     @Override
@@ -47,15 +40,12 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
 
         updateIsLoadingState(true);
         updateIsListEmptyState(false);
-        getMakerObject();
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-
         ServerRequest request = new ServerRequest();
-        request.setArtQuery(artMaker.getArtMaker());
+        request.setOperation(Constants.GET_ARTS_LIST_OPERATION);
         request.setPageNumber(1);
         request.setUserUniqueId(userUniqueId);
-        request.setOperation(Constants.GET_ARTS_LIST_MAKER_OPERATION);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
         response.enqueue(new Callback<ServerResponse>() {
@@ -67,8 +57,8 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsListEmptyState(false);
-                        MakerDataInMemory.getInstance().addData(resp.getListArts());
-                        callback.onResult(MakerDataInMemory.getInstance().getInitialData(),null, 2);
+                        HomeDataInMemory.getInstance().addData(resp.getListArts());
+                        callback.onResult(HomeDataInMemory.getInstance().getInitialData(),null, 2);
                     } else {
                         updateIsListEmptyState(true);
                     }
@@ -90,12 +80,10 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
     public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Art> callback) {
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-
         ServerRequest request = new ServerRequest();
-        request.setArtQuery(artMaker.getArtMaker());
+        request.setOperation(Constants.GET_ARTS_LIST_OPERATION);
         request.setPageNumber(params.key);
         request.setUserUniqueId(userUniqueId);
-        request.setOperation(Constants.GET_ARTS_LIST_MAKER_OPERATION);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
         response.enqueue(new Callback<ServerResponse>() {
@@ -107,8 +95,8 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsListEmptyState(false);
-                        MakerDataInMemory.getInstance().addData(resp.getListArts());
-                        callback.onResult(MakerDataInMemory.getInstance().getAfterData(params.key), params.key + 1);
+                        HomeDataInMemory.getInstance().addData(resp.getListArts());
+                        callback.onResult(HomeDataInMemory.getInstance().getAfterData(params.key), params.key + 1);
                     } else {
                         updateIsListEmptyState(false);
                     }
@@ -134,22 +122,6 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
         isListEmpty.postValue(state);
     }
 
-    private void updateArtMaker(Maker artMaker) {
-        maker.postValue(artMaker);
-    }
-
-    private void updateArtMakerFirstTime(Maker artMaker) {
-        makerFirstTime.postValue(artMaker);
-    }
-
-    public MutableLiveData<Maker> getMaker() {
-        return maker;
-    }
-
-    public MutableLiveData<Maker> getMakerFirstTime() {
-        return makerFirstTime;
-    }
-
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
     }
@@ -158,7 +130,7 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
         return isListEmpty;
     }
 
-    public void likeArt(Art art, final int position, String userUniqueId) {
+    public void likeArt(final Art art, final int position, String userUniqueId) {
 
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.ART_LIKE_OPERATION);
@@ -193,8 +165,10 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
     }
 
     public void refresh() {
-        MakerDataInMemory.getInstance().refresh();
+        HomeDataInMemory.getInstance().refresh();
         invalidate();
+        //updateIsLoadingState(true);
+        updateIsListEmptyState(false);
     }
 
     public boolean isNetworkAvailable() {
@@ -223,73 +197,8 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
         });
     }
 
-    private void getMakerObject() {
-
-        String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        ServerRequest request = new ServerRequest();
-        request.setUserUniqueId(userUniqueId);
-        request.setMaker(artMaker);
-        request.setOperation(Constants.GET_MAKER_OBJECT);
-
-        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
-        response.enqueue(new Callback<ServerResponse>() {
-            @Override
-            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                if (response.isSuccessful()) {
-                    ServerResponse resp = response.body();
-                    if(resp.getResult().equals(Constants.SUCCESS)) {
-
-                        updateArtMakerFirstTime(resp.getArtMaker());
-                    } else {
-
-                    }
-                } else {
-
-                }
-            }
-            @Override
-            public void onFailure(Call<ServerResponse> call, Throwable t) { }
-        });
-    }
-
-    public void likeMaker(Maker maker, String userUniqueId) {
-
-        ServerRequest request = new ServerRequest();
-        request.setUserUniqueId(userUniqueId);
-        request.setOperation(Constants.MAKER_LIKE_OPERATION);
-        request.setMaker(maker);
-        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
-        response.enqueue(new Callback<ServerResponse>() {
-            @Override
-            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                if (response.isSuccessful()) {
-                    ServerResponse resp = response.body();
-                    Log.i("response", resp.getMessage());
-                    if(resp.getResult().equals(Constants.SUCCESS)) {
-
-                        updateArtMaker(resp.getArtMaker());
-
-                        ArtistsRepository artistsRepository = ArtistsRepository.getInstance(application);
-                        artistsRepository.refresh();
-                    } else {
-
-                    }
-                } else {
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ServerResponse> call, Throwable t) {
-
-            }
-        });
-
-
-    }
-
     public void setActivity(MainActivity activity) {
         this.activity = activity;
-        MakerDataInMemory.getInstance().setArtObserver(activity);
+        HomeDataInMemory.getInstance().setArtObserver(activity);
     }
 }

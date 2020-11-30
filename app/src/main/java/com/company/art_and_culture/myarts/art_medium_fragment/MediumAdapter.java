@@ -10,7 +10,7 @@ import android.widget.ImageView;
 
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
-import com.company.art_and_culture.myarts.ui.home.LifecycleViewHolder;
+import com.company.art_and_culture.myarts.bottom_menu.home.LifecycleViewHolder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 

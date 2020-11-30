@@ -16,6 +16,7 @@ public class ServerResponse {
     private String century;
     private ArrayList<Attribute> listAttribute;
     private String suggestQuery;
+    private ArrayList<Folder> listFolders;
 
     public ArrayList<Art> getListArts() {
         return listArts;
@@ -63,6 +64,10 @@ public class ServerResponse {
 
     public String getSuggestQuery() {
         return suggestQuery;
+    }
+
+    public ArrayList<Folder> getListFolders() {
+        return listFolders;
     }
 
 }

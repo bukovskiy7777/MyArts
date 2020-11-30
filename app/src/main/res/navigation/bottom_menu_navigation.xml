@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.company.art_and_culture.myarts.ui.home.HomeFragment"
+        android:name="com.company.art_and_culture.myarts.bottom_menu.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -40,7 +40,7 @@
 
     <fragment
         android:id="@+id/navigation_explore"
-        android:name="com.company.art_and_culture.myarts.ui.explore.ExploreFragment"
+        android:name="com.company.art_and_culture.myarts.bottom_menu.explore.ExploreFragment"
         android:label="@string/title_explore"
         tools:layout="@layout/fragment_explore" >
         <action
@@ -73,7 +73,7 @@
 
     <fragment
         android:id="@+id/navigation_favorites"
-        android:name="com.company.art_and_culture.myarts.ui.favorites.BlankFragment"
+        android:name="com.company.art_and_culture.myarts.bottom_menu.favorites.BlankFragment"
         android:label="@string/title_favorites"
         tools:layout="@layout/fragment_favorites_blank" >
         <action
@@ -99,7 +99,7 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.company.art_and_culture.myarts.ui.notifications.NotificationsFragment"
+        android:name="com.company.art_and_culture.myarts.bottom_menu.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
 
@@ -202,7 +202,7 @@
     </fragment>
     <fragment
         android:id="@+id/tagsFragment"
-        android:name="com.company.art_and_culture.myarts.attrib_tags_fragment.TagsFragment"
+        android:name="com.company.art_and_culture.myarts.tags_fragment.TagsFragment"
         android:label="TagsFragment" >
         <action
             android:id="@+id/action_tagsFragment_to_mediumFragment"

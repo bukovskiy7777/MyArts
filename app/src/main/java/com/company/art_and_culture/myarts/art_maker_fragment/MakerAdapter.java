@@ -18,7 +18,7 @@ import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
-import com.company.art_and_culture.myarts.ui.home.LifecycleViewHolder;
+import com.company.art_and_culture.myarts.bottom_menu.home.LifecycleViewHolder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -27,10 +27,10 @@ import androidx.lifecycle.Observer;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 
-import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.likeFadeIn;
-import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.likeScaleDown;
-import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.shareScaleDown;
-import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.shareScaleUp;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeFadeIn;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeScaleDown;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleDown;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleUp;
 
 public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHolder> {
 

@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.art_maker_fragment;
+package com.company.art_and_culture.myarts.bottom_menu.home;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -19,9 +19,22 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
@@ -37,70 +50,70 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.paging.PagedList;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import de.hdodenhof.circleimageview.CircleImageView;
-
 import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadFadeIn;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadFadeOut;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadTranslation;
 
-public class MakerFragment extends Fragment {
+public class HomeFragment extends Fragment implements View.OnClickListener {
 
-    private MakerViewModel makerViewModel;
-    private RecyclerView makerRecyclerView;
-    private MakerAdapter makerAdapter;
-    private MakerEventListener makerEventListener;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private android.content.res.Resources res;
-    private MainActivity activity;
-    private Maker maker;
+    private HomeViewModel homeViewModel;
+    private RecyclerView homeRecyclerView;
+    private HomeAdapter homeAdapter;
+    private ProgressBar homeProgressBar, download_progress;
     private TextView textView;
-    private ProgressBar makerProgressBar, download_progress;
+    private int scrollPosition = 0;
+    private HomeEventListener homeEventListener;
+    private SharedPreferences preferences;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private View download_view, done_view;
     private CircleImageView add_view;
     private ConstraintLayout download_linear;
+    private MainActivity activity;
     private Target target;
-    private SharedPreferences preferences;
+    private int bottomInitialMargin = 0, leftInitialMargin = 0;
+    private android.content.res.Resources res;
+    private ImageView search_btn;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_art_maker, container, false);
-        makerRecyclerView = root.findViewById(R.id.recycler_view_maker);
-        swipeRefreshLayout = root.findViewById(R.id.maker_swipeRefreshLayout);
-        textView = root.findViewById(R.id.text_maker);
-        makerProgressBar = root.findViewById(R.id.progress_bar_maker);
+        View root = inflater.inflate(R.layout.fragment_home, container, false);
+        textView = root.findViewById(R.id.text_home);
+        homeRecyclerView = root.findViewById(R.id.recycler_view_home);
+        homeProgressBar = root.findViewById(R.id.progress_bar_home);
+        swipeRefreshLayout = root.findViewById(R.id.home_swipeRefreshLayout);
+        search_btn = root.findViewById(R.id.search_btn);
+        search_btn.setOnClickListener(this);
 
-        makerViewModel = new ViewModelProvider(this).get(MakerViewModel.class);
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         res = getResources();
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
+        initRecyclerView(homeViewModel, displayWidth, displayHeight);
+
         activity = (MainActivity) getActivity();
-        if (activity != null) maker = activity.getNavFragments().getMakerForMakerFragment();
+        if (activity != null) scrollPosition = activity.getNavFragments().getHomePosition();
+        if (scrollPosition >= 0) homeRecyclerView.scrollToPosition(scrollPosition);
+
+        if (activity != null) homeEventListener = activity.getNavFragments();
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
-        if (activity != null) makerEventListener = activity.getNavFragments();
+        homeViewModel.setActivity(activity);
 
-        makerViewModel.setArtMaker(maker);
-        makerViewModel.setActivity(activity);
-
-        initRecyclerView(makerViewModel, displayWidth, displayHeight, maker);
         initSwipeRefreshLayout();
         subscribeObservers();
         initDownloadViews(root);
         setOnBackPressedListener(root);
 
         return root;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == search_btn.getId()) {
+            homeEventListener.homeSearchClickEvent();
+        }
     }
 
     private void initDownloadViews(View root) {
@@ -118,7 +131,7 @@ public class MakerFragment extends Fragment {
 
     }
 
-    private void setOnBackPressedListener(final View root) {
+    private void setOnBackPressedListener(View root) {
         //You need to add the following line for this solution to work; thanks skayred
         root.setFocusableInTouchMode(true);
         root.requestFocus();
@@ -126,11 +139,11 @@ public class MakerFragment extends Fragment {
             @Override
             public boolean onKey( View v, int keyCode, KeyEvent event ) {
 
-                if( keyCode == KeyEvent.KEYCODE_BACK ) { // && activity.getNavFragments().getArtShowFragment() == null
-                    int scrollPosition = 0;
-                    if (makerAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
+                if( keyCode == KeyEvent.KEYCODE_BACK ) { //&& activity.getNavFragments().getArtShowFragment() == null // && !activity.isSearchLayoutOpen()
+
+                    if (homeAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
                     if (scrollPosition > 4) {
-                        makerRecyclerView.smoothScrollToPosition(0);
+                        homeRecyclerView.smoothScrollToPosition(0);
                         return true;
                     }
                     return false;
@@ -144,7 +157,7 @@ public class MakerFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                boolean networkState = makerViewModel.refresh();
+                boolean networkState = homeViewModel.refresh();
                 if (!networkState) {
                     Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
                     swipeRefreshLayout.setRefreshing(false);
@@ -162,21 +175,20 @@ public class MakerFragment extends Fragment {
 
     private void subscribeObservers() {
 
-        makerViewModel.getArtList().observe(getViewLifecycleOwner(), new Observer<PagedList<Art>>() {
+        homeViewModel.getArtList().observe(getViewLifecycleOwner(), new Observer<PagedList<Art>>() {
             @Override
             public void onChanged(PagedList<Art> arts) {
-                makerAdapter.submitList(arts);
-                hideText();
+                homeAdapter.submitList(arts);
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-        makerViewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        homeViewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) { showProgressBar(); } else { hideProgressBar(); }
             }
         });
-        makerViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        homeViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) { showText(); } else { hideText(); }
@@ -184,19 +196,38 @@ public class MakerFragment extends Fragment {
         });
     }
 
-    private void initRecyclerView(final MakerViewModel makerViewModel, int displayWidth, int displayHeight, Maker maker){
+    private void initRecyclerView(final HomeViewModel homeViewModel, int displayWidth, int displayHeight){
 
-        MakerAdapter.OnArtClickListener onArtClickListener = new MakerAdapter.OnArtClickListener() {
+        HomeAdapter.OnArtClickListener onArtClickListener = new HomeAdapter.OnArtClickListener() {
 
             @Override
-            public void onArtImageClick(Art art, int position) {
-                ArrayList<Art> artInMemory = MakerDataInMemory.getInstance().getAllData();
-                makerEventListener.makerArtClickEvent(artInMemory, position);
+            public void onArtImageClick(Art art, int position, int viewWidth, int viewHeight) {
+                Collection<Art> listArts = new ArrayList<>();
+                Art artInMemory = HomeDataInMemory.getInstance().getSingleItem(position);
+                listArts.add(artInMemory);
+                homeEventListener.homeArtClickEvent(listArts, 0);
+            }
+
+            @Override
+            public void onArtMakerClick(Art art) {
+                String artImgUrl;
+                if (!art.getArtImgUrlSmall().equals(" ") && art.getArtImgUrlSmall().startsWith(getResources().getString(R.string.http))) {
+                    artImgUrl = art.getArtImgUrlSmall();
+                } else {
+                    artImgUrl= art.getArtImgUrl();
+                }
+                Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), artImgUrl, art.getArtWidth(), art.getArtHeight(), art.getArtId(), art.getArtProviderId());
+                homeEventListener.homeMakerClickEvent(maker);
+            }
+
+            @Override
+            public void onArtClassificationClick(Art art) {
+                homeEventListener.homeClassificationClickEvent(art.getArtClassification(), Constants.ART_CLASSIFICATION);
             }
 
             @Override
             public void onArtLikeClick(Art art, int position) {
-                boolean networkState = MakerFragment.this.makerViewModel.likeArt (art, position, preferences.getString(Constants.USER_UNIQUE_ID,""));
+                boolean networkState = HomeFragment.this.homeViewModel.likeArt (art, position, preferences.getString(Constants.USER_UNIQUE_ID,""));
                 if (!networkState) {
                     Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_SHORT).show();
                 }
@@ -217,6 +248,7 @@ public class MakerFragment extends Fragment {
 
             @Override
             public void onArtDownloadClick(final Art art, final int x, final int y, final int viewWidth, final int viewHeight) {
+
                 ArrayList<String> arrPerm = checkPermission();
                 if(arrPerm.isEmpty()) {
 
@@ -266,109 +298,15 @@ public class MakerFragment extends Fragment {
             }
 
             @Override
-            public void onMakerLikeClick(Maker maker) {
-                //Maker maker = new Maker (artMaker, artistBio, artistImageUrl, artHeaderImageUrl, artWidth, artHeight);
-                boolean networkState = MakerFragment.this.makerViewModel.likeMaker (maker, preferences.getString(Constants.USER_UNIQUE_ID,""));
-                if (!networkState) {
-                    Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_SHORT).show();
-                }
-            }
+            public void onLogoClick(Art art) {
 
-            @Override
-            public void onMakerShareClick(String makerName, String makerBio, String makerWikiPageUrl, String artHeaderImageUrl) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                String text;
-                if (makerWikiPageUrl != null) {
-                    text = makerName+" - "+makerBio + System.getProperty ("line.separator") + makerWikiPageUrl;
-                } else {
-                    text = makerName+" - "+makerBio + System.getProperty ("line.separator") + artHeaderImageUrl;
-                }
-                //String text = art.getArtLink();
-                sendIntent.putExtra(Intent.EXTRA_TEXT, text);
-                sendIntent.setType("text/plain");
-                Intent shareIntent = Intent.createChooser(sendIntent, null);
-                startActivity(shareIntent);
             }
-
-            @Override
-            public void onMakerWikiClick(String makerWikiPageUrl) {
-                makerEventListener.makerWikiClick(makerWikiPageUrl);
-            }
-
         };
 
-        makerAdapter = new MakerAdapter(makerViewModel,getContext(), onArtClickListener, displayWidth, displayHeight, maker);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        makerRecyclerView.setLayoutManager(layoutManager);
-        makerRecyclerView.setAdapter(makerAdapter);
-    }
-
-    private void showProgressBar(){
-        makerProgressBar.setVisibility(View.VISIBLE);
-    }
-
-    private void hideProgressBar(){
-        makerProgressBar.setVisibility(View.GONE);
-    }
-
-    private void showText(){
-        textView.setVisibility(View.VISIBLE);
-    }
-
-    private void hideText(){
-        textView.setVisibility(View.GONE);
-    }
-
-    public interface MakerEventListener {
-        void makerArtClickEvent(Collection<Art> arts, int position);
-        void makerWikiClick(String makerWikiPageUrl);
-    }
-
-    private int getTargetScrollPosition () {
-
-        int targetPosition = 0;
-        if(makerAdapter.getItemCount() > 0) {
-            final int firstPosition = ((LinearLayoutManager) makerRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-            final int lastPosition = ((LinearLayoutManager) makerRecyclerView.getLayoutManager()).findLastVisibleItemPosition();
-
-            Rect rvRect = new Rect();
-            makerRecyclerView.getGlobalVisibleRect(rvRect);
-
-            targetPosition = firstPosition;
-            int targetPercent = 0;
-            for (int i = firstPosition; i <= lastPosition; i++) {
-
-                Rect rowRect = new Rect();
-                makerRecyclerView.getLayoutManager().findViewByPosition(i).getGlobalVisibleRect(rowRect);
-
-                int percent;
-                if (rowRect.bottom >= rvRect.bottom){
-                    int visibleHeightFirst =rvRect.bottom - rowRect.top;
-                    percent = (visibleHeightFirst * 100) / makerRecyclerView.getLayoutManager().findViewByPosition(i).getHeight();
-                }else {
-                    int visibleHeightFirst = rowRect.bottom - rvRect.top;
-                    percent = (visibleHeightFirst * 100) / makerRecyclerView.getLayoutManager().findViewByPosition(i).getHeight();
-                }
-
-                if (percent>100) percent = 100;
-
-                if (percent > targetPercent) {
-                    targetPercent = percent;
-                    targetPosition = i;
-                }
-            }
-        }
-        return targetPosition;
-    }
-
-    private File getFile(Art art) {
-        File pictureFolder = Environment.getExternalStorageDirectory();
-        File mainFolder = new File(pictureFolder, res.getString(R.string.folder_my_arts_pictures));
-        if (!mainFolder.exists()) {
-            mainFolder.mkdirs();
-        }
-        return new File(mainFolder, art.getArtMaker()+" - "+art.getArtTitle()+".jpg");
+        homeAdapter = new HomeAdapter(homeViewModel,getContext(), onArtClickListener, displayWidth, displayHeight);
+        RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        homeRecyclerView.setLayoutManager(linearLayoutManager);
+        homeRecyclerView.setAdapter(homeAdapter);
     }
 
     private Target getTarget(final File file) {
@@ -382,35 +320,35 @@ public class MakerFragment extends Fragment {
                     @Override
                     public void run() {
 
-                        try {
-                            file.createNewFile();
-                            FileOutputStream ostream = new FileOutputStream(file);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, ostream);
-                            ostream.flush();
-                            ostream.close();
+                    try {
+                        file.createNewFile();
+                        FileOutputStream ostream = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, ostream);
+                        ostream.flush();
+                        ostream.close();
 
-                            ContentValues values = new ContentValues();
-                            values.put(MediaStore.Images.Media.DATA, file.getAbsolutePath());
-                            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-                            getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                        ContentValues values = new ContentValues();
+                        values.put(MediaStore.Images.Media.DATA, file.getAbsolutePath());
+                        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+                        getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    stopDownloadAnimation();
-                                    runDownLoadSuccessAnimation ();
-                                }
-                            });
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                stopDownloadAnimation();
+                                runDownLoadSuccessAnimation ();
+                            }
+                        });
 
-                        } catch (IOException e) {
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(getContext(), R.string.download_error, Toast.LENGTH_LONG).show();
-                                    stopDownloadAnimation();
-                                }
-                            });
-                        }
+                    } catch (IOException e) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getContext(), R.string.download_error, Toast.LENGTH_LONG).show();
+                                stopDownloadAnimation();
+                            }
+                        });
+                    }
                     }
                 }).start();
 
@@ -428,12 +366,34 @@ public class MakerFragment extends Fragment {
         return target;
     }
 
+    private void runDownLoadSuccessAnimation () {
+
+        download_linear.setVisibility(View.VISIBLE);
+        done_view.setVisibility(View.VISIBLE);
+
+        AnimatorSet set = new AnimatorSet();
+        set.playSequentially(
+                downloadFadeOut(download_linear, done_view, leftInitialMargin, bottomInitialMargin)
+        );
+        set.start();
+    }
+
     private AnimatorSet startDownloadAnimation(int x, int y) {
 
-        int actionBarHeight = 0;
-        //if (activity != null) actionBarHeight = activity.getToolbarHeight();
         add_view.setX(x);
-        add_view.setY(y - actionBarHeight);
+        add_view.setY(y);
+
+        ConstraintLayout.MarginLayoutParams marginLayoutParams = (ConstraintLayout.MarginLayoutParams) download_linear.getLayoutParams();
+        bottomInitialMargin = marginLayoutParams.bottomMargin;
+        leftInitialMargin = marginLayoutParams.leftMargin;
+        int bottomMargin = bottomInitialMargin;
+
+        if (activity.isNavViewOnScreen()) {
+            int navViewHeight = activity.getNavViewHeight();
+            bottomMargin = bottomMargin + navViewHeight;
+        }
+        marginLayoutParams.setMargins(leftInitialMargin, 0, 0, bottomMargin);
+        download_linear.setLayoutParams(marginLayoutParams);
 
         int[] location = new int[2];
         download_view.getLocationOnScreen(location);
@@ -441,6 +401,11 @@ public class MakerFragment extends Fragment {
         int y1 = location[1];
         int targetX = x1 + download_view.getWidth()/2;
         int targetY = y1 + download_view.getHeight()/2;
+
+        if (activity.isNavViewOnScreen()) {
+            int navViewHeight = activity.getNavViewHeight();
+            targetY = targetY - navViewHeight;
+        }
 
         AnimatorSet set = new AnimatorSet();
         set.playSequentially(
@@ -459,16 +424,78 @@ public class MakerFragment extends Fragment {
         download_progress.setVisibility(View.INVISIBLE);
     }
 
-    private void runDownLoadSuccessAnimation () {
+    private File getFile(Art art) {
+        File pictureFolder = Environment.getExternalStorageDirectory();
+        File mainFolder = new File(pictureFolder, res.getString(R.string.folder_my_arts_pictures));
+        if (!mainFolder.exists()) {
+            mainFolder.mkdirs();
+        }
+        return new File(mainFolder, art.getArtMaker()+" - "+art.getArtTitle()+".jpg");
+    }
 
-        download_linear.setVisibility(View.VISIBLE);
-        done_view.setVisibility(View.VISIBLE);
+    private void showProgressBar(){
+        homeProgressBar.setVisibility(View.VISIBLE);
+    }
 
-        AnimatorSet set = new AnimatorSet();
-        set.playSequentially(
-                downloadFadeOut(download_linear, done_view, 0, 0)
-        );
-        set.start();
+    private void hideProgressBar(){
+        homeProgressBar.setVisibility(View.GONE);
+    }
+
+    private void showText(){
+        textView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideText(){
+        textView.setVisibility(View.GONE);
+    }
+
+    public interface HomeEventListener {
+        void homeScrollEvent(int position);
+        void homeArtClickEvent(Collection<Art> arts, int position);
+        void homeMakerClickEvent(Maker maker);
+        void homeClassificationClickEvent(String artClassification, String queryType);
+        void homeSearchClickEvent();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (homeAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
+        homeEventListener.homeScrollEvent(scrollPosition);
+    }
+
+    private int getTargetScrollPosition () {
+
+        final int firstPosition = ((LinearLayoutManager) homeRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+        final int lastPosition = ((LinearLayoutManager) homeRecyclerView.getLayoutManager()).findLastVisibleItemPosition();
+
+        Rect rvRect = new Rect();
+        homeRecyclerView.getGlobalVisibleRect(rvRect);
+
+        int targetPosition = firstPosition;
+        int targetPercent = 0;
+        for (int i = firstPosition; i <= lastPosition; i++) {
+
+            Rect rowRect = new Rect();
+            homeRecyclerView.getLayoutManager().findViewByPosition(i).getGlobalVisibleRect(rowRect);
+
+            int percent;
+            if (rowRect.bottom >= rvRect.bottom){
+                int visibleHeightFirst =rvRect.bottom - rowRect.top;
+                percent = (visibleHeightFirst * 100) / homeRecyclerView.getLayoutManager().findViewByPosition(i).getHeight();
+            }else {
+                int visibleHeightFirst = rowRect.bottom - rvRect.top;
+                percent = (visibleHeightFirst * 100) / homeRecyclerView.getLayoutManager().findViewByPosition(i).getHeight();
+            }
+
+            if (percent>100) percent = 100;
+
+            if (percent > targetPercent) {
+                targetPercent = percent;
+                targetPosition = i;
+            }
+        }
+        return targetPosition;
     }
 
     private ArrayList<String> checkPermission() {
@@ -521,7 +548,6 @@ public class MakerFragment extends Fragment {
         }
 
     }
-
 
 
 }

@@ -2,8 +2,6 @@ package com.company.art_and_culture.myarts.arts_show_fragment;
 
 import android.animation.AnimatorSet;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +12,8 @@ import android.widget.TextView;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
-import com.company.art_and_culture.myarts.ui.home.LifecycleViewHolder;
+import com.company.art_and_culture.myarts.bottom_menu.home.LifecycleViewHolder;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,10 +25,10 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.likeFadeIn;
-import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.likeScaleDown;
-import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.shareScaleDown;
-import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.shareScaleUp;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeFadeIn;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeScaleDown;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleDown;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleUp;
 
 public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowViewHolder> {
 

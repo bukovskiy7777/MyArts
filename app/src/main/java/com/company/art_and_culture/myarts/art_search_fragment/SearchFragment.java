@@ -6,7 +6,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -19,7 +18,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -39,7 +37,6 @@ import android.widget.Toast;
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
-import com.company.art_and_culture.myarts.SuggestAdapter;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
@@ -69,9 +66,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
 import static com.company.art_and_culture.myarts.MainActivity.hideSoftKeyboard;
-import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.downloadFadeIn;
-import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.downloadFadeOut;
-import static com.company.art_and_culture.myarts.ui.home.HomeAnimations.downloadTranslation;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadFadeIn;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadFadeOut;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadTranslation;
 
 public class SearchFragment extends Fragment implements View.OnClickListener {
 
