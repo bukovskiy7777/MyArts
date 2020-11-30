@@ -50,7 +50,7 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_attrib_tags, container, false);
+        View root = inflater.inflate(R.layout.fragment_tags, container, false);
 
         title_layout = root.findViewById(R.id.title_layout);
         title_tv = root.findViewById(R.id.title);
