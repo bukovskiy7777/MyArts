@@ -1,6 +1,7 @@
 package com.company.art_and_culture.myarts.bottom_menu.favorites.Folders;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,7 +111,13 @@ class FoldersAdapter extends RecyclerView.Adapter<FoldersAdapter.FoldersViewHold
             this.position = position;
 
             if (folder.getArtImageUrl() != null && folder.getArtImageUrl().startsWith(context.getResources().getString(R.string.http))) {
-                Picasso.get().load(folder.getArtImageUrl()).placeholder(R.color.colorSilver).into(folder_image);
+                if (folder.getArtWidth() > 0) {
+                    int imgWidth = displayWidth/spanCount;
+                    int imgHeight = (folder.getArtHeight() * imgWidth) / folder.getArtWidth();
+                    Picasso.get().load(folder.getArtImageUrl()).resize(imgWidth, imgHeight).onlyScaleDown().into(folder_image);
+                } else {
+                    Picasso.get().load(folder.getArtImageUrl()).into(folder_image);
+                }
             }
 
             folder_title.setText(folder.getTitle());

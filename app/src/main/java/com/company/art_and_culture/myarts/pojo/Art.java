@@ -20,6 +20,8 @@ public class Art {
     private String century;
     private String artistBio;
 
+    private boolean isChosenForAddToFolder = false;
+
 
     public void setArtWidth(int artWidth) {
         this.artWidth = artWidth;
@@ -95,5 +97,13 @@ public class Art {
 
     public String getArtistBio() {
         return artistBio;
+    }
+
+    public boolean isChosenForAddToFolder() {
+        return isChosenForAddToFolder;
+    }
+
+    public void setChosenForAddToFolder(boolean chosenForAddToFolder) {
+        isChosenForAddToFolder = chosenForAddToFolder;
     }
 }

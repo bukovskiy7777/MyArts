@@ -248,7 +248,7 @@ public class NavFragments implements
     }
     @Override
     public void createFolderClick() {
-
+        navController.navigate(R.id.action_navigation_favorites_to_createFolderFragment);
     }
 
 

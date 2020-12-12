@@ -1,5 +1,6 @@
 package com.company.art_and_culture.myarts.bottom_menu.favorites.Folders;
 
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,11 +14,14 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +37,7 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
 
     private FoldersViewModel foldersViewModel;
     private TextView create_folder_button;
-    private ConstraintLayout create_folder_layout;
+    private FrameLayout create_folder_layout;
     private FloatingActionButton floatingActionButton;
     private int spanCount = 1;
     private ProgressBar foldersProgressBar;
@@ -57,6 +61,9 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
         swipeRefreshLayout = root.findViewById(R.id.folders_swipeRefreshLayout);
         floatingActionButton = root.findViewById(R.id.floating_button);
 
+        create_folder_layout.setVisibility(View.GONE);
+        floatingActionButton.setVisibility(View.GONE);
+
         floatingActionButton.setOnClickListener(this);
         create_folder_button.setOnClickListener(this);
 
@@ -70,7 +77,7 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
         if (activity != null) folderEventListener = activity.getNavFragments();
 
         initSwipeRefreshLayout();
-        subscribeObservers();
+        subscribeObservers(activity);
 
         return root;
     }
@@ -89,7 +96,7 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
         folderRecyclerView.setAdapter(foldersAdapter);
     }
 
-    private void subscribeObservers() {
+    private void subscribeObservers(MainActivity activity) {
 
         foldersViewModel.getFoldersList().observe(getViewLifecycleOwner(), new Observer<ArrayList<Folder>>() {
             @Override
@@ -115,6 +122,13 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) { showText(); } else { hideText(); }
+            }
+        });
+
+        activity.getUpdateFolders().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                refresh();
             }
         });
 
@@ -172,6 +186,7 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if (view.getId() == floatingActionButton.getId() || view.getId() == create_folder_button.getId()) {
+            Log.i("create_folder_button", "clicked");
             folderEventListener.createFolderClick();
         }
     }

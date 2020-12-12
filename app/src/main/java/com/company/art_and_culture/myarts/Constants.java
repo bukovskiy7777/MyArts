@@ -43,6 +43,7 @@ public class Constants {
     public static final String GET_MY_FAVORITES_ARTISTS_OPERATION = "getMyFavoritesArtists";
     public static final String GET_FILTER_MAKERS_OPERATION = "getFilterMakers";
     public static final String GET_FOLDERS_LIST_OPERATION = "getFoldersList";
+    public static final String CREATE_FOLDER_OPERATION = "createFolder";
 
 
     public static final String GET_LIST_CULTURE_OPERATION = "getCultureList";

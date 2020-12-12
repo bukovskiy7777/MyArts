@@ -63,7 +63,7 @@
                 <ImageButton
                     android:layout_marginRight="16dp"
                     android:id="@+id/sort_by_maker"
-                    android:background="@drawable/ic_color_lens_black_100dp"
+                    android:background="@drawable/ic_baseline_sort_by_alpha_black"
                     android:scaleType="fitCenter"
                     app:layout_constraintEnd_toStartOf="@+id/sort_by_century"
                     app:layout_constraintBottom_toBottomOf="@+id/favorites_sort_by"

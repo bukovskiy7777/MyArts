@@ -161,7 +161,7 @@ public class SearchAdapter extends PagedListAdapter<Art, SearchAdapter.SearchVie
                 art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
             }
 
-            if (!art.getArtImgUrlSmall().equals(" ") && art.getArtImgUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
+            if (art.getArtImgUrlSmall() != null && art.getArtImgUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
                 artImgUrl = art.getArtImgUrlSmall();
             } else {
                 artImgUrl= art.getArtImgUrl();

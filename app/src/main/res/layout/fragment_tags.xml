@@ -9,7 +9,7 @@
         android:clipToPadding="false"
         android:paddingTop="100dp"
         android:layout_marginBottom="0dp"
-        android:id="@+id/recycler_view_attribute"
+        android:id="@+id/recycler_view_tags"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"

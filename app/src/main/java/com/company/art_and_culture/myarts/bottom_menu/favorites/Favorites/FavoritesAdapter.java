@@ -165,7 +165,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private int position;
         private ImageView art_image;
         private TextView art_maker;
-        private String artImgUrl = " ";
+        private String artImgUrl = "";
         private final Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -191,7 +191,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             this.art = art;
             this.position = position;
 
-            if (!art.getArtImgUrlSmall().equals(" ") && art.getArtImgUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
+            if (art.getArtImgUrlSmall() != null && art.getArtImgUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
                 artImgUrl = art.getArtImgUrlSmall();
             } else {
                 artImgUrl= art.getArtImgUrl();

@@ -82,7 +82,7 @@ public class AttributeAdapter extends PagedListAdapter<Attribute, AttributeAdapt
         private int position;
         private ImageView attribute_image;
         private TextView attribute_text, art_count;
-        private String imageUrl = " ";
+        private String imageUrl = "";
         private final Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {

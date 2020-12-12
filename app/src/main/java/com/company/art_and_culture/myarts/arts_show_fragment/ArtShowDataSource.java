@@ -51,9 +51,6 @@ class ArtShowDataSource {
 
                         activity.postNewArt(resp.getArt());
 
-                        FavoritesRepository favoritesRepository = FavoritesRepository.getInstance(application);
-                        favoritesRepository.refresh();
-
                     } else {
 
                     }

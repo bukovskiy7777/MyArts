@@ -12,6 +12,7 @@ public class ServerRequest {
     private String artQuery;
     private ArrayList<Art> oldList;
     private Maker maker;
+    private Folder folder;
 
     public void setOperation(String operation) {
         this.operation = operation;
@@ -48,4 +49,9 @@ public class ServerRequest {
     public void setMaker(Maker maker) {
         this.maker = maker;
     }
+
+    public void setFolder(Folder folder) {
+        this.folder = folder;
+    }
+
 }

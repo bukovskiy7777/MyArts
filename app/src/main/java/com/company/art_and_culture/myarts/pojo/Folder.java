@@ -1,5 +1,7 @@
 package com.company.art_and_culture.myarts.pojo;
 
+import java.util.ArrayList;
+
 public class Folder {
 
     private String artImageUrl;
@@ -14,7 +16,16 @@ public class Folder {
     private String userUniqueId;
     private String createdAt;
     private boolean isPublic;
+    private ArrayList<Art> folderListArts;
     public enum folderState {active, deleted}
+
+    public Folder(String title, String folderUniqueId, String userUniqueId, boolean isPublic, ArrayList<Art> folderListArts) {
+        this.title = title;
+        this.folderUniqueId = folderUniqueId;
+        this.userUniqueId = userUniqueId;
+        this.isPublic = isPublic;
+        this.folderListArts = folderListArts;
+    }
 
     public String getArtImageUrl() {
         return artImageUrl;
@@ -58,5 +69,9 @@ public class Folder {
 
     public boolean isPublic() {
         return isPublic;
+    }
+
+    public ArrayList<Art> getFolderListArts() {
+        return folderListArts;
     }
 }

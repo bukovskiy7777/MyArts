@@ -95,6 +95,13 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right" />
+        <action
+            android:id="@+id/action_navigation_favorites_to_createFolderFragment"
+            app:destination="@id/createFolderFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
     </fragment>
 
     <fragment
@@ -224,4 +231,8 @@
             app:popEnterAnim="@anim/enter_from_top"
             app:popExitAnim="@anim/exit_to_bottom" />
     </fragment>
+    <fragment
+        android:id="@+id/createFolderFragment"
+        android:name="com.company.art_and_culture.myarts.create_folder_fragment.CreateFolderFragment"
+        android:label="CreateFolderFragment" />
 </navigation>

@@ -2,6 +2,7 @@ package com.company.art_and_culture.myarts.bottom_menu.favorites.Favorites;
 
 import android.app.Application;
 
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import java.util.ArrayList;
@@ -41,5 +42,9 @@ public class FavoritesViewModel extends AndroidViewModel {
 
     public boolean refresh() {
         return favoritesRepository.refresh();
+    }
+
+    public void setActivity(MainActivity activity) {
+        favoritesRepository.setActivity(activity);
     }
 }

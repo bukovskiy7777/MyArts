@@ -174,9 +174,6 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
 
                         activity.postNewArt(resp.getArt());
 
-                        FavoritesRepository favoritesRepository = FavoritesRepository.getInstance(application);
-                        favoritesRepository.refresh();
-
                     } else {
 
                     }

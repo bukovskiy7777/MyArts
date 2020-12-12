@@ -110,7 +110,7 @@ public class MediumAdapter extends PagedListAdapter<Art, MediumAdapter.MediumVie
             this.art = art;
             this.position = position;
 
-            if (!art.getArtImgUrlSmall().equals(" ") && art.getArtImgUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
+            if (art.getArtImgUrlSmall() != null && art.getArtImgUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
                 artImgUrl = art.getArtImgUrlSmall();
             } else {
                 artImgUrl= art.getArtImgUrl();

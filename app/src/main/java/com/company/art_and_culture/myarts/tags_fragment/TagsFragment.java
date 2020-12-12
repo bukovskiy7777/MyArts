@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class TagsFragment extends Fragment implements View.OnClickListener {
 
-    private RecyclerView recycler_view_attribute, recycler_view_filter;
+    private RecyclerView recycler_view_tags, recycler_view_filter;
     private TagsViewModel tagsViewModel;
     private FrameLayout title_layout;
     private TextView title_tv;
@@ -54,7 +54,7 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
 
         title_layout = root.findViewById(R.id.title_layout);
         title_tv = root.findViewById(R.id.title);
-        recycler_view_attribute = root.findViewById(R.id.recycler_view_attribute);
+        recycler_view_tags = root.findViewById(R.id.recycler_view_tags);
         download_progress = root.findViewById(R.id.download_progress);
 
         recycler_view_filter = root.findViewById(R.id.recycler_view_filter);
@@ -137,8 +137,8 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
         };
         tagsAdapter = new TagsAdapter(getContext(), onTagsClickListener, displayWidth, displayHeight, spanCount);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
-        recycler_view_attribute.setLayoutManager(layoutManager);
-        recycler_view_attribute.setAdapter(tagsAdapter);
+        recycler_view_tags.setLayoutManager(layoutManager);
+        recycler_view_tags.setAdapter(tagsAdapter);
     }
 
     private void initFilterRecyclerView(int displayWidth, int displayHeight) {

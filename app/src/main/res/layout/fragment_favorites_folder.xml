@@ -11,8 +11,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:visibility="gone"
+        <androidx.recyclerview.widget.RecyclerView
+            android:clipToPadding="false"
+            android:paddingTop="0dp"
+            android:paddingBottom="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/recycler_view_folders"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+        <FrameLayout
+            android:clickable="true"
+            android:visibility="visible"
             android:id="@+id/create_folder_layout"
             android:paddingTop="25dp"
             android:paddingLeft="20dp"
@@ -26,63 +37,59 @@
             android:layout_width="match_parent"
             android:layout_height="0dp">
 
-            <TextView
-                android:text="@string/create_a_folder"
-                android:textColor="@color/colorPrimary"
-                android:fontFamily="@string/font_sans_serif"
-                android:textSize="22sp"
-                android:minLines="1"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:id="@+id/create_folder_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <TextView
-                android:layout_marginTop="20dp"
-                android:text="@string/organize_your_favorites"
-                android:textColor="@color/colorPrimary"
-                android:fontFamily="@string/font_sans_serif"
-                android:textSize="18sp"
-                android:minLines="1"
-                android:maxLines="5"
-                android:ellipsize="end"
-                android:id="@+id/create_folder_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/create_folder_title" />
+                <TextView
+                    android:text="@string/create_a_folder"
+                    android:textColor="@color/colorPrimary"
+                    android:fontFamily="@string/font_sans_serif"
+                    android:textSize="22sp"
+                    android:minLines="1"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:id="@+id/create_folder_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:background="@drawable/create_folder_button"
-                android:layout_marginTop="20dp"
-                android:text="@string/create_a_folder"
-                android:textColor="@color/colorPrimary"
-                android:fontFamily="@string/font_sans_serif"
-                android:textSize="18sp"
-                android:minLines="1"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:id="@+id/create_folder_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/create_folder_text" />
+                <TextView
+                    android:layout_marginTop="20dp"
+                    android:text="@string/organize_your_favorites"
+                    android:textColor="@color/colorPrimary"
+                    android:fontFamily="@string/font_sans_serif"
+                    android:textSize="18sp"
+                    android:minLines="1"
+                    android:maxLines="5"
+                    android:ellipsize="end"
+                    android:id="@+id/create_folder_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/create_folder_title" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:background="@drawable/create_folder_button"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/create_a_folder"
+                    android:textColor="@color/colorPrimary"
+                    android:fontFamily="@string/font_sans_serif"
+                    android:textSize="18sp"
+                    android:minLines="1"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:id="@+id/create_folder_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/create_folder_text" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:clipToPadding="false"
-            android:paddingTop="0dp"
-            android:paddingBottom="50dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:id="@+id/recycler_view_folders"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </FrameLayout>
 
         <ProgressBar
             android:layout_marginBottom="0dp"
@@ -96,6 +103,7 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginBottom="120dp"

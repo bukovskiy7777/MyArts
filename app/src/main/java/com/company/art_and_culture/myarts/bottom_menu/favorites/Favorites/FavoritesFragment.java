@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -80,6 +81,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
         displayHeight = res.getDisplayMetrics().heightPixels;
 
         activity = (MainActivity) getActivity();
+        favoritesViewModel.setActivity(activity);
 
         Sort sort_type = Sort.by_date;
         if (activity != null) sort_type = activity.getNavFragments().getSort_type();
@@ -100,7 +102,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
         } else if (sort_type.equals(Sort.by_century)) {
             sort_by_century.setImageResource(R.drawable.ic_access_time_blue_100dp);
         } else if (sort_type.equals(Sort.by_maker)) {
-            sort_by_maker.setImageResource(R.drawable.ic_color_lens_blue_100dp);
+            sort_by_maker.setImageResource(R.drawable.ic_baseline_sort_by_alpha_blue);
         }
 
         return root;
@@ -268,7 +270,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
                 });
                 sort_by_date.setImageResource(R.drawable.ic_apps_black_100dp);
                 sort_by_century.setImageResource(R.drawable.ic_access_time_blue_100dp);
-                sort_by_maker.setImageResource(R.drawable.ic_color_lens_black_100dp);
+                sort_by_maker.setImageResource(R.drawable.ic_baseline_sort_by_alpha_black);
                 setAnimationRecyclerView (newList);
                 favoritesAdapter.clearItems();
                 favoritesAdapter.setItems(newList);
@@ -290,7 +292,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
                 });
                 sort_by_date.setImageResource(R.drawable.ic_apps_black_100dp);
                 sort_by_century.setImageResource(R.drawable.ic_access_time_black_100dp);
-                sort_by_maker.setImageResource(R.drawable.ic_color_lens_blue_100dp);
+                sort_by_maker.setImageResource(R.drawable.ic_baseline_sort_by_alpha_blue);
                 setAnimationRecyclerView (newList);
                 favoritesAdapter.clearItems();
                 favoritesAdapter.setItems(newList);
@@ -306,7 +308,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
                 initRecyclerView(displayWidth, displayHeight, Sort.by_date, spanCount);
                 sort_by_date.setImageResource(R.drawable.ic_apps_blue_100dp);
                 sort_by_century.setImageResource(R.drawable.ic_access_time_black_100dp);
-                sort_by_maker.setImageResource(R.drawable.ic_color_lens_black_100dp);
+                sort_by_maker.setImageResource(R.drawable.ic_baseline_sort_by_alpha_black);
                 setAnimationRecyclerView (newList);
                 favoritesAdapter.clearItems();
                 favoritesAdapter.setItems(newList);
@@ -324,7 +326,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
 
     public int getTargetScrollPosition () {
 
-        if (favoritesRecyclerView.getAdapter().getItemCount() > 0) {
+        if (favoritesRecyclerView.isShown() && favoritesRecyclerView.getAdapter().getItemCount() > 0) {
 
             final int firstPosition = ((LinearLayoutManager) favoritesRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
             final int lastPosition = ((LinearLayoutManager) favoritesRecyclerView.getLayoutManager()).findLastVisibleItemPosition();

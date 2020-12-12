@@ -36,5 +36,16 @@
     <string name="art_mediums">Art mediums</string>
     <string name="art_classifications">Art classifications</string>
     <string name="art_tags">Art tags</string>
+    <string name="folder_title">Folder title</string>
+    <string name="create_folder">Create folder</string>
+    <string name="public_visible_to_all_users">Public - visible to all users</string>
+    <string name="count">Count:</string>
+    <string name="private_visible_only_to_me">Private - visible only to me</string>
+    <string name="specify_folder_title_please">Specify folder title, please</string>
+    <string name="choose_at_least_one_image_please">Choose at least one image, please</string>
+    <string name="want_to_exit">Are you sure you want to exit?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="the_data_will_not_be_saved">The data will not be saved</string>
 
 </resources>

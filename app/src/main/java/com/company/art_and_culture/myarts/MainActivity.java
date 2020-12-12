@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private NavFragments navFragments;
     private MutableLiveData<ServerResponse> serverResponse = new MutableLiveData<>();
     private MutableLiveData<Art> art = new MutableLiveData<>();
+    private MutableLiveData<Boolean> updateFolders = new MutableLiveData<>();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -65,6 +66,18 @@ public class MainActivity extends AppCompatActivity {
         return art;
     }
 
+    public void updateFolders(boolean b) {
+        updateFolders.postValue(b);
+    }
+
+    public MutableLiveData<Boolean> getUpdateFolders() {
+        return updateFolders;
+    }
+
+    public LiveData<ServerResponse> getListSuggest() {
+        return serverResponse;
+    }
+
     private void getUserUniqueId() {
 
         if (preferences.getString(Constants.USER_UNIQUE_ID,"").length()==0) {
@@ -75,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String randomString(int len){
+    public String randomString(int len){
         String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         SecureRandom rnd = new SecureRandom();
 
@@ -107,9 +120,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public LiveData<ServerResponse> getListSuggest() {
-        return serverResponse;
-    }
 
     public void getSuggests(String suggestQuery, String userUniqueId) {
 
