@@ -7,6 +7,8 @@ import com.company.art_and_culture.myarts.art_maker_fragment.MakerFragment;
 import com.company.art_and_culture.myarts.art_medium_fragment.MediumFragment;
 import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
 import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
+import com.company.art_and_culture.myarts.pojo.Folder;
+import com.company.art_and_culture.myarts.show_folder_fragment.ShowFolderFragment;
 import com.company.art_and_culture.myarts.tags_fragment.TagsFragment;
 import com.company.art_and_culture.myarts.attribute_fragment.AttributeFragment;
 import com.company.art_and_culture.myarts.filter_maker_fragment.FilterMakerFragment;
@@ -33,7 +35,7 @@ public class NavFragments implements
         HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
         MakerFragment.MakerEventListener, ExploreFragment.ExploreEventListener, MediumFragment.MediumEventListener,
         ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener, FilterMakerFragment.FilterMakerEventListener,
-        AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener, BlankFragment.BlankEventListener, FoldersFragment.FoldersEventListener {
+        AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener, BlankFragment.BlankEventListener, FoldersFragment.FoldersEventListener, ShowFolderFragment.ShowFolderEventListener {
 
     private MainActivity activity;
     private NavController navController;
@@ -57,6 +59,8 @@ public class NavFragments implements
     private int filterPositionForTagsFragment= 0;
 
     private String urlForWebFragment;
+
+    private Folder folderForShowFolderFragment;
 
 
     public NavFragments(MainActivity mainActivity, NavController navController) {
@@ -243,13 +247,25 @@ public class NavFragments implements
         navController.navigate(R.id.action_navigation_favorites_to_artShowFragment);
     }
     @Override
-    public void folderClick(String folderUniqueId, String userUniqueId) {
-
+    public void folderClick(Folder folder) {
+        folderForShowFolderFragment = folder;
+        navController.navigate(R.id.action_navigation_favorites_to_showFolderFragment);
     }
     @Override
     public void createFolderClick() {
         navController.navigate(R.id.action_navigation_favorites_to_createFolderFragment);
     }
+    @Override
+    public void artFolderClickEvent(Collection<Art> arts, int position) {
+        this.listArtsForArtShowFragment = arts;
+        this.clickPositionForArtShowFragment = position;
+        navController.navigate(R.id.action_showFolderFragment_to_artShowFragment);
+    }
+    @Override
+    public void folderEditClickListener(Folder folder) {
+
+    }
+
 
 
     @Override
@@ -332,4 +348,7 @@ public class NavFragments implements
         return urlForWebFragment;
     }
 
+    public Folder getFolderForShowFolderFragment() {
+        return folderForShowFolderFragment;
+    }
 }

@@ -7,7 +7,7 @@
 
     <com.makeramen.roundedimageview.RoundedImageView
         app:riv_corner_radius="18dp"
-        android:background="#ccffffff"
+        android:background="@drawable/folder_title_back"
         android:foreground="?android:attr/selectableItemBackground"
         android:scaleType="centerCrop"
         android:layout_margin="16dp"

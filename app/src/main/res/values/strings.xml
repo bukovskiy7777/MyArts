@@ -47,5 +47,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="the_data_will_not_be_saved">The data will not be saved</string>
+    <string name="want_to_delete">Are you sure you want to delete this folder?</string>
 
 </resources>

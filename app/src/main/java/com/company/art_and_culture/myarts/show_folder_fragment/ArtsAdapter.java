@@ -1,7 +1,5 @@
-package com.company.art_and_culture.myarts.create_folder_fragment;
+package com.company.art_and_culture.myarts.show_folder_fragment;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -10,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -110,7 +107,7 @@ public class ArtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private int position;
         private final ImageView art_image;
         private final TextView art_maker;
-        private final View choose_view;
+        private final View choose_view, circle_choose_view;
         private final View color_filter_view;
         private String artImgUrl = "";
         private final Target target = new Target() {
@@ -132,6 +129,7 @@ public class ArtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             art_image = itemView.findViewById(R.id.art_image);
             art_maker = itemView.findViewById(R.id.art_maker);
             choose_view = itemView.findViewById(R.id.choose_view);
+            circle_choose_view = itemView.findViewById(R.id.circle_choose_view);
             color_filter_view = itemView.findViewById(R.id.color_filter_view);
             art_image.setOnClickListener(this);
         }
@@ -157,13 +155,9 @@ public class ArtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             art_maker.setText(art.getArtMaker());
 
-            if(art.isChosenForAddToFolder()) {
-                choose_view.setVisibility(View.VISIBLE);
-                color_filter_view.setVisibility(View.VISIBLE);
-            } else {
-                choose_view.setVisibility(View.GONE);
-                color_filter_view.setVisibility(View.GONE);
-            }
+            choose_view.setVisibility(View.GONE);
+            color_filter_view.setVisibility(View.GONE);
+            circle_choose_view.setVisibility(View.GONE);
         }
 
         @Override

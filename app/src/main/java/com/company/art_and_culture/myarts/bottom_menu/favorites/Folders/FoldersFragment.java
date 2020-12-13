@@ -87,7 +87,7 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
         FoldersAdapter.OnFolderClickListener onFolderClickListener = new FoldersAdapter.OnFolderClickListener() {
             @Override
             public void onFolderImageClick(Folder folder, int position) {
-                folderEventListener.folderClick(folder.getFolderUniqueId(), folder.getUserUniqueId());
+                folderEventListener.folderClick(folder);
             }
         };
         foldersAdapter = new FoldersAdapter(getContext(), onFolderClickListener, displayWidth, displayHeight, spanCount);
@@ -96,7 +96,7 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
         folderRecyclerView.setAdapter(foldersAdapter);
     }
 
-    private void subscribeObservers(MainActivity activity) {
+    private void subscribeObservers(final MainActivity activity) {
 
         foldersViewModel.getFoldersList().observe(getViewLifecycleOwner(), new Observer<ArrayList<Folder>>() {
             @Override
@@ -128,7 +128,12 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
         activity.getUpdateFolders().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                refresh();
+                if(aBoolean) {
+                    refresh();
+                    activity.updateFolders(false);
+                }
+
+
             }
         });
 
@@ -186,13 +191,12 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if (view.getId() == floatingActionButton.getId() || view.getId() == create_folder_button.getId()) {
-            Log.i("create_folder_button", "clicked");
             folderEventListener.createFolderClick();
         }
     }
 
     public interface FoldersEventListener {
-        void folderClick(String folderUniqueId, String userUniqueId);
+        void folderClick(Folder folder);
         void createFolderClick();
     }
 
