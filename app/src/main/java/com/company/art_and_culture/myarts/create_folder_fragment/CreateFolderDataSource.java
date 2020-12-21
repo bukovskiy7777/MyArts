@@ -27,13 +27,55 @@ class CreateFolderDataSource {
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
     private MutableLiveData<ArrayList<Art>> artList = new MutableLiveData<>();
     private Application application;
+    private Folder folderForEdit;
 
-    public CreateFolderDataSource(Application application) {
+    public CreateFolderDataSource(Application application, Folder folderForEdit) {
         this.application = application;
+        this.folderForEdit = folderForEdit;
         updateIsLoadingState(true);
         updateIsListEmptyState(false);
-        loadMyFavorites();
+        if(folderForEdit == null)
+            loadMyFavorites();
+        else
+            getFolderForEdit(folderForEdit);
     }
+
+    private void getFolderForEdit(Folder folderForEdit) {
+        String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
+        ServerRequest request = new ServerRequest();
+        request.setOperation(Constants.GET_FOLDER_FOR_EDIT_OPERATION);
+        request.setUserUniqueId(userUniqueId);
+        request.setFolder(folderForEdit);
+
+        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
+        response.enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                updateIsLoadingState(false);
+                if (response.isSuccessful()) {
+                    ServerResponse resp = response.body();
+                    if(resp.getResult().equals(Constants.SUCCESS)) {
+
+                        updateIsListEmptyState(false);
+                        updateArtList(resp.getListArts());
+                    } else {
+                        updateIsListEmptyState(true);
+                        updateArtList(null);
+                    }
+                } else {
+                    updateIsListEmptyState(true);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) {
+                updateIsLoadingState(false);
+                updateIsListEmptyState(true);
+            }
+        });
+
+    }
+
 
     public void loadMyFavorites () {
 
@@ -109,7 +151,10 @@ class CreateFolderDataSource {
 
     public void refresh() {
         updateIsListEmptyState(false);
-        loadMyFavorites();
+        if(folderForEdit == null)
+            loadMyFavorites();
+        else
+            getFolderForEdit(folderForEdit);
     }
 
     public void createFolder(Folder folder, final MainActivity activity) {

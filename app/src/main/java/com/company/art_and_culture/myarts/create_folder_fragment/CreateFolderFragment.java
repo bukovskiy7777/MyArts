@@ -49,7 +49,7 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
     private RecyclerView recycler_view_items;
     private CreateFolderViewModel createFolderViewModel;
     private FrameLayout title_layout;
-    private TextView items_count, switch_description;
+    private TextView title, items_count, switch_description;
     private ImageButton back_button;
     private EditText title_edit_text;
     private SwitchCompat switch_isPublic;
@@ -57,7 +57,7 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
     private ArtsAdapter artsAdapter;
     private int spanCount = 2;
     private android.content.res.Resources res;
-    //private CreateFolderEventListener createFolderEventListener;
+    private CreateFolderEventListener createFolderEventListener;
     private FloatingActionButton floatingActionButton;
     private int countChosen = 0;
     private MainActivity activity;
@@ -71,6 +71,7 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
         View root = inflater.inflate(R.layout.fragment_create_folder, container, false);
 
         title_layout = root.findViewById(R.id.title_layout);
+        title = root.findViewById(R.id.title);
         items_count = root.findViewById(R.id.items_count);
         switch_description = root.findViewById(R.id.switch_description);
         back_button = root.findViewById(R.id.back_button);
@@ -85,18 +86,6 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
         res = getResources();
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
-
-        createFolderViewModel = new ViewModelProvider(this).get(CreateFolderViewModel.class);
-
-        activity = (MainActivity) getActivity();
-        //createFolderEventListener = activity.getNavFragments();
-        createFolderViewModel.setActivity(activity);
-
-        initItemsRecyclerView(displayWidth, displayHeight, spanCount);
-
-        subscribeObservers();
-
-        setOnBackPressedListener(root);
 
         switch_isPublic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -129,9 +118,38 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
             }
         });
 
-        folderUniqueId = activity.randomString(23);
+        createFolderViewModel = new ViewModelProvider(this).get(CreateFolderViewModel.class);
+
+        activity = (MainActivity) getActivity();
+        createFolderEventListener = activity.getNavFragments();
+        Folder folderForEdit = activity.getNavFragments().getFolderForEditFolderFragment();
+        if(folderForEdit == null) {
+            createFolderViewModel.getFolderForEdit(null);
+            title.setText(res.getText(R.string.create_folder));
+            folderUniqueId = activity.randomString(23);
+        } else {
+            createFolderViewModel.getFolderForEdit(folderForEdit);
+            title.setText(res.getText(R.string.edit_folder));
+            title_edit_text.setText(folderForEdit.getTitle());
+            items_count.setText(Integer.toString(folderForEdit.getItemsCount()));
+            switch_isPublic.setChecked(folderForEdit.isPublic());
+            folderUniqueId = folderForEdit.getFolderUniqueId();
+        }
+        createFolderViewModel.setActivity(activity);
+
+        initItemsRecyclerView(displayWidth, displayHeight, spanCount);
+
+        subscribeObservers();
+
+        setOnBackPressedListener(root);
 
         return root;
+    }
+
+    @Override
+    public void onDetach() {
+        createFolderEventListener.onCreateFolderFragmentClose();
+        super.onDetach();
     }
 
     private void setOnBackPressedListener(View root) {
@@ -157,12 +175,6 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
                 return false;
             }
         } );
-    }
-
-    @Override
-    public void onDetach() {
-        createFolderViewModel.refresh();
-        super.onDetach();
     }
 
     private int getTargetScrollPosition () {
@@ -350,10 +362,8 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    /*
     public interface CreateFolderEventListener {
-        void tagClickEvent(Attribute attribute);
-        void tagFilterPositionEvent(int position);
+        void onCreateFolderFragmentClose();
     }
-*/
+
 }

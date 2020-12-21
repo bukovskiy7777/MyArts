@@ -42,7 +42,7 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:text="@string/create_a_folder"
+                    android:text="@string/create_folder"
                     android:textColor="@color/colorPrimary"
                     android:fontFamily="@string/font_sans_serif"
                     android:textSize="22sp"
@@ -74,7 +74,7 @@
                 <TextView
                     android:background="@drawable/create_folder_button"
                     android:layout_marginTop="20dp"
-                    android:text="@string/create_a_folder"
+                    android:text="@string/create_folder"
                     android:textColor="@color/colorPrimary"
                     android:fontFamily="@string/font_sans_serif"
                     android:textSize="18sp"

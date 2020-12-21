@@ -4,16 +4,13 @@ import android.app.Application;
 
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
-import com.company.art_and_culture.myarts.pojo.Attribute;
 import com.company.art_and_culture.myarts.pojo.Folder;
-import com.company.art_and_culture.myarts.tags_fragment.TagsRepository;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.paging.PagedList;
 
 public class CreateFolderViewModel extends AndroidViewModel {
 
@@ -26,9 +23,11 @@ public class CreateFolderViewModel extends AndroidViewModel {
 
     public CreateFolderViewModel(@NonNull Application application) {
         super(application);
-
         this.application = application;
-        createFolderRepository = CreateFolderRepository.getInstance(application);
+    }
+
+    public void getFolderForEdit(Folder folderForEdit) {
+        createFolderRepository = new CreateFolderRepository(application, folderForEdit); //.getInstance
         artsList = createFolderRepository.getArtsList();
         isLoading = createFolderRepository.getIsLoading();
         isListEmpty = createFolderRepository.getIsListEmpty();
@@ -50,11 +49,8 @@ public class CreateFolderViewModel extends AndroidViewModel {
         createFolderRepository.setActivity(activity);
     }
 
-    public void refresh() {
-        createFolderRepository.refresh();
-    }
-
     public void createFolder(Folder folder, MainActivity activity) {
         createFolderRepository.createFolder(folder, activity);
     }
+
 }

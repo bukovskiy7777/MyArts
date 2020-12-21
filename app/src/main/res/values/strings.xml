@@ -21,7 +21,6 @@
     <string name="sort_by">Sort ArtWorks by</string>
     <string name="th_century">th century</string>
     <string name="folders">Folders</string>
-    <string name="create_a_folder">Create a folder</string>
     <string name="organize_your_favorites">Organize your favorite artWorks into folders according to different criteria: author, subject, etc.</string>
     <string name="read_more">Read more</string>
     <string name="show_less">Show less</string>
@@ -38,6 +37,7 @@
     <string name="art_tags">Art tags</string>
     <string name="folder_title">Folder title</string>
     <string name="create_folder">Create folder</string>
+    <string name="edit_folder">Edit folder</string>
     <string name="public_visible_to_all_users">Public - visible to all users</string>
     <string name="count">Count:</string>
     <string name="private_visible_only_to_me">Private - visible only to me</string>

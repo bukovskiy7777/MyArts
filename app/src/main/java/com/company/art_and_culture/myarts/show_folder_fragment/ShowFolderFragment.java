@@ -84,8 +84,10 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
 
         if(currentFolder.getUserUniqueId().equals(activity.getSharedPreferences(Constants.TAG, 0).getString(Constants.USER_UNIQUE_ID,""))){
             delete_btn.setVisibility(View.VISIBLE);
+            floatingActionButton.setVisibility(View.VISIBLE);
         } else {
             delete_btn.setVisibility(View.GONE);
+            floatingActionButton.setVisibility(View.GONE);
         }
 
         folder_title.setText(currentFolder.getTitle());

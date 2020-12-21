@@ -7,6 +7,7 @@ import com.company.art_and_culture.myarts.art_maker_fragment.MakerFragment;
 import com.company.art_and_culture.myarts.art_medium_fragment.MediumFragment;
 import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
 import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
+import com.company.art_and_culture.myarts.create_folder_fragment.CreateFolderFragment;
 import com.company.art_and_culture.myarts.pojo.Folder;
 import com.company.art_and_culture.myarts.show_folder_fragment.ShowFolderFragment;
 import com.company.art_and_culture.myarts.tags_fragment.TagsFragment;
@@ -35,9 +36,8 @@ public class NavFragments implements
         HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
         MakerFragment.MakerEventListener, ExploreFragment.ExploreEventListener, MediumFragment.MediumEventListener,
         ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener, FilterMakerFragment.FilterMakerEventListener,
-        AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener, BlankFragment.BlankEventListener, FoldersFragment.FoldersEventListener, ShowFolderFragment.ShowFolderEventListener {
+        AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener, BlankFragment.BlankEventListener, FoldersFragment.FoldersEventListener, ShowFolderFragment.ShowFolderEventListener, CreateFolderFragment.CreateFolderEventListener {
 
-    private MainActivity activity;
     private NavController navController;
 
     private Collection<Art> listArtsForArtShowFragment;
@@ -60,24 +60,23 @@ public class NavFragments implements
 
     private String urlForWebFragment;
 
-    private Folder folderForShowFolderFragment;
+    private Folder folderForShowFolderFragment, folderForEditFolderFragment;
 
 
     public NavFragments(MainActivity mainActivity, NavController navController) {
-        activity = mainActivity;
         this.navController = navController;
-        visibilityNavElements(navController);
+        visibilityNavElements(mainActivity, navController);
     }
 
-    private void visibilityNavElements(NavController navController) {
+    private void visibilityNavElements(final MainActivity mainActivity, NavController navController) {
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
             public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
                 if(destination.getId() == R.id.navigation_home || destination.getId() == R.id.navigation_explore ||
                         destination.getId() == R.id.navigation_favorites || destination.getId() == R.id.navigation_notifications) {
-                    activity.setNavViewVisible();
+                    mainActivity.setNavViewVisible();
                 } else {
-                    activity.goneNavView();
+                    mainActivity.goneNavView();
                 }
             }
         });
@@ -256,6 +255,10 @@ public class NavFragments implements
         navController.navigate(R.id.action_navigation_favorites_to_createFolderFragment);
     }
     @Override
+    public void onCreateFolderFragmentClose() {
+        folderForEditFolderFragment = null;
+    }
+    @Override
     public void artFolderClickEvent(Collection<Art> arts, int position) {
         this.listArtsForArtShowFragment = arts;
         this.clickPositionForArtShowFragment = position;
@@ -263,7 +266,8 @@ public class NavFragments implements
     }
     @Override
     public void folderEditClickListener(Folder folder) {
-
+        folderForEditFolderFragment = folder;
+        navController.navigate(R.id.action_showFolderFragment_to_createFolderFragment);
     }
 
 
@@ -282,7 +286,6 @@ public class NavFragments implements
     public void homeMakerClickEvent(Maker maker) {
         this.makerForMakerFragment = maker;
         navController.navigate(R.id.action_navigation_home_to_makerFragment);
-
     }
     @Override
     public void homeClassificationClickEvent(String artClassification, String queryType) {
@@ -351,4 +354,9 @@ public class NavFragments implements
     public Folder getFolderForShowFolderFragment() {
         return folderForShowFolderFragment;
     }
+
+    public Folder getFolderForEditFolderFragment() {
+        return folderForEditFolderFragment;
+    }
+
 }

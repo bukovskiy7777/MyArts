@@ -63,7 +63,7 @@
                 app:layout_constraintTop_toBottomOf="@id/title"
                 android:id="@+id/title_edit_text"
                 android:layout_marginTop="16dp"
-                android:textColor="@color/colorBlack"
+                android:textColor="@color/colorBlue"
                 android:hint="@string/folder_title"
                 android:drawableRight="@drawable/ic_baseline_edit_24"
                 android:background="@drawable/border_edit_text_create_folder"
@@ -110,7 +110,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/title" />
 
             <TextView
-                android:text=" "
+                android:text="0"
                 android:textColor="@color/colorBlack"
                 android:fontFamily="@string/font_sans_serif"
                 android:textSize="14sp"

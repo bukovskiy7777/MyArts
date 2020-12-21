@@ -13,20 +13,11 @@ import androidx.lifecycle.Observer;
 
 public class CreateFolderRepository {
 
-    private static CreateFolderRepository instance;
     private CreateFolderDataSource createFolderDataSource;
 
-    public static CreateFolderRepository getInstance(Application application){
+    public CreateFolderRepository(Application application, Folder folderForEdit) {
 
-        if(instance == null){
-            instance = new CreateFolderRepository(application);
-        }
-        return instance;
-    }
-
-    public CreateFolderRepository(Application application) {
-
-        createFolderDataSource = new CreateFolderDataSource(application);
+        createFolderDataSource = new CreateFolderDataSource(application, folderForEdit);
     }
 
     public LiveData<ArrayList<Art>> getArtsList(){
@@ -41,19 +32,11 @@ public class CreateFolderRepository {
         return createFolderDataSource.getIsListEmpty();
     }
 
-    public boolean refresh() {
-        boolean isConnected = createFolderDataSource.isNetworkAvailable();
-        if (isConnected){
-            createFolderDataSource.refresh();
-        }
-        return isConnected;
-    }
-
     public void setActivity(MainActivity activity) {
         activity.getArt().observe(activity, new Observer<Art>() {
             @Override
             public void onChanged(Art art) {
-                refresh();
+                createFolderDataSource.refresh(); //refresh();
             }
         });
     }
