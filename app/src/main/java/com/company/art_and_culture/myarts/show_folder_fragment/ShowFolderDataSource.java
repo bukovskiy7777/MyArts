@@ -27,6 +27,7 @@ class ShowFolderDataSource {
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
     private MutableLiveData<ArrayList<Art>> artList = new MutableLiveData<>();
     private Application application;
+    private MainActivity activity;
 
     public ShowFolderDataSource(Application application, Folder folder) {
         this.application = application;
@@ -96,4 +97,40 @@ class ShowFolderDataSource {
         return artList;
     }
 
+    public void deleteFolder(Folder currentFolder) {
+
+        String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
+        ServerRequest request = new ServerRequest();
+        request.setOperation(Constants.DELETE_FOLDER_OPERATION);
+        request.setUserUniqueId(userUniqueId);
+        request.setFolder(currentFolder);
+
+        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
+        response.enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                updateIsLoadingState(false);
+                if (response.isSuccessful()) {
+                    ServerResponse resp = response.body();
+                    if(resp.getResult().equals(Constants.SUCCESS)) {
+                        updateIsLoadingState(false);
+                        activity.updateFolders(true);
+                        activity.getNavFragments().popBackStack();
+                    } else {
+                        updateIsLoadingState(false);
+                    }
+                } else {
+                    updateIsLoadingState(false);
+                }
+            }
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) {
+                updateIsLoadingState(false);
+            }
+        });
+    }
+
+    public void setActivity(MainActivity activity) {
+        this.activity = activity;
+    }
 }

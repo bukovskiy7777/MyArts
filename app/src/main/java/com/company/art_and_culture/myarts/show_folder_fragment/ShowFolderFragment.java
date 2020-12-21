@@ -79,8 +79,8 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
         activity = (MainActivity) getActivity();
         showFolderEventListener = activity.getNavFragments();
         currentFolder = activity.getNavFragments().getFolderForShowFolderFragment();
-        //showFolderViewModel.setActivity(activity);
         showFolderViewModel.setFolder(currentFolder);
+        showFolderViewModel.setActivity(activity);
 
         if(currentFolder.getUserUniqueId().equals(activity.getSharedPreferences(Constants.TAG, 0).getString(Constants.USER_UNIQUE_ID,""))){
             delete_btn.setVisibility(View.VISIBLE);
@@ -189,10 +189,8 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
         builder.setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
-
                 dialog = null;
-                // delete folder
-
+                showFolderViewModel.deleteFolder(currentFolder); // delete folder
             }
         });
         builder.setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {

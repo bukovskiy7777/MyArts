@@ -44,4 +44,11 @@ public class ShowFolderRepository {
         instance = null;
     }
 
+    public void deleteFolder(Folder currentFolder) {
+        showFolderDataSource.deleteFolder(currentFolder);
+    }
+
+    public void setActivity(MainActivity activity) {
+        showFolderDataSource.setActivity(activity);
+    }
 }

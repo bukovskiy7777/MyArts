@@ -2,6 +2,7 @@ package com.company.art_and_culture.myarts.show_folder_fragment;
 
 import android.app.Application;
 
+import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Folder;
 
@@ -48,5 +49,13 @@ public class ShowFolderViewModel extends AndroidViewModel {
 
     public void refresh() {
         showFolderRepository.refresh();
+    }
+
+    public void deleteFolder(Folder currentFolder) {
+        showFolderRepository.deleteFolder(currentFolder);
+    }
+
+    public void setActivity(MainActivity activity) {
+        showFolderRepository.setActivity(activity);
     }
 }
