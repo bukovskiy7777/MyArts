@@ -1,5 +1,7 @@
 package com.company.art_and_culture.myarts.pojo;
 
+import java.util.ArrayList;
+
 public class Art {
 
     private String artLink;
@@ -21,6 +23,7 @@ public class Art {
     private String artistBio;
 
     private boolean isChosenForAddToFolder = false;
+    private ArrayList<String> listFoldersAdded = new ArrayList<>();
 
 
     public void setArtWidth(int artWidth) {
@@ -106,4 +109,9 @@ public class Art {
     public void setChosenForAddToFolder(boolean chosenForAddToFolder) {
         isChosenForAddToFolder = chosenForAddToFolder;
     }
+
+    public ArrayList<String> getListFoldersAdded() {
+        return listFoldersAdded;
+    }
+
 }

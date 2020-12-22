@@ -47,6 +47,7 @@ public class Constants {
     public static final String GET_FOLDER_ARTS_OPERATION = "getFolderArts";
     public static final String GET_FOLDER_FOR_EDIT_OPERATION = "getFolderForEdit";
     public static final String DELETE_FOLDER_OPERATION = "deleteFolder";
+    public static final String GET_MY_FAVORITES_TO_CREATE_FOLDER = "getMyFavoritesToCreateFolder";
 
 
     public static final String GET_LIST_CULTURE_OPERATION = "getCultureList";

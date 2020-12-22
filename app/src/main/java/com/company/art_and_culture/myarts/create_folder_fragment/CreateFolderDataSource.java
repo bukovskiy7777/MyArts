@@ -81,7 +81,7 @@ class CreateFolderDataSource {
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
         ServerRequest request = new ServerRequest();
-        request.setOperation(Constants.GET_MY_FAVORITES_OPERATION);
+        request.setOperation(Constants.GET_MY_FAVORITES_TO_CREATE_FOLDER);
         request.setUserUniqueId(userUniqueId);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);

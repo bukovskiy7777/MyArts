@@ -109,7 +109,7 @@ public class ArtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private Art art;
         private int position;
         private final ImageView art_image;
-        private final TextView art_maker;
+        private final TextView art_maker, folders_list;
         private final View choose_view;
         private final View color_filter_view;
         private String artImgUrl = "";
@@ -131,6 +131,7 @@ public class ArtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             itemView.getLayoutParams().height = displayWidth/spanCount;
             art_image = itemView.findViewById(R.id.art_image);
             art_maker = itemView.findViewById(R.id.art_maker);
+            folders_list = itemView.findViewById(R.id.folders_list);
             choose_view = itemView.findViewById(R.id.choose_view);
             color_filter_view = itemView.findViewById(R.id.color_filter_view);
             art_image.setOnClickListener(this);
@@ -157,12 +158,24 @@ public class ArtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             art_maker.setText(art.getArtMaker());
 
+            StringBuilder builder = new StringBuilder();
+            if(art.getListFoldersAdded().size() > 0) builder.append(context.getString(R.string.folders_with_this_art) + "\n");
+            for (int i = 0; i < art.getListFoldersAdded().size(); i++) {
+                if(i == art.getListFoldersAdded().size()-1)
+                    builder.append(art.getListFoldersAdded().get(i));
+                else
+                    builder.append(art.getListFoldersAdded().get(i) + "\n");
+            }
+            folders_list.setText(builder.toString());
+
             if(art.isChosenForAddToFolder()) {
                 choose_view.setVisibility(View.VISIBLE);
                 color_filter_view.setVisibility(View.VISIBLE);
+                folders_list.setVisibility(View.VISIBLE);
             } else {
                 choose_view.setVisibility(View.GONE);
                 color_filter_view.setVisibility(View.GONE);
+                folders_list.setVisibility(View.GONE);
             }
         }
 
