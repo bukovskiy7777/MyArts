@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
+import com.company.art_and_culture.myarts.art_maker_fragment.MakerRepository;
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import androidx.lifecycle.LiveData;
@@ -16,6 +17,7 @@ public class MediumRepository {
     private LiveData<PagedList<Art>> artList;
     private MediumDataSource mediumDataSource;
     private MediumDataSourceFactory mediumDataSourceFactory;
+    private Application application;
 
     private String artQuery, queryType;
 
@@ -29,6 +31,7 @@ public class MediumRepository {
 
     public MediumRepository(Application application, String artQuery, String queryType) {
 
+        this.application = application;
         this.artQuery = artQuery;
         this.queryType = queryType;
 
@@ -63,13 +66,22 @@ public class MediumRepository {
         mediumDataSource.writeDimentionsOnServer(art);
     }
 
-    public void setArtQueryAndType(String artQuery, String queryType) {
-        if (!this.artQuery.equals(artQuery) || !this.queryType.equals(queryType)) mediumDataSourceFactory.setArtQueryAndType(artQuery, queryType);
-        this.artQuery = artQuery;
-        this.queryType = queryType;
+    public MediumRepository setArtQueryAndType(String artQuery, String queryType) {
+        mediumDataSourceFactory.setArtQueryAndType(artQuery, queryType);
+        instance = new MediumRepository(application, artQuery, queryType);
+        return instance;
     }
 
     public void setActivity(MainActivity activity) {
         mediumDataSource.setActivity(activity);
     }
+
+    public String getArtQuery() {
+        return artQuery;
+    }
+
+    public String getQueryType() {
+        return queryType;
+    }
+
 }

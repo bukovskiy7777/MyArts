@@ -90,11 +90,7 @@ public class MediumFragment extends Fragment {
                     if (scrollPosition > 4) {
                         mediumRecyclerView.smoothScrollToPosition(0);
                         return true;
-                    } else {
-                        mediumViewModel.setArtQueryAndType ("", "");
-                        return false;
                     }
-
                 }
                 return false;
             }

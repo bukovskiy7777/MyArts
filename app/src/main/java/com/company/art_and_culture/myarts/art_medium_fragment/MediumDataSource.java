@@ -49,14 +49,14 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
         request.setPageNumber(1);
         request.setUserUniqueId(userUniqueId);
 
-        if (queryType != null && queryType.equals(Constants.ART_MEDIUM)) {
+        if (queryType.equals(Constants.ART_MEDIUM)) {
             request.setOperation(Constants.GET_ARTS_LIST_MEDIUM_OPERATION);
-        } else if (queryType != null && queryType.equals(Constants.ART_CLASSIFICATION)) {
+        } else if (queryType.equals(Constants.ART_CLASSIFICATION)) {
             request.setOperation(Constants.GET_ARTS_LIST_CLASSIFICATION_OPERATION);
             request.setOldList(MediumDataInMemory.getInstance().getAllData());
-        } else if (queryType != null && queryType.equals(Constants.ART_CULTURE)) {
+        } else if (queryType.equals(Constants.ART_CULTURE)) {
             request.setOperation(Constants.GET_ARTS_LIST_CULTURE_OPERATION);
-        } else if (queryType != null && queryType.equals(Constants.ART_TAG)) {
+        } else if (queryType.equals(Constants.ART_TAG)) {
             request.setOperation(Constants.GET_ARTS_LIST_TAG_OPERATION);
         }
 
@@ -99,14 +99,14 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
         request.setPageNumber(params.key);
         request.setUserUniqueId(userUniqueId);
 
-        if (queryType != null && queryType.equals(Constants.ART_MEDIUM)) {
+        if (queryType.equals(Constants.ART_MEDIUM)) {
             request.setOperation(Constants.GET_ARTS_LIST_MEDIUM_OPERATION);
-        } else if (queryType != null && queryType.equals(Constants.ART_CLASSIFICATION)) {
+        } else if (queryType.equals(Constants.ART_CLASSIFICATION)) {
             request.setOperation(Constants.GET_ARTS_LIST_CLASSIFICATION_OPERATION);
             request.setOldList(MediumDataInMemory.getInstance().getAllData());
-        } else if (queryType != null && queryType.equals(Constants.ART_CULTURE)) {
+        } else if (queryType.equals(Constants.ART_CULTURE)) {
             request.setOperation(Constants.GET_ARTS_LIST_CULTURE_OPERATION);
-        } else if (queryType != null && queryType.equals(Constants.ART_TAG)) {
+        } else if (queryType.equals(Constants.ART_TAG)) {
             request.setOperation(Constants.GET_ARTS_LIST_TAG_OPERATION);
         }
 

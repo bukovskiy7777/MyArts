@@ -24,10 +24,7 @@ public class MediumViewModel extends AndroidViewModel {
         super(application);
 
         this.application = application;
-        mediumRepository = MediumRepository.getInstance(application, "", "");
-        artList = mediumRepository.getArtList();
-        isLoading = mediumRepository.getIsLoading();
-        isListEmpty = mediumRepository.getIsListEmpty();
+
     }
 
     public LiveData<PagedList<Art>> getArtList(){
@@ -51,7 +48,13 @@ public class MediumViewModel extends AndroidViewModel {
     }
 
     public void setArtQueryAndType(String artQuery, String queryType) {
-        mediumRepository.setArtQueryAndType(artQuery, queryType);
+        mediumRepository = MediumRepository.getInstance(application, artQuery, queryType);
+        if (!mediumRepository.getArtQuery().equals(artQuery) || !mediumRepository.getQueryType().equals(queryType)) {
+            mediumRepository = mediumRepository.setArtQueryAndType(artQuery, queryType);
+        }
+        artList = mediumRepository.getArtList();
+        isLoading = mediumRepository.getIsLoading();
+        isListEmpty = mediumRepository.getIsListEmpty();
     }
 
     public void setActivity(MainActivity activity) {
