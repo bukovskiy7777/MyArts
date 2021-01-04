@@ -52,6 +52,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
     private TextView favorites_sort_by;
     private MainActivity activity;
     public enum Sort {by_date, by_maker, by_century}
+    private int sortDirection = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -259,60 +260,88 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
 
         if(v.getId() == sort_by_century.getId()) {
 
-            if(!favoritesAdapter.getSort_type().equals(Sort.by_century)) {
-                spanCount = 1;
-                initRecyclerView(displayWidth, displayHeight, Sort.by_century, spanCount);
+            if(sortDirection == 0) {
+                sortDirection = 1;
                 Collections.sort(newList, new Comparator<Art>() {
                     @Override
                     public int compare(Art one, Art other) {
-                        return one.getCentury().compareTo(other.getCentury());
+                        return one.getCentury().compareToIgnoreCase(other.getCentury());
                     }
                 });
-                sort_by_date.setImageResource(R.drawable.ic_apps_black_100dp);
-                sort_by_century.setImageResource(R.drawable.ic_access_time_blue_100dp);
-                sort_by_maker.setImageResource(R.drawable.ic_baseline_sort_by_alpha_black);
-                setAnimationRecyclerView (newList);
-                favoritesAdapter.clearItems();
-                favoritesAdapter.setItems(newList);
+            } else {
+                sortDirection = 0;
+                Collections.sort(newList, new Comparator<Art>() {
+                    @Override
+                    public int compare(Art one, Art other) {
+                        return other.getCentury().compareToIgnoreCase(one.getCentury());
+                    }
+                });
             }
+            spanCount = 1;
+            initRecyclerView(displayWidth, displayHeight, Sort.by_century, spanCount);
+
+            sort_by_date.setImageResource(R.drawable.ic_apps_black_100dp);
+            sort_by_century.setImageResource(R.drawable.ic_access_time_blue_100dp);
+            sort_by_maker.setImageResource(R.drawable.ic_baseline_sort_by_alpha_black);
+            setAnimationRecyclerView (newList);
+            favoritesAdapter.clearItems();
+            favoritesAdapter.setItems(newList);
+
             AnimatorSet set = new AnimatorSet();
             set.playSequentially(scaleUp(sort_by_century), scaleDown(sort_by_century));
             set.start();
 
         } else if(v.getId() == sort_by_maker.getId()) {
 
-            if(!favoritesAdapter.getSort_type().equals(Sort.by_maker)) {
-                spanCount = 1;
-                initRecyclerView(displayWidth, displayHeight, Sort.by_maker, spanCount);
+            if(sortDirection == 0) {
+                sortDirection = 1;
                 Collections.sort(newList, new Comparator<Art>() {
                     @Override
                     public int compare(Art one, Art other) {
-                        return one.getArtMaker().compareTo(other.getArtMaker());
+                        return one.getArtMaker().compareToIgnoreCase(other.getArtMaker());
                     }
                 });
-                sort_by_date.setImageResource(R.drawable.ic_apps_black_100dp);
-                sort_by_century.setImageResource(R.drawable.ic_access_time_black_100dp);
-                sort_by_maker.setImageResource(R.drawable.ic_baseline_sort_by_alpha_blue);
-                setAnimationRecyclerView (newList);
-                favoritesAdapter.clearItems();
-                favoritesAdapter.setItems(newList);
+            } else {
+                sortDirection = 0;
+                Collections.sort(newList, new Comparator<Art>() {
+                    @Override
+                    public int compare(Art one, Art other) {
+                        return other.getArtMaker().compareToIgnoreCase(one.getArtMaker());
+                    }
+                });
             }
+            spanCount = 1;
+            initRecyclerView(displayWidth, displayHeight, Sort.by_maker, spanCount);
+
+            sort_by_date.setImageResource(R.drawable.ic_apps_black_100dp);
+            sort_by_century.setImageResource(R.drawable.ic_access_time_black_100dp);
+            sort_by_maker.setImageResource(R.drawable.ic_baseline_sort_by_alpha_blue);
+            setAnimationRecyclerView (newList);
+            favoritesAdapter.clearItems();
+            favoritesAdapter.setItems(newList);
+
             AnimatorSet set = new AnimatorSet();
             set.playSequentially(scaleUp(sort_by_maker), scaleDown(sort_by_maker));
             set.start();
 
         } else if(v.getId() == sort_by_date.getId()) {
 
-            if(!favoritesAdapter.getSort_type().equals(Sort.by_date)) {
-                spanCount = 3;
-                initRecyclerView(displayWidth, displayHeight, Sort.by_date, spanCount);
-                sort_by_date.setImageResource(R.drawable.ic_apps_blue_100dp);
-                sort_by_century.setImageResource(R.drawable.ic_access_time_black_100dp);
-                sort_by_maker.setImageResource(R.drawable.ic_baseline_sort_by_alpha_black);
-                setAnimationRecyclerView (newList);
-                favoritesAdapter.clearItems();
-                favoritesAdapter.setItems(newList);
+            if(sortDirection == 0) {
+                sortDirection = 1;
+                Collections.reverse(newList);
+            } else {
+                sortDirection = 0;
             }
+            spanCount = 3;
+            initRecyclerView(displayWidth, displayHeight, Sort.by_date, spanCount);
+
+            sort_by_date.setImageResource(R.drawable.ic_apps_blue_100dp);
+            sort_by_century.setImageResource(R.drawable.ic_access_time_black_100dp);
+            sort_by_maker.setImageResource(R.drawable.ic_baseline_sort_by_alpha_black);
+            setAnimationRecyclerView (newList);
+            favoritesAdapter.clearItems();
+            favoritesAdapter.setItems(newList);
+
             AnimatorSet set = new AnimatorSet();
             set.playSequentially(scaleUp(sort_by_date), scaleDown(sort_by_date));
             set.start();
