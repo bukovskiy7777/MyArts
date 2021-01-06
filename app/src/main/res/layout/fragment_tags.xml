@@ -91,5 +91,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
+    <FrameLayout
+        android:clickable="true"
+        android:background="#88000000"
+        android:id="@+id/black_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

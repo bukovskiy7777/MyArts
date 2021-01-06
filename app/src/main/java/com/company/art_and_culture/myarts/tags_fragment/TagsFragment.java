@@ -1,6 +1,7 @@
 package com.company.art_and_culture.myarts.tags_fragment;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,7 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
 
     private RecyclerView recycler_view_tags, recycler_view_filter;
     private TagsViewModel tagsViewModel;
-    private FrameLayout title_layout;
+    private FrameLayout title_layout, black_layout;
     private TextView title_tv;
     private ProgressBar download_progress;
     private TagsAdapter tagsAdapter;
@@ -54,6 +55,7 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
 
         title_layout = root.findViewById(R.id.title_layout);
         title_tv = root.findViewById(R.id.title);
+        black_layout = root.findViewById(R.id.black_layout);
         recycler_view_tags = root.findViewById(R.id.recycler_view_tags);
         download_progress = root.findViewById(R.id.download_progress);
 
@@ -68,7 +70,6 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
         tagsViewModel = new ViewModelProvider(this).get(TagsViewModel.class);
 
         MainActivity activity = (MainActivity) getActivity();
-
         tagsEventListener = activity.getNavFragments();
 
         initFilterRecyclerView(displayWidth, displayHeight);
@@ -79,14 +80,55 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
 
         recycler_view_filter.setVisibility(View.GONE);
         background_view.setVisibility(View.GONE);
+        black_layout.setVisibility(View.GONE);
 
         floatingActionButton.setOnClickListener(this);
+        black_layout.setOnClickListener(this);
 
         initTagRecyclerView(displayWidth, displayHeight, spanCount);
 
         subscribeObservers();
 
+        setOnBackPressedListener(root);
+
         return root;
+    }
+
+    private void setOnBackPressedListener(View root) {
+        //You need to add the following line for this solution to work; thanks skayred
+        root.setFocusableInTouchMode(true);
+        root.requestFocus();
+        root.setOnKeyListener( new View.OnKeyListener() {
+            @Override
+            public boolean onKey( View v, int keyCode, KeyEvent event ) {
+
+                if( keyCode == KeyEvent.KEYCODE_BACK ) {
+                    if(recycler_view_filter.isShown()) {
+                        recycler_view_filter.setVisibility(View.GONE);
+                        background_view.setVisibility(View.GONE);
+                        black_layout.setVisibility(View.GONE);
+                        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.filter_layout_fade_out);
+                        recycler_view_filter.startAnimation(animation);
+                        background_view.startAnimation(animation);
+                        return true;
+                    } else {
+                        int scrollPosition = 0;
+                        if (tagsAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
+                        if (scrollPosition > 4 * spanCount) {
+                            recycler_view_tags.smoothScrollToPosition(0);
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                return false;
+            }
+        } );
+    }
+
+    private int getTargetScrollPosition () {
+
+        return ((GridLayoutManager) recycler_view_tags.getLayoutManager()).findFirstVisibleItemPosition();
     }
 
     private ArrayList<FilterObject> getFilterList(int filterPosition) {
@@ -175,6 +217,7 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
             if(recycler_view_filter.isShown()) {
                 recycler_view_filter.setVisibility(View.GONE);
                 background_view.setVisibility(View.GONE);
+                black_layout.setVisibility(View.GONE);
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.filter_layout_fade_out);
                 recycler_view_filter.startAnimation(animation);
                 background_view.startAnimation(animation);
@@ -182,22 +225,28 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.filter_layout_fade_in);
                 animation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
+                    public void onAnimationStart(Animation animation) { }
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         recycler_view_filter.setVisibility(View.VISIBLE);
                         background_view.setVisibility(View.VISIBLE);
+                        black_layout.setVisibility(View.VISIBLE);
                     }
                     @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
+                    public void onAnimationRepeat(Animation animation) { }
                 });
                 recycler_view_filter.startAnimation(animation);
                 background_view.startAnimation(animation);
+                animation = AnimationUtils.loadAnimation(getContext(), R.anim.enter_fade_in);
+                black_layout.startAnimation(animation);
             }
+        } else if (view.getId() == black_layout.getId()) {
+            recycler_view_filter.setVisibility(View.GONE);
+            background_view.setVisibility(View.GONE);
+            black_layout.setVisibility(View.GONE);
+            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.filter_layout_fade_out);
+            recycler_view_filter.startAnimation(animation);
+            background_view.startAnimation(animation);
         }
     }
 
