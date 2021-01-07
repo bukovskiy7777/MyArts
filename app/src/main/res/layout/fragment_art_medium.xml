@@ -68,7 +68,6 @@
             app:layout_constraintTop_toTopOf="parent">
         </ProgressBar>
 
-
         <androidx.recyclerview.widget.RecyclerView
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/art_medium_appbar"

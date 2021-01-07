@@ -46,6 +46,7 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
     private ArrayList<FilterObject> filterList = new ArrayList<>();
     private View background_view;
     private FloatingActionButton floatingActionButton;
+    private MainActivity activity;
 
     @Nullable
     @Override
@@ -69,7 +70,7 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
 
         tagsViewModel = new ViewModelProvider(this).get(TagsViewModel.class);
 
-        MainActivity activity = (MainActivity) getActivity();
+        activity = (MainActivity) getActivity();
         tagsEventListener = activity.getNavFragments();
 
         initFilterRecyclerView(displayWidth, displayHeight);
@@ -104,12 +105,7 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
 
                 if( keyCode == KeyEvent.KEYCODE_BACK ) {
                     if(recycler_view_filter.isShown()) {
-                        recycler_view_filter.setVisibility(View.GONE);
-                        background_view.setVisibility(View.GONE);
-                        black_layout.setVisibility(View.GONE);
-                        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.filter_layout_fade_out);
-                        recycler_view_filter.startAnimation(animation);
-                        background_view.startAnimation(animation);
+                        goneFilterViews();
                         return true;
                     } else {
                         int scrollPosition = 0;
@@ -215,17 +211,14 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         if(view.getId() == floatingActionButton.getId()) {
             if(recycler_view_filter.isShown()) {
-                recycler_view_filter.setVisibility(View.GONE);
-                background_view.setVisibility(View.GONE);
-                black_layout.setVisibility(View.GONE);
-                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.filter_layout_fade_out);
-                recycler_view_filter.startAnimation(animation);
-                background_view.startAnimation(animation);
+                goneFilterViews();
             } else {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.filter_layout_fade_in);
                 animation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
-                    public void onAnimationStart(Animation animation) { }
+                    public void onAnimationStart(Animation animation) {
+                        activity.getWindow().setStatusBarColor(res.getColor(R.color.colorText));
+                    }
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         recycler_view_filter.setVisibility(View.VISIBLE);
@@ -241,13 +234,18 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
                 black_layout.startAnimation(animation);
             }
         } else if (view.getId() == black_layout.getId()) {
-            recycler_view_filter.setVisibility(View.GONE);
-            background_view.setVisibility(View.GONE);
-            black_layout.setVisibility(View.GONE);
-            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.filter_layout_fade_out);
-            recycler_view_filter.startAnimation(animation);
-            background_view.startAnimation(animation);
+            goneFilterViews();
         }
+    }
+
+    private void goneFilterViews() {
+        recycler_view_filter.setVisibility(View.GONE);
+        background_view.setVisibility(View.GONE);
+        black_layout.setVisibility(View.GONE);
+        activity.getWindow().setStatusBarColor(res.getColor(R.color.colorPrimaryDark));
+        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.filter_layout_fade_out);
+        recycler_view_filter.startAnimation(animation);
+        background_view.startAnimation(animation);
     }
 
     public interface TagsEventListener {

@@ -1,5 +1,7 @@
 package com.company.art_and_culture.myarts.art_medium_fragment;
 
+import android.util.Log;
+
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
@@ -25,8 +27,8 @@ public class MediumDataInMemory {
     }
 
     public void addData(ArrayList<Art> data) {
-        //listArts.addAll(data);
-        for (int i = 0; i < data.size(); i++) {
+        listArts.addAll(data);
+        /*for (int i = 0; i < data.size(); i++) {
             boolean add = true;
             for (int j = 0; j < listArts.size(); j++) {
                 if (data.get(i).getArtId().equals(listArts.get(j).getArtId()) && data.get(i).getArtProvider().equals(listArts.get(j).getArtProvider())) {
@@ -36,7 +38,7 @@ public class MediumDataInMemory {
             if (add) {
                 listArts.add(data.get(i));
             }
-        }
+        }*/
     }
 
     public ArrayList<Art> getInitialData() {
