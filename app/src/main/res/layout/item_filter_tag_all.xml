@@ -9,7 +9,7 @@
         android:id="@+id/circle_filter_view"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:src="#883366BB"
+        android:src="@color/colorBlueFilter"
         app:layout_constraintLeft_toLeftOf="@+id/filter_text"
         app:layout_constraintRight_toRightOf="@+id/filter_text"
         app:layout_constraintTop_toTopOf="@+id/filter_text"

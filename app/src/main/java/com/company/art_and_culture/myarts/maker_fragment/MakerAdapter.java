@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.art_maker_fragment;
+package com.company.art_and_culture.myarts.maker_fragment;
 
 import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
@@ -16,9 +16,9 @@ import android.widget.TextView;
 
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.bottom_menu.home.LifecycleViewHolder;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
-import com.company.art_and_culture.myarts.bottom_menu.home.LifecycleViewHolder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 

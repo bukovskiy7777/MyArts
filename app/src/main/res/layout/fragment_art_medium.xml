@@ -12,33 +12,33 @@
         android:layout_height="match_parent"
         android:background="@color/colorPrimary">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/art_medium_appbar"
-        android:background="@color/colorPrimary"
-        android:elevation="6dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
-
-        <TextView
-            android:id="@+id/appbar_medium"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:gravity="center"
-            android:maxLines="1"
-            android:ellipsize="end"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/art_medium_appbar"
+            android:background="@color/colorPrimary"
+            android:elevation="4dp"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:textColor="@color/colorBlack"
-            android:textSize="20sp"
-            android:fontFamily="@string/font_sans_serif"
-            android:text="Rembrandt"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="50dp">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/appbar_medium"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:textColor="@color/colorBlack"
+                android:textSize="20sp"
+                android:fontFamily="@string/font_sans_serif"
+                android:text="Keyword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/text_medium"
@@ -74,6 +74,109 @@
             android:id="@+id/recycler_view_medium"
             android:layout_width="match_parent"
             android:layout_height="0dp"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginBottom="30dp"
+            android:layout_marginRight="15dp"
+            android:id="@+id/floating_button"
+            app:backgroundTint="@color/colorPrimary"
+            android:src="@drawable/ic_baseline_tune_100"
+            android:elevation="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <FrameLayout
+            android:clickable="true"
+            android:elevation="4dp"
+            android:background="#88000000"
+            android:id="@+id/black_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:clickable="true"
+                android:id="@+id/filters_container"
+                android:background="@drawable/filter_layout_back_art_filter_fragment"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginBottom="100dp"
+                android:layout_marginTop="60dp"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/filters_title"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="18sp"
+                    android:fontFamily="@string/font_sans_serif_black"
+                    android:text="@string/filters"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    app:layout_constraintTop_toBottomOf="@+id/filters_title"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"
+                    android:id="@+id/filter_artist_tv"
+                    android:fontFamily="@string/font_sans_serif"
+                    android:text="@string/artists"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    app:layout_constraintTop_toBottomOf="@id/filter_artist_tv"
+                    android:id="@+id/recycler_view_artists"
+                    android:layout_width="match_parent"
+                    android:layout_height="140dp"/>
+
+                <TextView
+                    app:layout_constraintTop_toBottomOf="@+id/recycler_view_artists"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"
+                    android:id="@+id/filter_century_tv"
+                    android:fontFamily="@string/font_sans_serif"
+                    android:text="@string/centuries"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    app:layout_constraintTop_toBottomOf="@id/filter_century_tv"
+                    android:id="@+id/recycler_view_centuries"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"/>
+
+                <TextView
+                    app:layout_constraintTop_toBottomOf="@+id/recycler_view_centuries"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"
+                    android:id="@+id/filter_keywords_tv"
+                    android:fontFamily="@string/font_sans_serif"
+                    android:text="@string/keywords"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    app:layout_constraintTop_toBottomOf="@id/filter_keywords_tv"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:id="@+id/recycler_view_keywords"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"/>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

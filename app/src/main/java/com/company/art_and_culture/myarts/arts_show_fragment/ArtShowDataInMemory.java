@@ -39,7 +39,7 @@ public class ArtShowDataInMemory {
     }
 
     public Art getSingleItem(int position){
-        if (listArts.size() >= position) {
+        if (position <= listArts.size()-1) {
             return listArts.get(position);
         } else {
             return null;

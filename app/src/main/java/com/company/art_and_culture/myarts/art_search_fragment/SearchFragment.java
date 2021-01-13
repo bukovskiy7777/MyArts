@@ -268,7 +268,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.delete_query:
-                        activity.deleteQuery(suggest.getSuggestStr(), preferences.getString(Constants.USER_UNIQUE_ID,""));
+                        activity.deleteSuggest(suggest.getSuggestStr(), preferences.getString(Constants.USER_UNIQUE_ID,""));
                         return true;
                     default:
                         return false;

@@ -216,9 +216,7 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.filter_layout_fade_in);
                 animation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
-                    public void onAnimationStart(Animation animation) {
-                        activity.getWindow().setStatusBarColor(res.getColor(R.color.colorText));
-                    }
+                    public void onAnimationStart(Animation animation) { }
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         recycler_view_filter.setVisibility(View.VISIBLE);
@@ -232,6 +230,7 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
                 background_view.startAnimation(animation);
                 animation = AnimationUtils.loadAnimation(getContext(), R.anim.enter_fade_in);
                 black_layout.startAnimation(animation);
+                activity.getWindow().setStatusBarColor(res.getColor(R.color.colorText));
             }
         } else if (view.getId() == black_layout.getId()) {
             goneFilterViews();

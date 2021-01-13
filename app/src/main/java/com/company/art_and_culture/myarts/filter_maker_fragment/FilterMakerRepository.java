@@ -17,7 +17,7 @@ public class FilterMakerRepository {
     private String filter = "", date = "";
     private Application application;
     private FilterMakerDataSource filterMakerDataSource;
-    private LiveData<Boolean> isInitialLoaded;
+    private LiveData<Boolean> isLoading;
 
     public static FilterMakerRepository getInstance(Application application, String filter, String date){
 
@@ -42,26 +42,24 @@ public class FilterMakerRepository {
         filterMakerDataSourceFactory = new FilterMakerDataSourceFactory(application, filter, date);
         makerList = new LivePagedListBuilder<>(filterMakerDataSourceFactory, config).build();
 
-        filterMakerDataSource = (FilterMakerDataSource) filterMakerDataSourceFactory.create();//if remove this line artLike will not working after refresh
-
+        filterMakerDataSource = filterMakerDataSourceFactory.getFilterMakerDataSource();
+        isLoading = filterMakerDataSource.getIsLoading();
     }
 
-    public LiveData<Boolean> getIsInitialLoaded() {
-        return filterMakerDataSource.getIsInitialLoaded();
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
     }
 
     public LiveData<PagedList<Maker>> getMakerList(){
         return makerList;
     }
 
-    public FilterMakerRepository setFilter(String filter, String date) {
+    public void setFilter(String filter, String date) {
         if (!this.filter.equals(filter) || !this.date.equals(date)) {
+            this.filter = filter;
+            this.date = date;
             filterMakerDataSourceFactory.setFilter(filter, date);
         }
-        this.filter = filter;
-        this.date = date;
-
-        return instance;
     }
 
 }

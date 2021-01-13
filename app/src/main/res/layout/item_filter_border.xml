@@ -5,32 +5,23 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/circle_filter_view"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:src="@color/colorBlueFilter"
-        app:layout_constraintLeft_toLeftOf="@+id/filter_text"
-        app:layout_constraintRight_toRightOf="@+id/filter_text"
-        app:layout_constraintTop_toTopOf="@+id/filter_text"
-        app:layout_constraintBottom_toBottomOf="@+id/filter_text"/>
-
     <TextView
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_margin="8dp"
+        android:layout_margin="4dp"
         android:gravity="center"
-        android:text="A"
+        android:background="@drawable/border_filter_item"
+        android:text="Keyword"
         android:textColor="@color/colorBlack"
         android:fontFamily="@string/font_sans_serif"
-        android:textSize="18sp"
+        android:textSize="14sp"
         android:minLines="1"
         android:maxLines="1"
         android:ellipsize="end"
         android:id="@+id/filter_text"
-        android:layout_width="24dp"
-        android:layout_height="24dp" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

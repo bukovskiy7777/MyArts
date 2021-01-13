@@ -119,7 +119,7 @@
 
     <fragment
         android:id="@+id/makerFragment"
-        android:name="com.company.art_and_culture.myarts.art_maker_fragment.MakerFragment"
+        android:name="com.company.art_and_culture.myarts.maker_fragment.MakerFragment"
         android:label="MakerFragment" >
         <action
             android:id="@+id/action_makerFragment_to_webViewFragment"

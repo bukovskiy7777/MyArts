@@ -2,7 +2,6 @@ package com.company.art_and_culture.myarts.filter_maker_fragment;
 
 import android.app.Application;
 
-
 import com.company.art_and_culture.myarts.pojo.Maker;
 
 import androidx.annotation.NonNull;
@@ -16,17 +15,16 @@ public class FilterMakerViewModel extends AndroidViewModel {
     private Application application;
     private FilterMakerRepository filterMakerRepository;
     private LiveData<PagedList<Maker>> makerList;
-    private LiveData<Boolean> isInitialLoaded;
+    private LiveData<Boolean> isLoading;
 
     public FilterMakerViewModel(@NonNull Application application) {
         super(application);
 
         this.application = application;
-        //isInitialLoaded = filterExploreRepository.getIsInitialLoaded();
     }
 
-    public LiveData<Boolean> getIsInitialLoaded() {
-        return filterMakerRepository.getIsInitialLoaded();
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
     }
 
     public LiveData<PagedList<Maker>> getMakerList(){
@@ -34,8 +32,10 @@ public class FilterMakerViewModel extends AndroidViewModel {
     }
 
     public void setFilter(String filter, String date) {
-        filterMakerRepository = FilterMakerRepository.getInstance(application, filter, date).setFilter(filter, date);
+        filterMakerRepository = FilterMakerRepository.getInstance(application, filter, date);
+        filterMakerRepository.setFilter(filter, date);
         makerList = filterMakerRepository.getMakerList();
+        isLoading = filterMakerRepository.getIsLoading();
     }
 
 }

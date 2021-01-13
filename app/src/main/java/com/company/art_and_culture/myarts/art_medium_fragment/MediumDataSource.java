@@ -12,6 +12,8 @@ import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -24,12 +26,15 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
 
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<String>> listMakerFilters = new MutableLiveData<>();
     private Application application;
-    private String artQuery, queryType;
+    private String keyword, makerFilter, centuryFilter, keywordType;
 
-    public MediumDataSource(Application application, String artQuery, String queryType) {
-        this.artQuery = artQuery;
-        this.queryType = queryType;
+    public MediumDataSource(Application application, String keyword, String makerFilter, String centuryFilter, String keywordType) {
+        this.keyword = keyword;
+        this.makerFilter = makerFilter;
+        this.centuryFilter = centuryFilter;
+        this.keywordType = keywordType;
         this.application = application;
     }
 
@@ -45,20 +50,14 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
 
         ServerRequest request = new ServerRequest();
-        request.setArtQuery(artQuery);
         request.setPageNumber(1);
         request.setUserUniqueId(userUniqueId);
-
-        if (queryType.equals(Constants.ART_MEDIUM)) {
-            request.setOperation(Constants.GET_ARTS_LIST_MEDIUM_OPERATION);
-        } else if (queryType.equals(Constants.ART_CLASSIFICATION)) {
-            request.setOperation(Constants.GET_ARTS_LIST_CLASSIFICATION_OPERATION);
-            request.setOldList(MediumDataInMemory.getInstance().getAllData());
-        } else if (queryType.equals(Constants.ART_CULTURE)) {
-            request.setOperation(Constants.GET_ARTS_LIST_CULTURE_OPERATION);
-        } else if (queryType.equals(Constants.ART_TAG)) {
-            request.setOperation(Constants.GET_ARTS_LIST_TAG_OPERATION);
-        }
+        request.setKeywordFilter(keyword);
+        request.setMakerFilter(makerFilter);
+        request.setCenturyFilter(centuryFilter);
+        request.setKeywordType(keywordType);
+        request.setOldList(MediumDataInMemory.getInstance().getAllData());
+        request.setOperation(Constants.GET_ARTS_LIST_FILTER_OPERATION);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
         response.enqueue(new Callback<ServerResponse>() {
@@ -70,6 +69,7 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsListEmptyState(false);
+                        updateListMakerFilters(resp.getListMakerFilters());
                         MediumDataInMemory.getInstance().addData(resp.getListArts());
                         callback.onResult(MediumDataInMemory.getInstance().getInitialData(),null, 2);
                     } else {
@@ -95,20 +95,15 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
 
         ServerRequest request = new ServerRequest();
-        request.setArtQuery(artQuery);
         request.setPageNumber(params.key);
         request.setUserUniqueId(userUniqueId);
+        request.setKeywordFilter(keyword);
+        request.setMakerFilter(makerFilter);
+        request.setCenturyFilter(centuryFilter);
+        request.setKeywordType(keywordType);
+        request.setOldList(MediumDataInMemory.getInstance().getAllData());
+        request.setOperation(Constants.GET_ARTS_LIST_FILTER_OPERATION);
 
-        if (queryType.equals(Constants.ART_MEDIUM)) {
-            request.setOperation(Constants.GET_ARTS_LIST_MEDIUM_OPERATION);
-        } else if (queryType.equals(Constants.ART_CLASSIFICATION)) {
-            request.setOperation(Constants.GET_ARTS_LIST_CLASSIFICATION_OPERATION);
-            request.setOldList(MediumDataInMemory.getInstance().getAllData());
-        } else if (queryType.equals(Constants.ART_CULTURE)) {
-            request.setOperation(Constants.GET_ARTS_LIST_CULTURE_OPERATION);
-        } else if (queryType.equals(Constants.ART_TAG)) {
-            request.setOperation(Constants.GET_ARTS_LIST_TAG_OPERATION);
-        }
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
         response.enqueue(new Callback<ServerResponse>() {
@@ -145,6 +140,10 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
 
     private void updateIsListEmptyState(Boolean state) {
         isListEmpty.postValue(state);
+    }
+
+    private void updateListMakerFilters(ArrayList<String> makers) {
+        listMakerFilters.postValue(makers);
     }
 
     public LiveData<Boolean> getIsLoading() {
@@ -188,5 +187,9 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
 
     public void setActivity(MainActivity activity) {
         MediumDataInMemory.getInstance().setArtObserver(activity);
+    }
+
+    public LiveData<ArrayList<String>> getListMakerFilters() {
+        return listMakerFilters;
     }
 }

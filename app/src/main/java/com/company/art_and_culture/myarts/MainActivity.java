@@ -142,11 +142,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void deleteQuery(String suggestStr, String userUniqueId) {
+    public void deleteSuggest(String suggestStr, String userUniqueId) {
 
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.DELETE_SUGGEST_QUERY_OPERATION);
-        request.setSearchQuery(suggestStr);
+        request.setSuggestQuery(suggestStr);
         request.setUserUniqueId(userUniqueId);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);

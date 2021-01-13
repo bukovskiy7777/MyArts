@@ -72,7 +72,7 @@
     <View
         android:elevation="8dp"
         android:id="@+id/background_view"
-        android:background="@drawable/filter_layout_background"
+        android:background="@drawable/filter_layout_back_tags_fragment"
         app:layout_constraintBottom_toBottomOf="@id/recycler_view_filter"
         app:layout_constraintTop_toTopOf="@id/recycler_view_filter"
         app:layout_constraintLeft_toLeftOf="@id/recycler_view_filter"

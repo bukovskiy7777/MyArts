@@ -32,12 +32,9 @@ public class Constants {
     public static final String GET_INITIAL_SUGGEST_OPERATION = "getInitialSuggests";
     public static final String GET_ARTS_LIST_SEARCH_OPERATION = "getArtsListSearch";
     public static final String GET_ARTS_LIST_MAKER_OPERATION = "getArtsListMaker";
-    public static final String GET_ARTS_LIST_CLASSIFICATION_OPERATION = "getArtsListClassification";
     public static final String GET_EXPLORE_LIST_OPERATION = "getExploreList";
     public static final String DELETE_SUGGEST_QUERY_OPERATION = "deleteSuggestQuery";
-    public static final String GET_ARTS_LIST_MEDIUM_OPERATION = "getArtsListMedium";
-    public static final String GET_ARTS_LIST_CULTURE_OPERATION = "getArtsListCulture";
-    public static final String GET_ARTS_LIST_TAG_OPERATION = "getArtsListTag";
+    public static final String GET_ARTS_LIST_FILTER_OPERATION = "getArtsListFilter";
     public static final String GET_MAKER_OBJECT = "getMakerObject";
     public static final String MAKER_LIKE_OPERATION = "makerLike";
     public static final String GET_MY_FAVORITES_ARTISTS_OPERATION = "getMyFavoritesArtists";

@@ -6,13 +6,20 @@ public class ServerRequest {
     private String operation;
     private int pageNumber;
     private String userUniqueId;
-    private Art art;
+
     private String suggestQuery;
     private String searchQuery;
-    private String artQuery;
+
+    private Art art;
     private ArrayList<Art> oldList;
     private Maker maker;
     private Folder folder;
+
+    private String charFilter;
+    private String centuryFilter;
+    private String makerFilter;
+    private String keywordFilter;
+    private String keywordType;
 
     public void setOperation(String operation) {
         this.operation = operation;
@@ -30,18 +37,6 @@ public class ServerRequest {
         this.art = art;
     }
 
-    public void setSuggestQuery(String suggestQuery) {
-        this.suggestQuery = suggestQuery;
-    }
-
-    public void setSearchQuery(String searchQuery) {
-        this.searchQuery = searchQuery;
-    }
-
-    public void setArtQuery(String artQuery) {
-        this.artQuery = artQuery;
-    }
-
     public void setOldList(ArrayList<Art> oldList) {
         this.oldList = oldList;
     }
@@ -54,4 +49,31 @@ public class ServerRequest {
         this.folder = folder;
     }
 
+    public void setSuggestQuery(String suggestQuery) {
+        this.suggestQuery = suggestQuery;
+    }
+
+    public void setSearchQuery(String searchQuery) {
+        this.searchQuery = searchQuery;
+    }
+
+    public void setCharFilter(String charFilter) {
+        this.charFilter = charFilter;
+    }
+
+    public void setCenturyFilter(String centuryFilter) {
+        this.centuryFilter = centuryFilter;
+    }
+
+    public void setMakerFilter(String makerFilter) {
+        this.makerFilter = makerFilter;
+    }
+
+    public void setKeywordFilter(String keywordFilter) {
+        this.keywordFilter = keywordFilter;
+    }
+
+    public void setKeywordType(String keywordType) {
+        this.keywordType = keywordType;
+    }
 }

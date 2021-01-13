@@ -5,6 +5,8 @@ import android.app.Application;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -14,6 +16,7 @@ import androidx.paging.PagedList;
 public class MediumViewModel extends AndroidViewModel {
 
     private LiveData<PagedList<Art>> artList;
+    private LiveData<ArrayList<String>> listMakerFilters;
     private LiveData<Boolean> isLoading;
     private LiveData<Boolean> isListEmpty;
     private MediumRepository mediumRepository;
@@ -31,6 +34,10 @@ public class MediumViewModel extends AndroidViewModel {
         return artList;
     }
 
+    public LiveData<ArrayList<String>> getListMakerFilters() {
+        return listMakerFilters;
+    }
+
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
     }
@@ -39,22 +46,26 @@ public class MediumViewModel extends AndroidViewModel {
         return isListEmpty;
     }
 
-    public boolean refresh() {
-        return mediumRepository.refresh();
-    }
-
     public void writeDimentionsOnServer(Art art) {
         mediumRepository.writeDimentionsOnServer(art);
     }
 
-    public void setArtQueryAndType(String artQuery, String queryType) {
-        mediumRepository = MediumRepository.getInstance(application, artQuery, queryType);
-        if (!mediumRepository.getArtQuery().equals(artQuery) || !mediumRepository.getQueryType().equals(queryType)) {
-            mediumRepository = mediumRepository.setArtQueryAndType(artQuery, queryType);
-        }
-        artList = mediumRepository.getArtList();
-        isLoading = mediumRepository.getIsLoading();
-        isListEmpty = mediumRepository.getIsListEmpty();
+    public boolean refresh() {
+        return mediumRepository.refresh();
+    }
+
+    public void setFilters(String keyword, String makerFilter, String centuryFilter, String keywordType) {
+
+        if(mediumRepository == null) {
+            mediumRepository = new MediumRepository(application, keyword, makerFilter, centuryFilter, keywordType);
+            artList = mediumRepository.getArtList();
+            listMakerFilters = mediumRepository.getListMakerFilters();
+            isLoading = mediumRepository.getIsLoading();
+            isListEmpty = mediumRepository.getIsListEmpty();
+        } else
+            mediumRepository.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+
+
     }
 
     public void setActivity(MainActivity activity) {

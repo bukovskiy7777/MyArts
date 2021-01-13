@@ -1,7 +1,6 @@
 package com.company.art_and_culture.myarts.pojo;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class ServerResponse {
     private String result;
@@ -17,6 +16,7 @@ public class ServerResponse {
     private ArrayList<Attribute> listAttribute;
     private String suggestQuery;
     private ArrayList<Folder> listFolders;
+    private ArrayList<String> listMakerFilters;
 
     public ArrayList<Art> getListArts() {
         return listArts;
@@ -68,6 +68,10 @@ public class ServerResponse {
 
     public ArrayList<Folder> getListFolders() {
         return listFolders;
+    }
+
+    public ArrayList<String> getListMakerFilters() {
+        return listMakerFilters;
     }
 
 }

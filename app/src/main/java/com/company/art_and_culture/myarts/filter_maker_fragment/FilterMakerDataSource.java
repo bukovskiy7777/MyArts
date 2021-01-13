@@ -20,7 +20,7 @@ class FilterMakerDataSource extends PageKeyedDataSource<Integer, Maker> {
 
     private Application application;
     private String filter = "", date = "";
-    private MutableLiveData<Boolean> isInitialLoaded = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
     public FilterMakerDataSource(Application application, String filter, String date) {
         this.filter = filter;
@@ -37,10 +37,12 @@ class FilterMakerDataSource extends PageKeyedDataSource<Integer, Maker> {
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull final LoadInitialCallback<Integer, Maker> callback) {
 
+        updateIsLoadingState (true);
+
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.GET_FILTER_MAKERS_OPERATION);
-        request.setSearchQuery(filter);
-        request.setArtQuery(date);
+        request.setCharFilter(filter);
+        request.setCenturyFilter(date);
         request.setPageNumber(1);
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
         request.setUserUniqueId(userUniqueId);
@@ -55,40 +57,40 @@ class FilterMakerDataSource extends PageKeyedDataSource<Integer, Maker> {
 
                         FilterMakerDataInMemory.getInstance().addData(resp.getListMakers(), resp.getFilter(), resp.getCentury());
                         callback.onResult(FilterMakerDataInMemory.getInstance().getInitialData(),null, 2);
-                        updateIsInitialLoaded (true);
+                        updateIsLoadingState (false);
 
                     } else {
-
+                        updateIsLoadingState (false);
                     }
                 } else {
-
+                    updateIsLoadingState (false);
                 }
             }
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
-
+                updateIsLoadingState (false);
             }
         });
     }
 
-    private void updateIsInitialLoaded(boolean state) {
-        //Log.i("filterExploreViewModel", state+"  DDSS");
-        isInitialLoaded.postValue(state);
+    private void updateIsLoadingState(boolean state) {
+        isLoading.postValue(state);
     }
 
-    public LiveData<Boolean> getIsInitialLoaded() {
-        //Log.i("filterExploreViewModel", isInitialLoaded+"  gettt DDSS");
-        return isInitialLoaded;
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
     }
 
     @Override
     public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Maker> callback) {
 
+        updateIsLoadingState (true);
+
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.GET_FILTER_MAKERS_OPERATION);
-        request.setSearchQuery(filter);
-        request.setArtQuery(date);
+        request.setCharFilter(filter);
+        request.setCenturyFilter(date);
         request.setPageNumber(params.key);
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
         request.setUserUniqueId(userUniqueId);
@@ -103,22 +105,24 @@ class FilterMakerDataSource extends PageKeyedDataSource<Integer, Maker> {
 
                         FilterMakerDataInMemory.getInstance().addData(resp.getListMakers(), resp.getFilter(), resp.getCentury());
                         callback.onResult(FilterMakerDataInMemory.getInstance().getAfterData(params.key), params.key + 1);
+                        updateIsLoadingState (false);
+                    } else {
+                        updateIsLoadingState (false);
                     }
                 } else {
-
+                    updateIsLoadingState (false);
                 }
             }
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
-
+                updateIsLoadingState (false);
             }
         });
     }
 
     public void refresh() {
         FilterMakerDataInMemory.getInstance().refresh();
-        updateIsInitialLoaded (false);
         invalidate();
     }
 }

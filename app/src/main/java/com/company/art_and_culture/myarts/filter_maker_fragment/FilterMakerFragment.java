@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -12,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
@@ -23,7 +23,6 @@ import java.util.TimerTask;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -53,6 +52,7 @@ public class FilterMakerFragment extends Fragment {
     private ArrayList<String> filterList = new ArrayList<>();
     private ArrayList<String> dateList = new ArrayList<>();
     private FilterMakerEventListener filterMakerEventListener;
+    private ProgressBar download_progress;
 
     @Nullable
     @Override
@@ -67,6 +67,7 @@ public class FilterMakerFragment extends Fragment {
         background_view = root.findViewById(R.id.background_view);
         title_layout = root.findViewById(R.id.title_layout);
         recycler_view_maker = root.findViewById(R.id.recycler_view_maker);
+        download_progress = root.findViewById(R.id.download_progress);
 
         res = getResources();
         int displayWidth = res.getDisplayMetrics().widthPixels;
@@ -106,15 +107,13 @@ public class FilterMakerFragment extends Fragment {
         filterMakerViewModel.getMakerList().observe(getViewLifecycleOwner(), new Observer<PagedList<Maker>>() {
             @Override
             public void onChanged(PagedList<Maker> makers) {
-                //Log.i("filterExploreViewModel", exploreObjects.size()+"  fd");
                 filterMakerAdapter.submitList(makers);
             }
         });
-        filterMakerViewModel.getIsInitialLoaded().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        filterMakerViewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                //Log.i("filterExploreViewModel", aBoolean+"  fd");
-                //recycler_view_explore.setAlpha(1f);
+                if (aBoolean) { download_progress.setVisibility(View.VISIBLE); } else { download_progress.setVisibility(View.GONE); }
             }
         });
     }
@@ -221,11 +220,6 @@ public class FilterMakerFragment extends Fragment {
     }
 
     private ArrayList<String> getFilterList() {
-        /*
-        for (char c = 'A'; c <= 'Z'; c++) {
-            filterList.add(String.valueOf(c));
-        }
-        */
         ArrayList<String> filterList = new ArrayList<>();
         filterList.add(res.getString(R.string.all));
         String filter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

@@ -1,9 +1,8 @@
-package com.company.art_and_culture.myarts.art_maker_fragment;
+package com.company.art_and_culture.myarts.maker_fragment;
 
 import android.app.Application;
 
 import com.company.art_and_culture.myarts.MainActivity;
-import com.company.art_and_culture.myarts.art_search_fragment.SearchRepository;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
 

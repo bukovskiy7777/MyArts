@@ -48,7 +48,7 @@ class TagsDataSource extends PageKeyedDataSource<Integer, Attribute> {
 
         ServerRequest request = new ServerRequest();
         request.setPageNumber(1);
-        request.setSearchQuery(filter);
+        request.setCharFilter(filter);
         request.setOperation(Constants.GET_LIST_TAG_OPERATION);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
@@ -86,7 +86,7 @@ class TagsDataSource extends PageKeyedDataSource<Integer, Attribute> {
 
         ServerRequest request = new ServerRequest();
         request.setPageNumber(params.key);
-        request.setSearchQuery(filter);
+        request.setCharFilter(filter);
         request.setOperation(Constants.GET_LIST_TAG_OPERATION);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);

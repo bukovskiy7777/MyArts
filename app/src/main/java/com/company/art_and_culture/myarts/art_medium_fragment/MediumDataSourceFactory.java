@@ -5,31 +5,31 @@ import android.app.Application;
 import com.company.art_and_culture.myarts.pojo.Art;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
 import androidx.paging.DataSource;
-import androidx.paging.PageKeyedDataSource;
 
 public class MediumDataSourceFactory extends DataSource.Factory<Integer, Art> {
 
-    private MutableLiveData<PageKeyedDataSource<Integer, Art>> mediumDataSourceMutableLiveData = new MutableLiveData<>();
     private Application application;
     private MediumDataSource mediumDataSource;
-    private String artQuery, queryType;
+    private String keyword, makerFilter, centuryFilter, keywordType;
 
-    public MediumDataSourceFactory(Application application, String artQuery, String queryType) {
+    public MediumDataSourceFactory(Application application, String keyword, String makerFilter, String centuryFilter, String keywordType) {
         this.application = application;
-        this.artQuery = artQuery;
-        this.queryType = queryType;
-        mediumDataSource = new MediumDataSource(application, artQuery, queryType);
+        this.keyword = keyword;
+        this.makerFilter = makerFilter;
+        this.centuryFilter = centuryFilter;
+        this.keywordType = keywordType;
+        mediumDataSource = new MediumDataSource(application, keyword, makerFilter, centuryFilter, keywordType);
     }
 
     @NonNull
     @Override
     public DataSource<Integer, Art> create() {
+        if (mediumDataSource.isInvalid()) mediumDataSource = new MediumDataSource(application, keyword, makerFilter, centuryFilter, keywordType);
+        return mediumDataSource;
+    }
 
-        if (mediumDataSource.isInvalid()) mediumDataSource = new MediumDataSource(application, artQuery, queryType);
-        mediumDataSourceMutableLiveData.postValue(mediumDataSource);
-
+    public MediumDataSource getMediumDataSource() {
         return mediumDataSource;
     }
 
@@ -41,9 +41,12 @@ public class MediumDataSourceFactory extends DataSource.Factory<Integer, Art> {
         return isConnected;
     }
 
-    public void setArtQueryAndType(String artQuery, String queryType) {
-        this.artQuery = artQuery;
-        this.queryType = queryType;
+    public void setFilters(String keyword, String makerFilter, String centuryFilter, String keywordType) {
+        this.keyword = keyword;
+        this.makerFilter = makerFilter;
+        this.centuryFilter = centuryFilter;
+        this.keywordType = keywordType;
+
         mediumDataSource.refresh();
     }
 }

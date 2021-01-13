@@ -49,5 +49,8 @@
     <string name="the_data_will_not_be_saved">The data will not be saved</string>
     <string name="want_to_delete">Are you sure you want to delete this folder?</string>
     <string name="folders_with_this_art">Folders with this art:</string>
+    <string name="filters">Filters</string>
+    <string name="centuries">Centuries</string>
+    <string name="keywords">Keywords</string>
 
 </resources>

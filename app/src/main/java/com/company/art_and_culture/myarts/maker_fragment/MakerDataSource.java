@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.art_maker_fragment;
+package com.company.art_and_culture.myarts.maker_fragment;
 
 import android.app.Application;
 import android.content.Context;
@@ -8,13 +8,12 @@ import android.util.Log;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
+import com.company.art_and_culture.myarts.bottom_menu.favorites.Artists.ArtistsRepository;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
-import com.company.art_and_culture.myarts.bottom_menu.favorites.Artists.ArtistsRepository;
-import com.company.art_and_culture.myarts.bottom_menu.favorites.Favorites.FavoritesRepository;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -52,7 +51,7 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
 
         ServerRequest request = new ServerRequest();
-        request.setArtQuery(artMaker.getArtMaker());
+        request.setMakerFilter(artMaker.getArtMaker());
         request.setPageNumber(1);
         request.setUserUniqueId(userUniqueId);
         request.setOperation(Constants.GET_ARTS_LIST_MAKER_OPERATION);
@@ -92,7 +91,7 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
 
         ServerRequest request = new ServerRequest();
-        request.setArtQuery(artMaker.getArtMaker());
+        request.setMakerFilter(artMaker.getArtMaker());
         request.setPageNumber(params.key);
         request.setUserUniqueId(userUniqueId);
         request.setOperation(Constants.GET_ARTS_LIST_MAKER_OPERATION);
