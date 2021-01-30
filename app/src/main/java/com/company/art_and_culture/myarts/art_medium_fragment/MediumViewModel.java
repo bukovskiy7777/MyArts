@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.FilterObject;
 
 import java.util.ArrayList;
 
@@ -17,6 +18,8 @@ public class MediumViewModel extends AndroidViewModel {
 
     private LiveData<PagedList<Art>> artList;
     private LiveData<ArrayList<String>> listMakerFilters;
+    private LiveData<ArrayList<String>> listCenturyFilters;
+    private LiveData<ArrayList<FilterObject>> listKeywordFilters;
     private LiveData<Boolean> isLoading;
     private LiveData<Boolean> isListEmpty;
     private MediumRepository mediumRepository;
@@ -36,6 +39,14 @@ public class MediumViewModel extends AndroidViewModel {
 
     public LiveData<ArrayList<String>> getListMakerFilters() {
         return listMakerFilters;
+    }
+
+    public LiveData<ArrayList<String>> getListCenturyFilters() {
+        return listCenturyFilters;
+    }
+
+    public LiveData<ArrayList<FilterObject>> getListKeywordFilters() {
+        return listKeywordFilters;
     }
 
     public LiveData<Boolean> getIsLoading() {
@@ -60,6 +71,8 @@ public class MediumViewModel extends AndroidViewModel {
             mediumRepository = new MediumRepository(application, keyword, makerFilter, centuryFilter, keywordType);
             artList = mediumRepository.getArtList();
             listMakerFilters = mediumRepository.getListMakerFilters();
+            listCenturyFilters = mediumRepository.getListCenturyFilters();
+            listKeywordFilters = mediumRepository.getListKeywordFilters();
             isLoading = mediumRepository.getIsLoading();
             isListEmpty = mediumRepository.getIsListEmpty();
         } else

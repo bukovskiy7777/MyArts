@@ -21,7 +21,7 @@ public class Constants {
     public static final String ART_MEDIUM = "artMedium";
     public static final String ART_CULTURE = "artCulture";
     public static final String ART_TAG = "artTag";
-    //public static final String ART_CENTURY = "artCentury";
+    public static final String ART_CENTURY = "artCentury";
 
 
     public static final String GET_ARTS_LIST_OPERATION = "getArtsList";
@@ -35,6 +35,7 @@ public class Constants {
     public static final String GET_EXPLORE_LIST_OPERATION = "getExploreList";
     public static final String DELETE_SUGGEST_QUERY_OPERATION = "deleteSuggestQuery";
     public static final String GET_ARTS_LIST_FILTER_OPERATION = "getArtsListFilter";
+    public static final String GET_FILTERS_LIST_OPERATION = "getListFilters";
     public static final String GET_MAKER_OBJECT = "getMakerObject";
     public static final String MAKER_LIKE_OPERATION = "makerLike";
     public static final String GET_MY_FAVORITES_ARTISTS_OPERATION = "getMyFavoritesArtists";

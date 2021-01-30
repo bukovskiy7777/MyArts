@@ -29,10 +29,6 @@ public class MediumDataSourceFactory extends DataSource.Factory<Integer, Art> {
         return mediumDataSource;
     }
 
-    public MediumDataSource getMediumDataSource() {
-        return mediumDataSource;
-    }
-
     public boolean refresh() {
         boolean isConnected = mediumDataSource.isNetworkAvailable();
         if (isConnected){

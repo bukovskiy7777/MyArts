@@ -12,7 +12,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="4dp"
         android:gravity="center"
-        android:background="@drawable/border_filter_item"
+        android:background="@drawable/filter_item"
         android:text="Keyword"
         android:textColor="@color/colorBlack"
         android:fontFamily="@string/font_sans_serif"

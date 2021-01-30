@@ -17,6 +17,8 @@ public class ServerResponse {
     private String suggestQuery;
     private ArrayList<Folder> listFolders;
     private ArrayList<String> listMakerFilters;
+    private ArrayList<String> listCenturyFilters;
+    private ArrayList<FilterObject> listKeywordFilters;
 
     public ArrayList<Art> getListArts() {
         return listArts;
@@ -72,6 +74,14 @@ public class ServerResponse {
 
     public ArrayList<String> getListMakerFilters() {
         return listMakerFilters;
+    }
+
+    public ArrayList<String> getListCenturyFilters() {
+        return listCenturyFilters;
+    }
+
+    public ArrayList<FilterObject> getListKeywordFilters() {
+        return listKeywordFilters;
     }
 
 }

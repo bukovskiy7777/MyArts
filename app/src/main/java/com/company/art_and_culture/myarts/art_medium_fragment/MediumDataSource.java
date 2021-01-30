@@ -69,7 +69,6 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsListEmptyState(false);
-                        updateListMakerFilters(resp.getListMakerFilters());
                         MediumDataInMemory.getInstance().addData(resp.getListArts());
                         callback.onResult(MediumDataInMemory.getInstance().getInitialData(),null, 2);
                     } else {
@@ -142,10 +141,6 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
         isListEmpty.postValue(state);
     }
 
-    private void updateListMakerFilters(ArrayList<String> makers) {
-        listMakerFilters.postValue(makers);
-    }
-
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
     }
@@ -189,7 +184,4 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
         MediumDataInMemory.getInstance().setArtObserver(activity);
     }
 
-    public LiveData<ArrayList<String>> getListMakerFilters() {
-        return listMakerFilters;
-    }
 }

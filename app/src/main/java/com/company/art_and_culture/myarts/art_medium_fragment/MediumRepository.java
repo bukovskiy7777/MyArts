@@ -5,6 +5,7 @@ import android.app.Application;
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.FilterObject;
 
 import java.util.ArrayList;
 
@@ -16,6 +17,7 @@ public class MediumRepository {
 
     private LiveData<PagedList<Art>> artList;
     private MediumDataSource mediumDataSource;
+    private FiltersDataSource filtersDataSource;
     private MediumDataSourceFactory mediumDataSourceFactory;
     private Application application;
 
@@ -37,8 +39,9 @@ public class MediumRepository {
         mediumDataSourceFactory = new MediumDataSourceFactory(application, keyword, makerFilter, centuryFilter, keywordType);
         artList = new LivePagedListBuilder<>(mediumDataSourceFactory, config).build();
 
-        //mediumDataSource = (MediumDataSource) mediumDataSourceFactory.create();//if remove this line artLike will not working after refresh
-        mediumDataSource = mediumDataSourceFactory.getMediumDataSource();
+        mediumDataSource = (MediumDataSource) mediumDataSourceFactory.create();//if remove this line artLike will not working after refresh
+
+        filtersDataSource = new FiltersDataSource(application, keyword, makerFilter, centuryFilter, keywordType);
     }
 
     public LiveData<PagedList<Art>> getArtList(){
@@ -46,7 +49,15 @@ public class MediumRepository {
     }
 
     public LiveData<ArrayList<String>> getListMakerFilters() {
-        return mediumDataSource.getListMakerFilters();
+        return filtersDataSource.getListMakerFilters();
+    }
+
+    public LiveData<ArrayList<String>> getListCenturyFilters() {
+        return filtersDataSource.getListCenturyFilters();
+    }
+
+    public LiveData<ArrayList<FilterObject>> getListKeywordFilters() {
+        return filtersDataSource.getListKeywordFilters();
     }
 
     public LiveData<Boolean> getIsLoading() {
@@ -62,6 +73,7 @@ public class MediumRepository {
     }
 
     public boolean refresh() {
+        filtersDataSource.refresh();
         return mediumDataSourceFactory.refresh();
     }
 
@@ -74,6 +86,7 @@ public class MediumRepository {
             this.centuryFilter = centuryFilter;
             this.keywordType = keywordType;
             mediumDataSourceFactory.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+            filtersDataSource.setFilters(keyword, makerFilter, centuryFilter, keywordType);
         }
     }
 

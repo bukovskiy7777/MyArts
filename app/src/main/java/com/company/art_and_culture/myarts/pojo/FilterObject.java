@@ -10,6 +10,12 @@ public class FilterObject {
         this.chosen = chosen;
     }
 
+    public FilterObject(String text, boolean chosen, String type) {
+        this.text = text;
+        this.chosen = chosen;
+        this.type = type;
+    }
+
     public String getText() {
         return text;
     }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.FilterObject;
 
@@ -45,25 +46,10 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyDataSetChanged();
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        //return super.getItemViewType(position);
-        if(position == 0) {
-            return 0;
-        } else {
-            return 1;
-        }
-    }
-
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view;
-        if (viewType == 0) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_filter_border_all, parent, false);
-        } else {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_filter_border, parent, false);
-        }
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_filter_border, parent, false);
         return new FilterViewHolder(view);
     }
 
@@ -102,16 +88,28 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             this.position = position;
 
             filter_text.setText(filterObject.getText());
-            if(filterObject.isChosen()) {
-                filter_text.setBackground(context.getDrawable(R.drawable.border_filter_item_chosen));
+            if(filterObject.getType().equals(Constants.ART_CENTURY)){
+                if(filterObject.isChosen())
+                    filter_text.setBackground(context.getDrawable(R.drawable.filter_item_century_chosen));
+                else
+                    filter_text.setBackground(context.getDrawable(R.drawable.filter_item_century));
             } else {
-                filter_text.setBackground(context.getDrawable(R.drawable.border_filter_item));
+                if(filterObject.isChosen())
+                    filter_text.setBackground(context.getDrawable(R.drawable.filter_item_chosen));
+                else
+                    filter_text.setBackground(context.getDrawable(R.drawable.filter_item));
             }
         }
 
         @Override
         public void onClick(View v) {
             onFilterClickListener.onFilterClick(filterObject, position);
+
+            for (FilterObject filter : itemsList) {
+                if(filter.isChosen()) filter.setChosen(false);
+            }
+            itemsList.get(position).setChosen(true);
+            notifyDataSetChanged();
         }
     }
 
