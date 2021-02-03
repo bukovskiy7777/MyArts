@@ -19,6 +19,7 @@ public class ServerResponse {
     private ArrayList<String> listMakerFilters;
     private ArrayList<String> listCenturyFilters;
     private ArrayList<FilterObject> listKeywordFilters;
+    private int artCount;
 
     public ArrayList<Art> getListArts() {
         return listArts;
@@ -84,4 +85,7 @@ public class ServerResponse {
         return listKeywordFilters;
     }
 
+    public int getArtCount() {
+        return artCount;
+    }
 }

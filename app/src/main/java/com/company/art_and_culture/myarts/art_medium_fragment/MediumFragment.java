@@ -43,7 +43,7 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
     private RecyclerView mediumRecyclerView, recycler_view_artists, recycler_view_keywords, recycler_view_centuries;
     private MediumAdapter mediumAdapter;
     private ProgressBar mediumProgressBar, progress_bar_filter, progress_bar_artist, progress_bar_century, progress_bar_keywords;
-    private TextView textView, appbar_medium;
+    private TextView textView, appbar_medium, appbar_art_count;
     private MediumEventListener mediumEventListener;
     private SwipeRefreshLayout swipeRefreshLayout;
     private android.content.res.Resources res;
@@ -64,6 +64,7 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
         mediumRecyclerView = root.findViewById(R.id.recycler_view_medium);
         mediumProgressBar = root.findViewById(R.id.progress_bar_medium);
         swipeRefreshLayout = root.findViewById(R.id.medium_swipeRefreshLayout);
+        appbar_art_count = root.findViewById(R.id.appbar_art_count);
         appbar_medium = root.findViewById(R.id.appbar_medium);
         floatingActionButton = root.findViewById(R.id.floating_button);
         floatingActionButton.setOnClickListener(this);
@@ -299,6 +300,13 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
                     setListKeywordFilters(listKeywords);
             }
         });
+
+        mediumViewModel.getArtCount().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer artCount) {
+                appbar_art_count.setText(artCount.toString());
+            }
+        });
     }
 
     private void setListKeywordFilters(final List<FilterObject> listKeywords) {
@@ -334,15 +342,18 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
 
     private void setListMakerFilters(final ArrayList<String> listStrings) {
 
+        final ArrayList<String> partialList;
+        if(listStrings.size()>500) partialList = new ArrayList<>(listStrings.subList(0, 500)); else partialList = listStrings;
+
         final Handler handler = new Handler();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 final ArrayList<FilterObject> listMakerFilters = new ArrayList<>();
                 int position = -1;
-                for (String maker : listStrings) {
+                for (String maker : partialList) {
                     if (maker.equals(makerFilter)) {
-                        position = listStrings.indexOf(maker);
+                        position = partialList.indexOf(maker);
                         listMakerFilters.add(new FilterObject(maker, true, Constants.ART_MAKER));
                     } else
                         listMakerFilters.add(new FilterObject(maker, false, Constants.ART_MAKER));
@@ -460,6 +471,9 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
 
         } else if (view.getId() == clear_keywords_tv.getId()) {
             keyword = ""; keywordType = "";
+            setFilterProgressesVisibility(View.VISIBLE);
+            setAppBarText();
+            setListKeywordFilters(filterKeywordAdapter.getItems());
             mediumViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
         }
     }

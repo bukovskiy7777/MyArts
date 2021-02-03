@@ -36,6 +36,7 @@ public class Constants {
     public static final String DELETE_SUGGEST_QUERY_OPERATION = "deleteSuggestQuery";
     public static final String GET_ARTS_LIST_FILTER_OPERATION = "getArtsListFilter";
     public static final String GET_FILTERS_LIST_OPERATION = "getListFilters";
+    public static final String GET_ART_COUNT_FILTER_FRAGMENT_OPERATION = "getArtCountFilterFragment";
     public static final String GET_MAKER_OBJECT = "getMakerObject";
     public static final String MAKER_LIKE_OPERATION = "makerLike";
     public static final String GET_MY_FAVORITES_ARTISTS_OPERATION = "getMyFavoritesArtists";

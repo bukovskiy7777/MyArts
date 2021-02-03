@@ -60,6 +60,10 @@ public class MediumRepository {
         return filtersDataSource.getListKeywordFilters();
     }
 
+    public LiveData<Integer> getArtCount() {
+        return filtersDataSource.getArtCount();
+    }
+
     public LiveData<Boolean> getIsLoading() {
         return mediumDataSource.getIsLoading();
     }
@@ -73,7 +77,7 @@ public class MediumRepository {
     }
 
     public boolean refresh() {
-        filtersDataSource.refresh();
+        //filtersDataSource.refresh();
         return mediumDataSourceFactory.refresh();
     }
 

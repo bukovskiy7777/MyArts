@@ -20,6 +20,7 @@ public class MediumViewModel extends AndroidViewModel {
     private LiveData<ArrayList<String>> listMakerFilters;
     private LiveData<ArrayList<String>> listCenturyFilters;
     private LiveData<ArrayList<FilterObject>> listKeywordFilters;
+    private LiveData<Integer> artCount;
     private LiveData<Boolean> isLoading;
     private LiveData<Boolean> isListEmpty;
     private MediumRepository mediumRepository;
@@ -49,6 +50,10 @@ public class MediumViewModel extends AndroidViewModel {
         return listKeywordFilters;
     }
 
+    public LiveData<Integer> getArtCount() {
+        return artCount;
+    }
+
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
     }
@@ -73,6 +78,7 @@ public class MediumViewModel extends AndroidViewModel {
             listMakerFilters = mediumRepository.getListMakerFilters();
             listCenturyFilters = mediumRepository.getListCenturyFilters();
             listKeywordFilters = mediumRepository.getListKeywordFilters();
+            artCount = mediumRepository.getArtCount();
             isLoading = mediumRepository.getIsLoading();
             isListEmpty = mediumRepository.getIsListEmpty();
         } else

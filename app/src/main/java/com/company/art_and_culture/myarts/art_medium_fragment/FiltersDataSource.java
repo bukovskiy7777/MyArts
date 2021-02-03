@@ -22,6 +22,7 @@ public class FiltersDataSource {
     private MutableLiveData<ArrayList<String>> listMakerFilters = new MutableLiveData<>();
     private MutableLiveData<ArrayList<String>> listCenturyFilters = new MutableLiveData<>();
     private MutableLiveData<ArrayList<FilterObject>> listKeywordFilters = new MutableLiveData<>();
+    private MutableLiveData<Integer> artCount = new MutableLiveData<>();
     private String keyword, makerFilter, centuryFilter, keywordType;
 
     public FiltersDataSource(Application application, String keyword, String makerFilter, String centuryFilter, String keywordType) {
@@ -31,6 +32,7 @@ public class FiltersDataSource {
         this.keywordType = keywordType;
         this.application = application;
         loadFiltersList();
+        loadArtCount();
     }
 
     private void updateMakersList (ArrayList<String> makers) {
@@ -45,6 +47,10 @@ public class FiltersDataSource {
         listKeywordFilters.postValue(keywords);
     }
 
+    private void updateArtCount (int count) {
+        artCount.postValue(count);
+    }
+
     public LiveData<ArrayList<String>> getListMakerFilters() {
         return listMakerFilters;
     }
@@ -57,16 +63,22 @@ public class FiltersDataSource {
         return listKeywordFilters;
     }
 
+    public LiveData<Integer> getArtCount() {
+        return artCount;
+    }
+
     public void setFilters(String keyword, String makerFilter, String centuryFilter, String keywordType) {
         this.keyword = keyword;
         this.makerFilter = makerFilter;
         this.centuryFilter = centuryFilter;
         this.keywordType = keywordType;
         loadFiltersList();
+        loadArtCount();
     }
 
     public void refresh() {
-        loadFiltersList();
+        //loadFiltersList();
+        //loadArtCount();
     }
 
     private void loadFiltersList() {
@@ -92,6 +104,36 @@ public class FiltersDataSource {
                         updateMakersList(resp.getListMakerFilters());
                         updateCenturyList(resp.getListCenturyFilters());
                         updateKeywordListList(resp.getListKeywordFilters());
+                    } else { }
+                } else { }
+            }
+
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) { }
+        });
+    }
+
+    private void loadArtCount() {
+
+        String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
+        ServerRequest request = new ServerRequest();
+        request.setOperation(Constants.GET_ART_COUNT_FILTER_FRAGMENT_OPERATION);
+        request.setUserUniqueId(userUniqueId);
+        request.setKeywordFilter(keyword);
+        request.setMakerFilter(makerFilter);
+        request.setCenturyFilter(centuryFilter);
+        request.setKeywordType(keywordType);
+
+        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
+        response.enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+
+                if (response.isSuccessful()) {
+                    ServerResponse resp = response.body();
+                    if(resp.getResult().equals(Constants.SUCCESS)) {
+
+                        updateArtCount(resp.getArtCount());
                     } else { }
                 } else { }
             }
