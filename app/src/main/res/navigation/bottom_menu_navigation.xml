@@ -30,8 +30,8 @@
             app:enterAnim="@anim/enter_fade_in"
             app:popExitAnim="@anim/exit_fade_out" />
         <action
-            android:id="@+id/action_navigation_home_to_mediumFragment"
-            app:destination="@id/mediumFragment"
+            android:id="@+id/action_navigation_home_to_artFilterFragment"
+            app:destination="@id/artFilterFragment"
             app:enterAnim="@anim/enter_from_bottom"
             app:exitAnim="@anim/exit_to_top"
             app:popEnterAnim="@anim/enter_from_top"
@@ -183,19 +183,19 @@
             app:popEnterAnim="@anim/enter_from_top"
             app:popExitAnim="@anim/exit_to_bottom" />
         <action
-            android:id="@+id/action_searchFragment_to_mediumFragment"
-            app:destination="@id/mediumFragment"
+            android:id="@+id/action_searchFragment_to_artFilterFragment"
+            app:destination="@id/artFilterFragment"
             app:enterAnim="@anim/enter_from_bottom"
             app:exitAnim="@anim/exit_to_top"
             app:popEnterAnim="@anim/enter_from_top"
             app:popExitAnim="@anim/exit_to_bottom" />
     </fragment>
     <fragment
-        android:id="@+id/mediumFragment"
-        android:name="com.company.art_and_culture.myarts.art_medium_fragment.MediumFragment"
-        android:label="MediumFragment" >
+        android:id="@+id/artFilterFragment"
+        android:name="com.company.art_and_culture.myarts.art_filter_fragment.ArtFilterFragment"
+        android:label="artFilterFragment" >
         <action
-            android:id="@+id/action_mediumFragment_to_artShowFragment"
+            android:id="@+id/action_artFilterFragment_to_artShowFragment"
             app:destination="@id/artShowFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
@@ -219,8 +219,8 @@
         android:name="com.company.art_and_culture.myarts.tags_fragment.TagsFragment"
         android:label="TagsFragment" >
         <action
-            android:id="@+id/action_tagsFragment_to_mediumFragment"
-            app:destination="@id/mediumFragment"
+            android:id="@+id/action_tagsFragment_to_artFilterFragment"
+            app:destination="@id/artFilterFragment"
             app:enterAnim="@anim/enter_from_bottom"
             app:exitAnim="@anim/exit_to_top"
             app:popEnterAnim="@anim/enter_from_top"
@@ -231,8 +231,8 @@
         android:name="com.company.art_and_culture.myarts.attribute_fragment.AttributeFragment"
         android:label="AttributeFragment" >
         <action
-            android:id="@+id/action_attributeFragment_to_mediumFragment"
-            app:destination="@id/mediumFragment"
+            android:id="@+id/action_attributeFragment_to_artFilterFragment"
+            app:destination="@id/artFilterFragment"
             app:enterAnim="@anim/enter_from_bottom"
             app:exitAnim="@anim/exit_to_top"
             app:popEnterAnim="@anim/enter_from_top"

@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.art_medium_fragment;
+package com.company.art_and_culture.myarts.art_filter_fragment;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
@@ -8,14 +8,14 @@ import java.util.ArrayList;
 
 import androidx.lifecycle.Observer;
 
-public class MediumDataInMemory {
+public class ArtFilterDataInMemory {
 
-    private static MediumDataInMemory instance;
+    private static ArtFilterDataInMemory instance;
     private ArrayList<Art> listArts = new ArrayList<>();
 
-    public static MediumDataInMemory getInstance(){
+    public static ArtFilterDataInMemory getInstance(){
         if(instance == null){
-            instance = new MediumDataInMemory();
+            instance = new ArtFilterDataInMemory();
         }
         return instance;
     }

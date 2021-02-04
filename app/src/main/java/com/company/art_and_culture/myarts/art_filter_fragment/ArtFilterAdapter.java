@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.art_medium_fragment;
+package com.company.art_and_culture.myarts.art_filter_fragment;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.company.art_and_culture.myarts.R;
-import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.bottom_menu.home.LifecycleViewHolder;
+import com.company.art_and_culture.myarts.pojo.Art;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -18,18 +18,18 @@ import androidx.annotation.NonNull;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 
-public class MediumAdapter extends PagedListAdapter<Art, MediumAdapter.MediumViewHolder> {
+public class ArtFilterAdapter extends PagedListAdapter<Art, ArtFilterAdapter.ArtFilterViewHolder> {
 
     private Context context;
     private OnArtClickListener onArtClickListener;
     private int displayWidth, displayHeight, spanCount;
-    private MediumViewModel mediumViewModel;
+    private ArtFilterViewModel artFilterViewModel;
 
 
-    public MediumAdapter(MediumViewModel mediumViewModel, Context context, OnArtClickListener onArtClickListener, int displayWidth, int displayHeight, int spanCount) {
+    public ArtFilterAdapter(ArtFilterViewModel artFilterViewModel, Context context, OnArtClickListener onArtClickListener, int displayWidth, int displayHeight, int spanCount) {
         super(itemDiffUtilCallback);
         this.context = context;
-        this.mediumViewModel = mediumViewModel;
+        this.artFilterViewModel = artFilterViewModel;
         this.onArtClickListener = onArtClickListener;
         this.displayWidth = displayWidth;
         this.displayHeight = displayHeight;
@@ -37,13 +37,13 @@ public class MediumAdapter extends PagedListAdapter<Art, MediumAdapter.MediumVie
     }
 
     @Override
-    public void onViewAttachedToWindow(@NonNull MediumViewHolder holder) {
+    public void onViewAttachedToWindow(@NonNull ArtFilterViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         holder.onAttached();
     }
 
     @Override
-    public void onViewDetachedFromWindow(@NonNull MediumViewHolder holder) {
+    public void onViewDetachedFromWindow(@NonNull ArtFilterViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
         holder.onDetached();
     }
@@ -54,13 +54,13 @@ public class MediumAdapter extends PagedListAdapter<Art, MediumAdapter.MediumVie
 
     @NonNull
     @Override
-    public MediumViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_medium, parent, false);
-        return new MediumViewHolder(view);
+    public ArtFilterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_art_filter, parent, false);
+        return new ArtFilterViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MediumViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ArtFilterViewHolder holder, int position) {
         Art art = getItem(position);
         if (art != null) {
             holder.bind(art, position);
@@ -71,7 +71,7 @@ public class MediumAdapter extends PagedListAdapter<Art, MediumAdapter.MediumVie
         }
     }
 
-    class MediumViewHolder extends LifecycleViewHolder implements View.OnClickListener {
+    class ArtFilterViewHolder extends LifecycleViewHolder implements View.OnClickListener {
 
         private Art art;
         private int position;
@@ -89,7 +89,7 @@ public class MediumAdapter extends PagedListAdapter<Art, MediumAdapter.MediumVie
                 }
                 art.setArtWidth(bitmap.getWidth());
                 art.setArtHeight(bitmap.getHeight());
-                mediumViewModel.writeDimentionsOnServer(art);
+                artFilterViewModel.writeDimentionsOnServer(art);
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(art_image);
             }
             @Override
@@ -98,7 +98,7 @@ public class MediumAdapter extends PagedListAdapter<Art, MediumAdapter.MediumVie
             public void onPrepareLoad(Drawable placeHolderDrawable) { }
         };
 
-        MediumViewHolder(@NonNull View itemView) {
+        ArtFilterViewHolder(@NonNull View itemView) {
             super(itemView);
             itemView.getLayoutParams().width = displayWidth/spanCount;
             //itemView.getLayoutParams().height = displayWidth/spanCount;

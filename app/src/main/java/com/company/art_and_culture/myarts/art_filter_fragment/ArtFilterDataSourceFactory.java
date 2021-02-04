@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.art_medium_fragment;
+package com.company.art_and_culture.myarts.art_filter_fragment;
 
 import android.app.Application;
 
@@ -7,32 +7,32 @@ import com.company.art_and_culture.myarts.pojo.Art;
 import androidx.annotation.NonNull;
 import androidx.paging.DataSource;
 
-public class MediumDataSourceFactory extends DataSource.Factory<Integer, Art> {
+public class ArtFilterDataSourceFactory extends DataSource.Factory<Integer, Art> {
 
     private Application application;
-    private MediumDataSource mediumDataSource;
+    private ArtFilterDataSource artFilterDataSource;
     private String keyword, makerFilter, centuryFilter, keywordType;
 
-    public MediumDataSourceFactory(Application application, String keyword, String makerFilter, String centuryFilter, String keywordType) {
+    public ArtFilterDataSourceFactory(Application application, String keyword, String makerFilter, String centuryFilter, String keywordType) {
         this.application = application;
         this.keyword = keyword;
         this.makerFilter = makerFilter;
         this.centuryFilter = centuryFilter;
         this.keywordType = keywordType;
-        mediumDataSource = new MediumDataSource(application, keyword, makerFilter, centuryFilter, keywordType);
+        artFilterDataSource = new ArtFilterDataSource(application, keyword, makerFilter, centuryFilter, keywordType);
     }
 
     @NonNull
     @Override
     public DataSource<Integer, Art> create() {
-        if (mediumDataSource.isInvalid()) mediumDataSource = new MediumDataSource(application, keyword, makerFilter, centuryFilter, keywordType);
-        return mediumDataSource;
+        if (artFilterDataSource.isInvalid()) artFilterDataSource = new ArtFilterDataSource(application, keyword, makerFilter, centuryFilter, keywordType);
+        return artFilterDataSource;
     }
 
     public boolean refresh() {
-        boolean isConnected = mediumDataSource.isNetworkAvailable();
+        boolean isConnected = artFilterDataSource.isNetworkAvailable();
         if (isConnected){
-            mediumDataSource.refresh();
+            artFilterDataSource.refresh();
         }
         return isConnected;
     }
@@ -43,6 +43,6 @@ public class MediumDataSourceFactory extends DataSource.Factory<Integer, Art> {
         this.centuryFilter = centuryFilter;
         this.keywordType = keywordType;
 
-        mediumDataSource.refresh();
+        artFilterDataSource.refresh();
     }
 }

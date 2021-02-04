@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.art_medium_fragment;
+package com.company.art_and_culture.myarts.art_filter_fragment;
 
 import android.app.Application;
 
@@ -14,7 +14,7 @@ import androidx.lifecycle.LiveData;
 import androidx.paging.PagedList;
 
 
-public class MediumViewModel extends AndroidViewModel {
+public class ArtFilterViewModel extends AndroidViewModel {
 
     private LiveData<PagedList<Art>> artList;
     private LiveData<ArrayList<String>> listMakerFilters;
@@ -23,11 +23,11 @@ public class MediumViewModel extends AndroidViewModel {
     private LiveData<Integer> artCount;
     private LiveData<Boolean> isLoading;
     private LiveData<Boolean> isListEmpty;
-    private MediumRepository mediumRepository;
+    private ArtFilterRepository artFilterRepository;
     private android.content.res.Resources res;
     private Application application;
 
-    public MediumViewModel(@NonNull Application application) {
+    public ArtFilterViewModel(@NonNull Application application) {
         super(application);
 
         this.application = application;
@@ -63,31 +63,31 @@ public class MediumViewModel extends AndroidViewModel {
     }
 
     public void writeDimentionsOnServer(Art art) {
-        mediumRepository.writeDimentionsOnServer(art);
+        artFilterRepository.writeDimentionsOnServer(art);
     }
 
     public boolean refresh() {
-        return mediumRepository.refresh();
+        return artFilterRepository.refresh();
     }
 
     public void setFilters(String keyword, String makerFilter, String centuryFilter, String keywordType) {
 
-        if(mediumRepository == null) {
-            mediumRepository = new MediumRepository(application, keyword, makerFilter, centuryFilter, keywordType);
-            artList = mediumRepository.getArtList();
-            listMakerFilters = mediumRepository.getListMakerFilters();
-            listCenturyFilters = mediumRepository.getListCenturyFilters();
-            listKeywordFilters = mediumRepository.getListKeywordFilters();
-            artCount = mediumRepository.getArtCount();
-            isLoading = mediumRepository.getIsLoading();
-            isListEmpty = mediumRepository.getIsListEmpty();
+        if(artFilterRepository == null) {
+            artFilterRepository = new ArtFilterRepository(application, keyword, makerFilter, centuryFilter, keywordType);
+            artList = artFilterRepository.getArtList();
+            listMakerFilters = artFilterRepository.getListMakerFilters();
+            listCenturyFilters = artFilterRepository.getListCenturyFilters();
+            listKeywordFilters = artFilterRepository.getListKeywordFilters();
+            artCount = artFilterRepository.getArtCount();
+            isLoading = artFilterRepository.getIsLoading();
+            isListEmpty = artFilterRepository.getIsListEmpty();
         } else
-            mediumRepository.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+            artFilterRepository.setFilters(keyword, makerFilter, centuryFilter, keywordType);
 
 
     }
 
     public void setActivity(MainActivity activity) {
-        mediumRepository.setActivity(activity);
+        artFilterRepository.setActivity(activity);
     }
 }

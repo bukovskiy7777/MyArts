@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.art_medium_fragment;
+package com.company.art_and_culture.myarts.art_filter_fragment;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,15 +37,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class MediumFragment extends Fragment implements View.OnClickListener {
+public class ArtFilterFragment extends Fragment implements View.OnClickListener {
 
-    private MediumViewModel mediumViewModel;
-    private RecyclerView mediumRecyclerView, recycler_view_artists, recycler_view_keywords, recycler_view_centuries;
-    private MediumAdapter mediumAdapter;
-    private ProgressBar mediumProgressBar, progress_bar_filter, progress_bar_artist, progress_bar_century, progress_bar_keywords;
-    private TextView textView, appbar_medium, appbar_art_count;
-    private MediumEventListener mediumEventListener;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private ArtFilterViewModel artFilterViewModel;
+    private RecyclerView recycler_view_art_filter, recycler_view_artists, recycler_view_keywords, recycler_view_centuries;
+    private ArtFilterAdapter artFilterAdapter;
+    private ProgressBar progress_bar_art_filter, progress_bar_filter, progress_bar_artist, progress_bar_century, progress_bar_keywords;
+    private TextView textView, appbar_art_filter, appbar_art_count;
+    private ArtFilterEventListener artFilterEventListener;
+    private SwipeRefreshLayout art_filter_swipeRefreshLayout;
     private android.content.res.Resources res;
     private MainActivity activity;
     private String keyword, makerFilter = "", centuryFilter = "";
@@ -59,13 +59,13 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_art_medium, container, false);
-        textView = root.findViewById(R.id.text_medium);
-        mediumRecyclerView = root.findViewById(R.id.recycler_view_medium);
-        mediumProgressBar = root.findViewById(R.id.progress_bar_medium);
-        swipeRefreshLayout = root.findViewById(R.id.medium_swipeRefreshLayout);
+        View root = inflater.inflate(R.layout.fragment_art_filter, container, false);
+        textView = root.findViewById(R.id.text_art_filter);
+        recycler_view_art_filter = root.findViewById(R.id.recycler_view_art_filter);
+        progress_bar_art_filter = root.findViewById(R.id.progress_bar_art_filter);
+        art_filter_swipeRefreshLayout = root.findViewById(R.id.art_filter_swipeRefreshLayout);
         appbar_art_count = root.findViewById(R.id.appbar_art_count);
-        appbar_medium = root.findViewById(R.id.appbar_medium);
+        appbar_art_filter = root.findViewById(R.id.appbar_art_filter);
         floatingActionButton = root.findViewById(R.id.floating_button);
         floatingActionButton.setOnClickListener(this);
         black_layout = root.findViewById(R.id.black_layout);
@@ -88,24 +88,24 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
         progress_bar_keywords = root.findViewById(R.id.progress_bar_keywords);
         setFilterProgressesVisibility(View.GONE);
 
-        mediumViewModel = new ViewModelProvider(this).get(MediumViewModel.class);
+        artFilterViewModel = new ViewModelProvider(this).get(ArtFilterViewModel.class);
 
         res = getResources();
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
-        initRecyclerView(mediumViewModel, displayWidth, displayHeight);
+        initRecyclerView(artFilterViewModel, displayWidth, displayHeight);
         initFiltersRecyclerView(root);
 
         activity = (MainActivity) getActivity();
 
-        if (activity != null && keyword == null) keyword = activity.getNavFragments().getArtQueryForMediumFragment();
-        if (activity != null && keywordType == null) keywordType = activity.getNavFragments().getQueryTypeForMediumFragment();
-        if (activity != null) mediumEventListener = activity.getNavFragments();
+        if (activity != null && keyword == null) keyword = activity.getNavFragments().getKeywordForArtFilterFragment();
+        if (activity != null && keywordType == null) keywordType = activity.getNavFragments().getKeywordTypeForArtFilterFragment();
+        if (activity != null) artFilterEventListener = activity.getNavFragments();
         setAppBarText();
 
-        mediumViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
-        mediumViewModel.setActivity(activity);
+        artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+        artFilterViewModel.setActivity(activity);
 
         initSwipeRefreshLayout();
         subscribeObservers();
@@ -117,7 +117,7 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
     private void setAppBarText() {
         List<String> list = new ArrayList<>();
         list.add(makerFilter); list.add(keyword); if(centuryFilter.length() > 0) list.add(centuryFilter+res.getString(R.string.century));
-        appbar_medium.setText(getJoinedString(list,", "));
+        appbar_art_filter.setText(getJoinedString(list,", "));
     }
 
     private void setFilterProgressesVisibility(int visible) {
@@ -143,7 +143,7 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroy() {
         keyword = ""; makerFilter = ""; centuryFilter = ""; keywordType = "";
-        mediumViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+        artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
         super.onDestroy();
     }
 
@@ -172,7 +172,7 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
                     setFilterProgressesVisibility(View.VISIBLE);
                     setAppBarText();
                 }
-                mediumViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+                artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
             }
         };
 
@@ -185,7 +185,7 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
                     setFilterProgressesVisibility(View.VISIBLE);
                     setAppBarText();
                 }
-                mediumViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+                artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
             }
         };
 
@@ -199,7 +199,7 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
                     setFilterProgressesVisibility(View.VISIBLE);
                     setAppBarText();
                 }
-                mediumViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+                artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
             }
         };
     }
@@ -218,9 +218,9 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
                         return true;
                     } else {
                         int scrollPosition = 0;
-                        if (mediumAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
+                        if (artFilterAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
                         if (scrollPosition > 4) {
-                            mediumRecyclerView.smoothScrollToPosition(0);
+                            recycler_view_art_filter.smoothScrollToPosition(0);
                             return true;
                         }
                     }
@@ -232,17 +232,17 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initSwipeRefreshLayout() {
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        art_filter_swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                boolean networkState = mediumViewModel.refresh();
+                boolean networkState = artFilterViewModel.refresh();
                 if (!networkState) {
                     Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
-                    swipeRefreshLayout.setRefreshing(false);
+                    art_filter_swipeRefreshLayout.setRefreshing(false);
                 }
             }
         });
-        swipeRefreshLayout.setColorSchemeResources(
+        art_filter_swipeRefreshLayout.setColorSchemeResources(
                 android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
@@ -253,27 +253,27 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
 
     private void subscribeObservers() {
 
-        mediumViewModel.getArtList().observe(getViewLifecycleOwner(), new Observer<PagedList<Art>>() {
+        artFilterViewModel.getArtList().observe(getViewLifecycleOwner(), new Observer<PagedList<Art>>() {
             @Override
             public void onChanged(PagedList<Art> arts) {
-                mediumAdapter.submitList(arts);
+                artFilterAdapter.submitList(arts);
                 hideText();
-                swipeRefreshLayout.setRefreshing(false);
+                art_filter_swipeRefreshLayout.setRefreshing(false);
             }
         });
-        mediumViewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        artFilterViewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) { showProgressBar(); } else { hideProgressBar(); }
             }
         });
-        mediumViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        artFilterViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) { showText(); } else { hideText(); }
             }
         });
-        mediumViewModel.getListMakerFilters().observe(getViewLifecycleOwner(), new Observer<ArrayList<String>>() {
+        artFilterViewModel.getListMakerFilters().observe(getViewLifecycleOwner(), new Observer<ArrayList<String>>() {
             @Override
             public void onChanged(ArrayList<String> listStrings) {
                 if (listStrings == null)
@@ -282,7 +282,7 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
                     setListMakerFilters(listStrings);
             }
         });
-        mediumViewModel.getListCenturyFilters().observe(getViewLifecycleOwner(), new Observer<ArrayList<String>>() {
+        artFilterViewModel.getListCenturyFilters().observe(getViewLifecycleOwner(), new Observer<ArrayList<String>>() {
             @Override
             public void onChanged(ArrayList<String> listStrings) {
                 if (listStrings == null)
@@ -291,7 +291,7 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
                     setListCenturyFilters(listStrings);
             }
         });
-        mediumViewModel.getListKeywordFilters().observe(getViewLifecycleOwner(), new Observer<ArrayList<FilterObject>>() {
+        artFilterViewModel.getListKeywordFilters().observe(getViewLifecycleOwner(), new Observer<ArrayList<FilterObject>>() {
             @Override
             public void onChanged(ArrayList<FilterObject> listKeywords) {
                 if (listKeywords == null)
@@ -301,7 +301,7 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        mediumViewModel.getArtCount().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+        artFilterViewModel.getArtCount().observe(getViewLifecycleOwner(), new Observer<Integer>() {
             @Override
             public void onChanged(Integer artCount) {
                 appbar_art_count.setText(artCount.toString());
@@ -388,30 +388,30 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
         if(centuryFilter.length() ==0) clear_century_tv.setVisibility(View.GONE); else clear_century_tv.setVisibility(View.VISIBLE);
     }
 
-    private void initRecyclerView(final MediumViewModel mediumViewModel, int displayWidth, int displayHeight){
+    private void initRecyclerView(final ArtFilterViewModel artFilterViewModel, int displayWidth, int displayHeight){
 
-        MediumAdapter.OnArtClickListener onArtClickListener = new MediumAdapter.OnArtClickListener() {
+        ArtFilterAdapter.OnArtClickListener onArtClickListener = new ArtFilterAdapter.OnArtClickListener() {
 
             @Override
             public void onArtImageClick(Art art, int position) {
-                ArrayList<Art> artInMemory = MediumDataInMemory.getInstance().getAllData();
-                mediumEventListener.mediumArtClickEvent(artInMemory, position);
+                ArrayList<Art> artInMemory = ArtFilterDataInMemory.getInstance().getAllData();
+                artFilterEventListener.artFilterArtClickEvent(artInMemory, position);
             }
 
         };
 
-        mediumAdapter = new MediumAdapter(mediumViewModel, getContext(), onArtClickListener, displayWidth, displayHeight, spanCount);
+        artFilterAdapter = new ArtFilterAdapter(artFilterViewModel, getContext(), onArtClickListener, displayWidth, displayHeight, spanCount);
         RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
-        mediumRecyclerView.setLayoutManager(layoutManager);
-        mediumRecyclerView.setAdapter(mediumAdapter);
+        recycler_view_art_filter.setLayoutManager(layoutManager);
+        recycler_view_art_filter.setAdapter(artFilterAdapter);
     }
 
     private void showProgressBar(){
-        mediumProgressBar.setVisibility(View.VISIBLE);
+        progress_bar_art_filter.setVisibility(View.VISIBLE);
     }
 
     private void hideProgressBar(){
-        mediumProgressBar.setVisibility(View.GONE);
+        progress_bar_art_filter.setVisibility(View.GONE);
     }
 
     private void showText(){
@@ -455,7 +455,7 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
                 listString.add(filter.getText());
             }
             setListMakerFilters(listString);
-            mediumViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+            artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
 
         } else if (view.getId() == clear_century_tv.getId()) {
             centuryFilter = "";
@@ -467,14 +467,14 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
                 listString.add(filter.getText());
             }
             setListCenturyFilters(listString);
-            mediumViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+            artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
 
         } else if (view.getId() == clear_keywords_tv.getId()) {
             keyword = ""; keywordType = "";
             setFilterProgressesVisibility(View.VISIBLE);
             setAppBarText();
             setListKeywordFilters(filterKeywordAdapter.getItems());
-            mediumViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+            artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
         }
     }
 
@@ -485,13 +485,13 @@ public class MediumFragment extends Fragment implements View.OnClickListener {
         black_layout.startAnimation(animation);
     }
 
-    public interface MediumEventListener {
-        void mediumArtClickEvent(Collection<Art> arts, int position);
+    public interface ArtFilterEventListener {
+        void artFilterArtClickEvent(Collection<Art> arts, int position);
     }
 
     private int getTargetScrollPosition () {
 
-        int scrollPosition = ((StaggeredGridLayoutManager) mediumRecyclerView.getLayoutManager()).findFirstVisibleItemPositions(null)[0];
+        int scrollPosition = ((StaggeredGridLayoutManager) recycler_view_art_filter.getLayoutManager()).findFirstVisibleItemPositions(null)[0];
 
         return scrollPosition;
     }

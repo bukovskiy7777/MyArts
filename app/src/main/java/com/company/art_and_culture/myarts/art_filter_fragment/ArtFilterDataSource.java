@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.art_medium_fragment;
+package com.company.art_and_culture.myarts.art_filter_fragment;
 
 import android.app.Application;
 import android.content.Context;
@@ -22,7 +22,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
+public class ArtFilterDataSource extends PageKeyedDataSource<Integer, Art> {
 
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
@@ -30,7 +30,7 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
     private Application application;
     private String keyword, makerFilter, centuryFilter, keywordType;
 
-    public MediumDataSource(Application application, String keyword, String makerFilter, String centuryFilter, String keywordType) {
+    public ArtFilterDataSource(Application application, String keyword, String makerFilter, String centuryFilter, String keywordType) {
         this.keyword = keyword;
         this.makerFilter = makerFilter;
         this.centuryFilter = centuryFilter;
@@ -56,7 +56,7 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
         request.setMakerFilter(makerFilter);
         request.setCenturyFilter(centuryFilter);
         request.setKeywordType(keywordType);
-        request.setOldList(MediumDataInMemory.getInstance().getAllData());
+        request.setOldList(ArtFilterDataInMemory.getInstance().getAllData());
         request.setOperation(Constants.GET_ARTS_LIST_FILTER_OPERATION);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
@@ -69,8 +69,8 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsListEmptyState(false);
-                        MediumDataInMemory.getInstance().addData(resp.getListArts());
-                        callback.onResult(MediumDataInMemory.getInstance().getInitialData(),null, 2);
+                        ArtFilterDataInMemory.getInstance().addData(resp.getListArts());
+                        callback.onResult(ArtFilterDataInMemory.getInstance().getInitialData(),null, 2);
                     } else {
                         updateIsListEmptyState(true);
                     }
@@ -100,7 +100,7 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
         request.setMakerFilter(makerFilter);
         request.setCenturyFilter(centuryFilter);
         request.setKeywordType(keywordType);
-        request.setOldList(MediumDataInMemory.getInstance().getAllData());
+        request.setOldList(ArtFilterDataInMemory.getInstance().getAllData());
         request.setOperation(Constants.GET_ARTS_LIST_FILTER_OPERATION);
 
 
@@ -114,8 +114,8 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsListEmptyState(false);
-                        MediumDataInMemory.getInstance().addData(resp.getListArts());
-                        callback.onResult(MediumDataInMemory.getInstance().getAfterData(params.key), params.key + 1);
+                        ArtFilterDataInMemory.getInstance().addData(resp.getListArts());
+                        callback.onResult(ArtFilterDataInMemory.getInstance().getAfterData(params.key), params.key + 1);
                     } else {
                         updateIsListEmptyState(false);
                     }
@@ -150,7 +150,7 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
     }
 
     public void refresh() {
-        MediumDataInMemory.getInstance().refresh();
+        ArtFilterDataInMemory.getInstance().refresh();
         invalidate();
     }
 
@@ -181,7 +181,7 @@ public class MediumDataSource extends PageKeyedDataSource<Integer, Art> {
     }
 
     public void setActivity(MainActivity activity) {
-        MediumDataInMemory.getInstance().setArtObserver(activity);
+        ArtFilterDataInMemory.getInstance().setArtObserver(activity);
     }
 
 }

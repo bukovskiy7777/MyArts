@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/medium_swipeRefreshLayout"
+    android:id="@+id/art_filter_swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,7 +14,7 @@
         android:background="@color/colorPrimary">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/art_medium_appbar"
+            android:id="@+id/art_filter_appbar"
             android:background="@color/colorPrimary"
             android:elevation="4dp"
             android:paddingLeft="5dp"
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
-                android:id="@+id/appbar_medium"
+                android:id="@+id/appbar_art_filter"
                 android:maxLines="2"
                 android:ellipsize="end"
                 android:textStyle="italic"
@@ -81,7 +81,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/text_medium"
+            android:id="@+id/text_art_filter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -93,12 +93,12 @@
             android:fontFamily="@string/font_sans_serif"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/art_medium_appbar"
+            app:layout_constraintTop_toBottomOf="@id/art_filter_appbar"
             android:gravity="center_horizontal" />
 
         <ProgressBar
             android:visibility="gone"
-            android:id="@+id/progress_bar_medium"
+            android:id="@+id/progress_bar_art_filter"
             android:indeterminateTint="@color/colorBlue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -110,8 +110,8 @@
 
         <androidx.recyclerview.widget.RecyclerView
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/art_medium_appbar"
-            android:id="@+id/recycler_view_medium"
+            app:layout_constraintTop_toBottomOf="@id/art_filter_appbar"
+            android:id="@+id/recycler_view_art_filter"
             android:layout_width="match_parent"
             android:layout_height="0dp"/>
 

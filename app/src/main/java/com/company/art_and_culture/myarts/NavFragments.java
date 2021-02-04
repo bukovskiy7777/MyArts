@@ -3,7 +3,7 @@ package com.company.art_and_culture.myarts;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.company.art_and_culture.myarts.art_medium_fragment.MediumFragment;
+import com.company.art_and_culture.myarts.art_filter_fragment.ArtFilterFragment;
 import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
 import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
 import com.company.art_and_culture.myarts.attribute_fragment.AttributeFragment;
@@ -34,7 +34,7 @@ import androidx.navigation.NavDestination;
 
 public class NavFragments implements
         HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
-        MakerFragment.MakerEventListener, ExploreFragment.ExploreEventListener, MediumFragment.MediumEventListener,
+        MakerFragment.MakerEventListener, ExploreFragment.ExploreEventListener, ArtFilterFragment.ArtFilterEventListener,
         ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener, FilterMakerFragment.FilterMakerEventListener,
         AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener, BlankFragment.BlankEventListener, FoldersFragment.FoldersEventListener, ShowFolderFragment.ShowFolderEventListener, CreateFolderFragment.CreateFolderEventListener {
 
@@ -45,7 +45,7 @@ public class NavFragments implements
 
     private Maker makerForMakerFragment;
 
-    private String artQueryForMediumFragment, queryTypeForMediumFragment;
+    private String keywordForArtFilterFragment, keywordTypeForArtFilterFragment;
 
     private String typeForAttributeFragment;
 
@@ -104,10 +104,10 @@ public class NavFragments implements
 
 
     @Override
-    public void mediumArtClickEvent(Collection<Art> arts, int position) {
+    public void artFilterArtClickEvent(Collection<Art> arts, int position) {
         this.listArtsForArtShowFragment = arts;
         this.clickPositionForArtShowFragment = position;
-        navController.navigate(R.id.action_mediumFragment_to_artShowFragment);
+        navController.navigate(R.id.action_artFilterFragment_to_artShowFragment);
     }
 
 
@@ -125,9 +125,9 @@ public class NavFragments implements
     }
     @Override
     public void searchClassificationClickEvent(String artClassification, String queryType) {
-        this.artQueryForMediumFragment = artClassification;
-        this.queryTypeForMediumFragment = queryType;
-        navController.navigate(R.id.action_searchFragment_to_mediumFragment);
+        this.keywordForArtFilterFragment = artClassification;
+        this.keywordTypeForArtFilterFragment = queryType;
+        navController.navigate(R.id.action_searchFragment_to_artFilterFragment);
     }
 
 
@@ -147,9 +147,9 @@ public class NavFragments implements
 
     @Override
     public void attributeClickEvent(Attribute attribute) {
-        queryTypeForMediumFragment = attribute.getType();
-        artQueryForMediumFragment = attribute.getText();
-        navController.navigate(R.id.action_attributeFragment_to_mediumFragment);
+        keywordTypeForArtFilterFragment = attribute.getType();
+        keywordForArtFilterFragment = attribute.getText();
+        navController.navigate(R.id.action_attributeFragment_to_artFilterFragment);
     }
 
 
@@ -157,9 +157,9 @@ public class NavFragments implements
 
     @Override
     public void tagClickEvent(Attribute attribute) {
-        queryTypeForMediumFragment = attribute.getType();
-        artQueryForMediumFragment = attribute.getText();
-        navController.navigate(R.id.action_tagsFragment_to_mediumFragment);
+        keywordTypeForArtFilterFragment = attribute.getType();
+        keywordForArtFilterFragment = attribute.getText();
+        navController.navigate(R.id.action_tagsFragment_to_artFilterFragment);
     }
     @Override
     public void tagFilterPositionEvent(int position) {
@@ -289,9 +289,9 @@ public class NavFragments implements
     }
     @Override
     public void homeClassificationClickEvent(String artClassification, String queryType) {
-        this.artQueryForMediumFragment = artClassification;
-        this.queryTypeForMediumFragment = queryType;
-        navController.navigate(R.id.action_navigation_home_to_mediumFragment);
+        this.keywordForArtFilterFragment = artClassification;
+        this.keywordTypeForArtFilterFragment = queryType;
+        navController.navigate(R.id.action_navigation_home_to_artFilterFragment);
     }
     @Override
     public void homeSearchClickEvent() {
@@ -311,12 +311,12 @@ public class NavFragments implements
         return makerForMakerFragment;
     }
 
-    public String getArtQueryForMediumFragment() {
-        return artQueryForMediumFragment;
+    public String getKeywordForArtFilterFragment() {
+        return keywordForArtFilterFragment;
     }
 
-    public String getQueryTypeForMediumFragment() {
-        return queryTypeForMediumFragment;
+    public String getKeywordTypeForArtFilterFragment() {
+        return keywordTypeForArtFilterFragment;
     }
 
     public String getTypeForAttributeFragment() {

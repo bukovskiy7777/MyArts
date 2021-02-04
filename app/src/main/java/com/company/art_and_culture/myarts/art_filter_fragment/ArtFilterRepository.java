@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.art_medium_fragment;
+package com.company.art_and_culture.myarts.art_filter_fragment;
 
 import android.app.Application;
 
@@ -13,17 +13,17 @@ import androidx.lifecycle.LiveData;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
-public class MediumRepository {
+public class ArtFilterRepository {
 
     private LiveData<PagedList<Art>> artList;
-    private MediumDataSource mediumDataSource;
+    private ArtFilterDataSource artFilterDataSource;
     private FiltersDataSource filtersDataSource;
-    private MediumDataSourceFactory mediumDataSourceFactory;
+    private ArtFilterDataSourceFactory artFilterDataSourceFactory;
     private Application application;
 
     private String keyword, makerFilter, centuryFilter, keywordType;
 
-    public MediumRepository(Application application, String keyword, String makerFilter, String centuryFilter, String keywordType) {
+    public ArtFilterRepository(Application application, String keyword, String makerFilter, String centuryFilter, String keywordType) {
 
         this.application = application;
         this.keyword = keyword;
@@ -36,10 +36,10 @@ public class MediumRepository {
                 .setPageSize(Constants.PAGE_SIZE)
                 .setInitialLoadSizeHint(Constants.PAGE_SIZE)
                 .build();
-        mediumDataSourceFactory = new MediumDataSourceFactory(application, keyword, makerFilter, centuryFilter, keywordType);
-        artList = new LivePagedListBuilder<>(mediumDataSourceFactory, config).build();
+        artFilterDataSourceFactory = new ArtFilterDataSourceFactory(application, keyword, makerFilter, centuryFilter, keywordType);
+        artList = new LivePagedListBuilder<>(artFilterDataSourceFactory, config).build();
 
-        mediumDataSource = (MediumDataSource) mediumDataSourceFactory.create();//if remove this line artLike will not working after refresh
+        artFilterDataSource = (ArtFilterDataSource) artFilterDataSourceFactory.create();//if remove this line artLike will not working after refresh
 
         filtersDataSource = new FiltersDataSource(application, keyword, makerFilter, centuryFilter, keywordType);
     }
@@ -65,20 +65,20 @@ public class MediumRepository {
     }
 
     public LiveData<Boolean> getIsLoading() {
-        return mediumDataSource.getIsLoading();
+        return artFilterDataSource.getIsLoading();
     }
 
     public LiveData<Boolean> getIsListEmpty() {
-        return mediumDataSource.getIsListEmpty();
+        return artFilterDataSource.getIsListEmpty();
     }
 
     public void writeDimentionsOnServer(Art art) {
-        mediumDataSource.writeDimentionsOnServer(art);
+        artFilterDataSource.writeDimentionsOnServer(art);
     }
 
     public boolean refresh() {
         //filtersDataSource.refresh();
-        return mediumDataSourceFactory.refresh();
+        return artFilterDataSourceFactory.refresh();
     }
 
     public void setFilters(String keyword, String makerFilter, String centuryFilter, String keywordType) {
@@ -89,13 +89,13 @@ public class MediumRepository {
             this.makerFilter = makerFilter;
             this.centuryFilter = centuryFilter;
             this.keywordType = keywordType;
-            mediumDataSourceFactory.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+            artFilterDataSourceFactory.setFilters(keyword, makerFilter, centuryFilter, keywordType);
             filtersDataSource.setFilters(keyword, makerFilter, centuryFilter, keywordType);
         }
     }
 
     public void setActivity(MainActivity activity) {
-        mediumDataSource.setActivity(activity);
+        artFilterDataSource.setActivity(activity);
     }
 
 }
