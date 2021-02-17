@@ -124,7 +124,7 @@
             app:backgroundTint="@color/colorPrimary"
             android:src="@drawable/ic_baseline_tune_100"
             android:elevation="8dp"
-            app:fabCustomSize="50dp"
+            app:fabCustomSize="44dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
@@ -156,7 +156,7 @@
                     android:text="@string/filters"
                     android:textColor="@color/colorBlack"
                     android:textSize="18sp"
-                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintLeft_toLeftOf="@+id/filter_artist_tv"
                     app:layout_constraintTop_toTopOf="parent" />
                 <ProgressBar
                     android:id="@+id/progress_bar_filter"
@@ -179,16 +179,41 @@
                     android:textSize="14sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/recycler_view_artists" />
+                <ImageView
+                    android:id="@+id/search_artist_iv"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="3dp"
+                    android:src="@drawable/ic_search_black_100dp"
+                    app:layout_constraintTop_toTopOf="@id/filter_artist_tv"
+                    app:layout_constraintBottom_toBottomOf="@+id/filter_artist_tv"
+                    app:layout_constraintLeft_toRightOf="@+id/filter_artist_tv" />
                 <ProgressBar
                     android:id="@+id/progress_bar_artist"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:layout_marginStart="6dp"
                     android:indeterminateTint="@color/colorBlue"
                     android:visibility="visible"
+                    android:layout_marginStart="3dp"
+                    app:layout_constraintStart_toEndOf="@+id/search_artist_iv"
                     app:layout_constraintBottom_toBottomOf="@+id/filter_artist_tv"
-                    app:layout_constraintStart_toEndOf="@+id/filter_artist_tv"
-                    app:layout_constraintTop_toTopOf="@id/filter_artist_tv"></ProgressBar>
+                    app:layout_constraintTop_toTopOf="@id/filter_artist_tv"/>
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/filter_artist_edit_text"
+                    app:layout_constraintLeft_toRightOf="@id/progress_bar_artist"
+                    app:layout_constraintRight_toLeftOf="@id/clear_artist_tv"
+                    app:layout_constraintBottom_toBottomOf="@id/filter_artist_tv"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="6dp"
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:textSize="14sp"
+                    android:maxLines="1"
+                    android:textColor="@color/colorBlack"
+                    android:hint="@string/search_artists"
+                    android:background="@null"
+                    android:imeOptions="actionSearch"
+                    android:inputType="textAutoCorrect" />
                 <ImageView
                     android:id="@+id/clear_artist_tv"
                     android:layout_width="20dp"
@@ -209,6 +234,7 @@
                     app:layout_constraintVertical_weight="6"
                     tools:layout_editor_absoluteX="10dp" />
 
+
                 <TextView
                     android:id="@+id/filter_century_tv"
                     android:layout_width="wrap_content"
@@ -223,12 +249,12 @@
                     android:id="@+id/progress_bar_century"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:layout_marginStart="6dp"
                     android:indeterminateTint="@color/colorBlue"
                     android:visibility="visible"
-                    app:layout_constraintBottom_toBottomOf="@+id/filter_century_tv"
+                    android:layout_marginStart="3dp"
                     app:layout_constraintStart_toEndOf="@+id/filter_century_tv"
-                    app:layout_constraintTop_toTopOf="@id/filter_century_tv"></ProgressBar>
+                    app:layout_constraintBottom_toBottomOf="@+id/filter_century_tv"
+                    app:layout_constraintTop_toTopOf="@id/filter_century_tv"/>
                 <ImageView
                     android:id="@+id/clear_century_tv"
                     android:layout_width="20dp"
@@ -248,6 +274,7 @@
                     app:layout_constraintVertical_weight="3"
                     tools:layout_editor_absoluteX="10dp" />
 
+
                 <TextView
                     android:id="@+id/filter_keywords_tv"
                     android:layout_width="wrap_content"
@@ -258,16 +285,41 @@
                     android:textSize="14sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/recycler_view_keywords" />
+                <ImageView
+                    android:id="@+id/search_keywords_iv"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="3dp"
+                    android:src="@drawable/ic_search_black_100dp"
+                    app:layout_constraintTop_toTopOf="@id/filter_keywords_tv"
+                    app:layout_constraintBottom_toBottomOf="@+id/filter_keywords_tv"
+                    app:layout_constraintLeft_toRightOf="@+id/filter_keywords_tv" />
                 <ProgressBar
                     android:id="@+id/progress_bar_keywords"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:layout_marginStart="6dp"
                     android:indeterminateTint="@color/colorBlue"
                     android:visibility="visible"
+                    android:layout_marginStart="3dp"
+                    app:layout_constraintStart_toEndOf="@+id/search_keywords_iv"
                     app:layout_constraintBottom_toBottomOf="@+id/filter_keywords_tv"
-                    app:layout_constraintStart_toEndOf="@+id/filter_keywords_tv"
-                    app:layout_constraintTop_toTopOf="@id/filter_keywords_tv"></ProgressBar>
+                    app:layout_constraintTop_toTopOf="@id/filter_keywords_tv"/>
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/filter_keyword_edit_text"
+                    app:layout_constraintLeft_toRightOf="@id/progress_bar_keywords"
+                    app:layout_constraintRight_toLeftOf="@id/clear_keywords_tv"
+                    app:layout_constraintBottom_toBottomOf="@id/filter_keywords_tv"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="6dp"
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:textSize="14sp"
+                    android:maxLines="1"
+                    android:textColor="@color/colorBlack"
+                    android:hint="@string/search_keywords"
+                    android:background="@null"
+                    android:imeOptions="actionSearch"
+                    android:inputType="textAutoCorrect" />
                 <ImageView
                     android:id="@+id/clear_keywords_tv"
                     android:layout_width="20dp"

@@ -2,6 +2,8 @@ package com.company.art_and_culture.myarts.art_filter_fragment;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +31,7 @@ import java.util.Collection;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -48,45 +51,28 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
     private SwipeRefreshLayout art_filter_swipeRefreshLayout;
     private android.content.res.Resources res;
     private MainActivity activity;
-    private String keyword, makerFilter = "", centuryFilter = "";
-    private String keywordType;
+    private String keyword, keywordType, makerFilter = "", centuryFilter = "";
     private int spanCount = 2;
     private FloatingActionButton floatingActionButton;
     private FrameLayout black_layout;
     private FilterAdapter filterMakerAdapter, filterCenturyAdapter, filterKeywordAdapter;
     private FilterAdapter.OnFilterClickListener onCenturyClickListener, onMakerClickListener, onKeywordClickListener;
     private ImageView clear_artist_tv, clear_century_tv, clear_keywords_tv;
+    private ImageView search_artist_iv, search_keywords_iv;
+    private boolean artistSearchPressed = false, keywordSearchPressed = false;
+    private AppCompatEditText filter_artist_edit_text, filter_keyword_edit_text;
+    private ArrayList<String> globalListArtists = new ArrayList<>();
+    private ArrayList<FilterObject> globalListKeywords = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_art_filter, container, false);
-        textView = root.findViewById(R.id.text_art_filter);
-        recycler_view_art_filter = root.findViewById(R.id.recycler_view_art_filter);
-        progress_bar_art_filter = root.findViewById(R.id.progress_bar_art_filter);
-        art_filter_swipeRefreshLayout = root.findViewById(R.id.art_filter_swipeRefreshLayout);
-        appbar_art_count = root.findViewById(R.id.appbar_art_count);
-        appbar_art_filter = root.findViewById(R.id.appbar_art_filter);
-        floatingActionButton = root.findViewById(R.id.floating_button);
-        floatingActionButton.setOnClickListener(this);
-        black_layout = root.findViewById(R.id.black_layout);
-        black_layout.setOnClickListener(this);
-        black_layout.setVisibility(View.GONE);
 
-        clear_artist_tv = root.findViewById(R.id.clear_artist_tv);
-        clear_artist_tv.setOnClickListener(this);
-        clear_artist_tv.setVisibility(View.GONE);
-        clear_century_tv = root.findViewById(R.id.clear_century_tv);
-        clear_century_tv.setOnClickListener(this);
-        clear_century_tv.setVisibility(View.GONE);
-        clear_keywords_tv = root.findViewById(R.id.clear_keywords_tv);
-        clear_keywords_tv.setOnClickListener(this);
-        clear_keywords_tv.setVisibility(View.GONE);
+        bindViews(root);
 
-        progress_bar_filter = root.findViewById(R.id.progress_bar_filter);
-        progress_bar_artist = root.findViewById(R.id.progress_bar_artist);
-        progress_bar_century = root.findViewById(R.id.progress_bar_century);
-        progress_bar_keywords = root.findViewById(R.id.progress_bar_keywords);
         setFilterProgressesVisibility(View.GONE);
+
+        initEditTexts();
 
         artFilterViewModel = new ViewModelProvider(this).get(ArtFilterViewModel.class);
 
@@ -112,6 +98,105 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         setOnBackPressedListener(root);
 
         return root;
+    }
+
+    private void bindViews(View root) {
+        textView = root.findViewById(R.id.text_art_filter);
+        recycler_view_art_filter = root.findViewById(R.id.recycler_view_art_filter);
+        progress_bar_art_filter = root.findViewById(R.id.progress_bar_art_filter);
+        art_filter_swipeRefreshLayout = root.findViewById(R.id.art_filter_swipeRefreshLayout);
+        appbar_art_count = root.findViewById(R.id.appbar_art_count);
+        appbar_art_filter = root.findViewById(R.id.appbar_art_filter);
+        floatingActionButton = root.findViewById(R.id.floating_button);
+        floatingActionButton.setOnClickListener(this);
+        black_layout = root.findViewById(R.id.black_layout);
+        black_layout.setOnClickListener(this);
+        black_layout.setVisibility(View.GONE);
+
+        clear_artist_tv = root.findViewById(R.id.clear_artist_tv);
+        clear_artist_tv.setOnClickListener(this);
+        clear_artist_tv.setVisibility(View.GONE);
+        clear_century_tv = root.findViewById(R.id.clear_century_tv);
+        clear_century_tv.setOnClickListener(this);
+        clear_century_tv.setVisibility(View.GONE);
+        clear_keywords_tv = root.findViewById(R.id.clear_keywords_tv);
+        clear_keywords_tv.setOnClickListener(this);
+        clear_keywords_tv.setVisibility(View.GONE);
+
+        search_artist_iv = root.findViewById(R.id.search_artist_iv);
+        search_artist_iv.setOnClickListener(this);
+        search_keywords_iv = root.findViewById(R.id.search_keywords_iv);
+        search_keywords_iv.setOnClickListener(this);
+
+        progress_bar_filter = root.findViewById(R.id.progress_bar_filter);
+        progress_bar_artist = root.findViewById(R.id.progress_bar_artist);
+        progress_bar_century = root.findViewById(R.id.progress_bar_century);
+        progress_bar_keywords = root.findViewById(R.id.progress_bar_keywords);
+
+        filter_artist_edit_text = root.findViewById(R.id.filter_artist_edit_text);
+        filter_keyword_edit_text = root.findViewById(R.id.filter_keyword_edit_text);
+        filter_artist_edit_text.setVisibility(View.GONE);
+        filter_keyword_edit_text.setVisibility(View.GONE);
+    }
+
+    private void initEditTexts() {
+        filter_artist_edit_text.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    filter_artist_edit_text.clearFocus();
+                }
+                return false;
+            }
+        });
+        filter_artist_edit_text.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(filter_artist_edit_text.getText().length() > 0) {
+                    ArrayList<String> partialListArtists = new ArrayList<>();
+                    for (String artist: globalListArtists){
+                        if(artist.toUpperCase().contains(filter_artist_edit_text.getText().toString().toUpperCase()))
+                            partialListArtists.add(artist);
+                    }
+                    setListMakerFilters(partialListArtists);
+                } else {
+                    setListMakerFilters(globalListArtists);
+                }
+            }
+        });
+
+        filter_keyword_edit_text.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    filter_keyword_edit_text.clearFocus();
+                }
+                return false;
+            }
+        });
+        filter_keyword_edit_text.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(filter_keyword_edit_text.getText().length() > 0) {
+                    ArrayList<FilterObject> partialListKeywords = new ArrayList<>();
+                    for (FilterObject keyword: globalListKeywords){
+                        if(keyword.getText().toUpperCase().contains(filter_keyword_edit_text.getText().toString().toUpperCase()))
+                            partialListKeywords.add(keyword);
+                    }
+                    setListKeywordFilters(partialListKeywords);
+                } else {
+                    setListKeywordFilters(globalListKeywords);
+                }
+            }
+        });
     }
 
     private void setAppBarText() {
@@ -276,10 +361,13 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         artFilterViewModel.getListMakerFilters().observe(getViewLifecycleOwner(), new Observer<ArrayList<String>>() {
             @Override
             public void onChanged(ArrayList<String> listStrings) {
-                if (listStrings == null)
+                if (listStrings == null){
                     filterMakerAdapter.clearItems();
-                 else
+                    globalListArtists.clear();
+                } else {
                     setListMakerFilters(listStrings);
+                    globalListArtists = listStrings;
+                }
             }
         });
         artFilterViewModel.getListCenturyFilters().observe(getViewLifecycleOwner(), new Observer<ArrayList<String>>() {
@@ -294,10 +382,13 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         artFilterViewModel.getListKeywordFilters().observe(getViewLifecycleOwner(), new Observer<ArrayList<FilterObject>>() {
             @Override
             public void onChanged(ArrayList<FilterObject> listKeywords) {
-                if (listKeywords == null)
+                if (listKeywords == null){
                     filterKeywordAdapter.clearItems();
-                else
+                    globalListKeywords.clear();
+                } else {
                     setListKeywordFilters(listKeywords);
+                    globalListKeywords = listKeywords;
+                }
             }
         });
 
@@ -309,7 +400,10 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         });
     }
 
-    private void setListKeywordFilters(final List<FilterObject> listKeywords) {
+    private void setListKeywordFilters(final ArrayList<FilterObject> listKeywords) {
+
+        final ArrayList<FilterObject> partialList;
+        if(listKeywords.size()>500) partialList = new ArrayList<>(listKeywords.subList(0, 500)); else partialList = listKeywords;
 
         final Handler handler = new Handler();
         new Thread(new Runnable() {
@@ -317,9 +411,9 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
             public void run() {
                 final ArrayList<FilterObject> listKeywordFilters = new ArrayList<>();
                 int position = -1;
-                for (FilterObject filter : listKeywords) {
+                for (FilterObject filter : partialList) {
                     if (keyword.toUpperCase().equals(filter.getText().toUpperCase())) {
-                        position = listKeywords.indexOf(filter);
+                        position = partialList.indexOf(filter);
                         listKeywordFilters.add(new FilterObject(filter.getText(), true, filter.getType()));
                     } else
                         listKeywordFilters.add(new FilterObject(filter.getText(), false, filter.getType()));
@@ -473,8 +567,29 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
             keyword = ""; keywordType = "";
             setFilterProgressesVisibility(View.VISIBLE);
             setAppBarText();
-            setListKeywordFilters(filterKeywordAdapter.getItems());
+            setListKeywordFilters((ArrayList<FilterObject>) filterKeywordAdapter.getItems());
             artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+
+        } else if (view.getId() == search_artist_iv.getId()) {
+            artistSearchPressed = !artistSearchPressed;
+            if(artistSearchPressed){
+                search_artist_iv.setImageDrawable(res.getDrawable(R.drawable.ic_keyboard_backspace_black_100dp));
+                filter_artist_edit_text.setVisibility(View.VISIBLE);
+            } else {
+                search_artist_iv.setImageDrawable(res.getDrawable(R.drawable.ic_search_black_100dp));
+                filter_artist_edit_text.setVisibility(View.GONE);
+            }
+
+        } else if (view.getId() == search_keywords_iv.getId()) {
+            keywordSearchPressed = !keywordSearchPressed;
+            if(keywordSearchPressed){
+                search_keywords_iv.setImageDrawable(res.getDrawable(R.drawable.ic_keyboard_backspace_black_100dp));
+                filter_keyword_edit_text.setVisibility(View.VISIBLE);
+            } else {
+                search_keywords_iv.setImageDrawable(res.getDrawable(R.drawable.ic_search_black_100dp));
+                filter_keyword_edit_text.setVisibility(View.GONE);
+            }
+
         }
     }
 
