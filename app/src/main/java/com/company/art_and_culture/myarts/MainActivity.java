@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     private MutableLiveData<ServerResponse> serverResponse = new MutableLiveData<>();
     private MutableLiveData<Art> art = new MutableLiveData<>();
     private MutableLiveData<Boolean> updateFolders = new MutableLiveData<>();
+    private MutableLiveData<Integer> favoritesArtsCount = new MutableLiveData<>();
+    private MutableLiveData<Integer> artistsCount = new MutableLiveData<>();
+    private MutableLiveData<Integer> foldersCount = new MutableLiveData<>();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -73,6 +76,25 @@ public class MainActivity extends AppCompatActivity {
     public MutableLiveData<Boolean> getUpdateFolders() {
         return updateFolders;
     }
+
+    public void postFavoritesArtsCount (int count){ favoritesArtsCount.postValue(count);}
+
+    public MutableLiveData<Integer> getFavoritesArtsCount() {
+        return favoritesArtsCount;
+    }
+
+    public void postArtistsCount (int count){ artistsCount.postValue(count);}
+
+    public MutableLiveData<Integer> getArtistsCount() {
+        return artistsCount;
+    }
+
+    public void postFoldersCount (int count){ foldersCount.postValue(count);}
+
+    public MutableLiveData<Integer> getFoldersCount() {
+        return foldersCount;
+    }
+
 
     public LiveData<ServerResponse> getListSuggest() {
         return serverResponse;

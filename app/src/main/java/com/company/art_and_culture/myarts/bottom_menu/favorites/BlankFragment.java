@@ -1,13 +1,8 @@
 package com.company.art_and_culture.myarts.bottom_menu.favorites;
 
 
+import android.animation.ValueAnimator;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
-
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,6 +16,12 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.lang.reflect.Field;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 public class BlankFragment extends Fragment implements View.OnClickListener {
 
@@ -82,8 +83,43 @@ public class BlankFragment extends Fragment implements View.OnClickListener {
 
         setOnBackPressedListener(root);
 
+        subscribeCountObservers();
+
         return root;
     }
+
+    private void subscribeCountObservers() {
+        activity.getFavoritesArtsCount().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                animateTab(0, integer, 1500);
+            }
+        });
+        activity.getArtistsCount().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                animateTab(1, integer, 1000);
+            }
+        });
+        activity.getFoldersCount().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                animateTab(2, integer, 500);
+            }
+        });
+    }
+
+    private void animateTab(final int tabNumber, int value, int duration) {
+        ValueAnimator animator = ValueAnimator.ofInt(0, value);
+        animator.setDuration(duration);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                tabLayout.getTabAt(tabNumber).getOrCreateBadge().setNumber((Integer) animation.getAnimatedValue());
+            }
+        });
+        animator.start();
+    }
+
 
     private void setOnBackPressedListener(final View root) {
 

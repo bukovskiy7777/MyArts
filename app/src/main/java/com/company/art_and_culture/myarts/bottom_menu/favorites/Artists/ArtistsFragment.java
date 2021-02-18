@@ -71,10 +71,12 @@ public class ArtistsFragment extends Fragment {
             public void onChanged(ArrayList<Maker> makers) {
                 if (makers == null) {
                     artistsAdapter.clearItems();
+                    activity.postArtistsCount(0);
                 } else {
                     setAnimationRecyclerView (makers);
                     artistsAdapter.clearItems();
                     artistsAdapter.setItems(makers);
+                    activity.postArtistsCount(makers.size());
                 }
                 swipeRefreshLayout.setRefreshing(false);
             }

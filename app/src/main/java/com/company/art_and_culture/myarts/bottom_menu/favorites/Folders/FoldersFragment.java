@@ -1,26 +1,11 @@
 package com.company.art_and_culture.myarts.bottom_menu.favorites.Folders;
 
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -32,6 +17,15 @@ import com.company.art_and_culture.myarts.pojo.Folder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class FoldersFragment extends Fragment implements View.OnClickListener {
 
@@ -104,10 +98,12 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
 
                 if (objects == null) {
                     foldersAdapter.clearItems();
+                    activity.postFoldersCount(0);
                 } else {
                     setAnimationRecyclerView (objects, foldersAdapter, folderRecyclerView);
                     foldersAdapter.clearItems();
                     foldersAdapter.setItems(objects);
+                    activity.postFoldersCount(objects.size());
                 }
                 swipeRefreshLayout.setRefreshing(false);
             }

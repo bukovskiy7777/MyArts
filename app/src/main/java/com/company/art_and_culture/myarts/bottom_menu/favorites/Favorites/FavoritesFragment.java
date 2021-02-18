@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -136,6 +135,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
                 if (arts == null) {
                     favoritesAdapter.clearItems();
                     listArts.clear();
+                    activity.postFavoritesArtsCount(listArts.size());
                 } else {
 
                     ArrayList<Art> newList = new ArrayList<>(arts);
@@ -157,6 +157,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
 
                     setAnimationRecyclerView (newList);
                     listArts = arts;
+                    activity.postFavoritesArtsCount(listArts.size());
                     favoritesAdapter.clearItems();
                     favoritesAdapter.setItems(newList);
                     if (arts.size() > 0) {
