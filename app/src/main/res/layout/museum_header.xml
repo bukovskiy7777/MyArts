@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.CollapsingToolbarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:minHeight="44dp"
+    android:fitsSystemWindows="false"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+     <androidx.constraintlayout.widget.ConstraintLayout
+         android:id="@+id/container"
+         android:paddingBottom="4dp"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content">
+
+        <ImageView
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/background"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:scaleType="centerCrop"/>
+
+        <TextView
+            app:layout_constraintTop_toBottomOf="@id/background"
+            android:id="@+id/museum_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:text=""
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/colorBlack"
+            android:textSize="22sp"
+            android:fontFamily="@string/font_sans_serif" />
+
+        <TextView
+            app:layout_constraintTop_toBottomOf="@id/museum_name"
+            android:id="@+id/museum_city"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:text=""
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp"
+            android:fontFamily="@string/font_sans_serif" />
+
+        <TextView
+            app:layout_constraintTop_toBottomOf="@id/museum_city"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="25dp"
+            android:id="@+id/button_show_tickets"
+            android:textColor="@color/colorBlack"
+            android:text="Show tickets"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            android:background="@drawable/button_museum_header_tickets"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"/>
+
+        <ImageButton
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="70dp"
+            android:id="@+id/museum_like"
+            android:background="@drawable/ic_favorite_border_black_100dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_show_tickets"
+            android:layout_width="26dp"
+            android:layout_height="26dp" />
+
+        <ImageButton
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="70dp"
+            android:id="@+id/museum_share"
+            android:background="@drawable/ic_share_black"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_show_tickets"
+            android:layout_width="26dp"
+            android:layout_height="26dp" />
+
+        <ImageButton
+            android:layout_marginLeft="10dp"
+            android:id="@+id/museum_location"
+            android:background="@drawable/ic_outline_location_on_100"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/museum_address"
+            app:layout_constraintBottom_toBottomOf="@id/museum_address"
+            android:layout_width="26dp"
+            android:layout_height="26dp" />
+
+        <TextView
+            app:layout_constraintTop_toBottomOf="@+id/museum_like"
+            app:layout_constraintLeft_toRightOf="@id/museum_location"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="25dp"
+            android:id="@+id/museum_address"
+            android:textColor="@color/colorBlack"
+            android:text=""
+            android:gravity="left|top"
+            android:textSize="18sp"
+            android:textStyle="normal"
+            android:autoLink="none"
+            android:textColorLink="@color/colorBlack"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:layout_marginLeft="10dp"
+            android:id="@+id/museum_phone"
+            android:background="@drawable/ic_outline_phone_in_talk_100"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/museum_phone_number"
+            app:layout_constraintBottom_toBottomOf="@id/museum_phone_number"
+            android:layout_width="26dp"
+            android:layout_height="26dp" />
+
+        <TextView
+            app:layout_constraintTop_toBottomOf="@+id/museum_address"
+            app:layout_constraintLeft_toRightOf="@id/museum_phone"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="25dp"
+            android:id="@+id/museum_phone_number"
+            android:textColor="@color/colorBlack"
+            android:text=""
+            android:gravity="left"
+            android:textSize="18sp"
+            android:textStyle="normal"
+            android:autoLink="none"
+            android:textColorLink="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:layout_marginLeft="10dp"
+            android:id="@+id/museum_web"
+            android:background="@drawable/ic_baseline_insert_link_100"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/museum_web_address"
+            app:layout_constraintBottom_toBottomOf="@id/museum_web_address"
+            android:layout_width="26dp"
+            android:layout_height="26dp" />
+
+        <TextView
+            app:layout_constraintTop_toBottomOf="@+id/museum_phone_number"
+            app:layout_constraintLeft_toRightOf="@id/museum_web"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="25dp"
+            android:id="@+id/museum_web_address"
+            android:textColor="@color/colorBlack"
+            android:text=""
+            android:gravity="left"
+            android:textSize="18sp"
+            android:textStyle="normal"
+            android:autoLink="none"
+            android:textColorLink="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/museum_description"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="25dp"
+            android:gravity="left"
+            android:minLines="4"
+            android:maxLines="4"
+            android:text=""
+            android:ellipsize="end"
+            app:layout_constraintTop_toBottomOf="@+id/museum_web_address"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/text_size_maker_description"
+            android:fontFamily="@string/font_sans_serif_light"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:text="@string/read_more"
+            android:textColor="@color/colorBlueLight"
+            android:fontFamily="@string/font_sans_serif"
+            android:textSize="15sp"
+            android:minLines="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:id="@+id/read_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/museum_description" />
+
+        <TextView
+            android:text="@string/wikipedia"
+            android:textColor="@color/colorText"
+            android:fontFamily="@string/font_sans_serif"
+            android:textSize="15sp"
+            android:minLines="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:id="@+id/wikipedia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="10dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/museum_description" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/read_more"
+            android:id="@+id/recycler_view_artists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:id="@+id/bottom_view"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:layout_constraintTop_toBottomOf="@id/recycler_view_artists"/>
+
+        <TextView
+            app:layout_constraintBottom_toBottomOf="@+id/bottom_view"
+            app:layout_constraintTop_toTopOf="@+id/bottom_view"
+            android:id="@+id/label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text=""
+            android:animateLayoutChanges="true"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/colorBlack"
+            android:textSize="20sp"
+            android:fontFamily="@string/font_serif_monospace" />
+
+        <ImageButton
+            android:layout_marginLeft="10dp"
+            android:id="@+id/museum_close_btn"
+            android:background="@drawable/ic_keyboard_backspace_black_100dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom_view"
+            app:layout_constraintTop_toTopOf="@+id/bottom_view"
+            android:layout_width="26dp"
+            android:layout_height="26dp" />
+
+     </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.appbar.CollapsingToolbarLayout>

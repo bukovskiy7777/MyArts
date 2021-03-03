@@ -28,7 +28,7 @@ public class MakerRepository {
         return instance;
     }
 
-    public MakerRepository(Application application, Maker artMaker) {
+    private MakerRepository(Application application, Maker artMaker) {
 
         this.application = application;
         this.artMaker = artMaker;

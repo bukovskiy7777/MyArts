@@ -24,18 +24,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.paging.PagedList;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import de.hdodenhof.circleimageview.CircleImageView;
-
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
@@ -49,6 +37,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadFadeIn;
@@ -299,7 +299,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onLogoClick(Art art) {
-
+                homeEventListener.homeMuseumClickEvent(art.getArtProviderId());
             }
         };
 
@@ -455,6 +455,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         void homeMakerClickEvent(Maker maker);
         void homeClassificationClickEvent(String artClassification, String queryType);
         void homeSearchClickEvent();
+        void homeMuseumClickEvent(String artProviderId);
     }
 
     @Override

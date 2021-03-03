@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.art_filter_fragment;
+package com.company.art_and_culture.myarts.museum_fragment;
 
 import android.app.Application;
 import android.content.Context;
@@ -20,18 +20,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ArtFilterDataSource extends PageKeyedDataSource<Integer, Art> {
+public class ArtDataSource extends PageKeyedDataSource<Integer, Art> {
 
-    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
     private Application application;
-    private String keyword, makerFilter, centuryFilter, keywordType;
+    private String artProviderId;
 
-    public ArtFilterDataSource(Application application, String keyword, String makerFilter, String centuryFilter, String keywordType) {
-        this.keyword = keyword;
-        this.makerFilter = makerFilter;
-        this.centuryFilter = centuryFilter;
-        this.keywordType = keywordType;
+    public ArtDataSource(Application application, String artProviderId) {
+        this.artProviderId = artProviderId;
         this.application = application;
     }
 
@@ -41,7 +38,6 @@ public class ArtFilterDataSource extends PageKeyedDataSource<Integer, Art> {
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull final LoadInitialCallback<Integer, Art> callback) {
 
-        updateIsLoadingState(true);
         updateIsListEmptyState(false);
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
@@ -49,25 +45,22 @@ public class ArtFilterDataSource extends PageKeyedDataSource<Integer, Art> {
         ServerRequest request = new ServerRequest();
         request.setPageNumber(1);
         request.setUserUniqueId(userUniqueId);
-        request.setKeywordFilter(keyword);
-        request.setMakerFilter(makerFilter);
-        request.setCenturyFilter(centuryFilter);
-        request.setKeywordType(keywordType);
-        request.setOldList(ArtFilterDataInMemory.getInstance().getAllData());
-        request.setOperation(Constants.GET_ARTS_LIST_FILTER_OPERATION);
+        request.setArtProviderId(artProviderId);
+        request.setOldList(ArtDataInMemory.getInstance().getAllData());
+        request.setOperation(Constants.GET_ARTS_LIST_MUSEUM_OPERATION);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
         response.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                updateIsLoadingState(false);
+
                 if (response.isSuccessful()) {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsListEmptyState(false);
-                        ArtFilterDataInMemory.getInstance().addData(resp.getListArts());
-                        callback.onResult(ArtFilterDataInMemory.getInstance().getInitialData(),null, 2);
+                        ArtDataInMemory.getInstance().addData(resp.getListArts());
+                        callback.onResult(ArtDataInMemory.getInstance().getInitialData(),null, 2);
                     } else {
                         updateIsListEmptyState(true);
                     }
@@ -78,7 +71,6 @@ public class ArtFilterDataSource extends PageKeyedDataSource<Integer, Art> {
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
-                updateIsLoadingState(false);
                 updateIsListEmptyState(true);
             }
         });
@@ -93,26 +85,23 @@ public class ArtFilterDataSource extends PageKeyedDataSource<Integer, Art> {
         ServerRequest request = new ServerRequest();
         request.setPageNumber(params.key);
         request.setUserUniqueId(userUniqueId);
-        request.setKeywordFilter(keyword);
-        request.setMakerFilter(makerFilter);
-        request.setCenturyFilter(centuryFilter);
-        request.setKeywordType(keywordType);
-        request.setOldList(ArtFilterDataInMemory.getInstance().getAllData());
-        request.setOperation(Constants.GET_ARTS_LIST_FILTER_OPERATION);
+        request.setArtProviderId(artProviderId);
+        request.setOldList(ArtDataInMemory.getInstance().getAllData());
+        request.setOperation(Constants.GET_ARTS_LIST_MUSEUM_OPERATION);
 
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
         response.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                updateIsLoadingState(false);
+
                 if (response.isSuccessful()) {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateIsListEmptyState(false);
-                        ArtFilterDataInMemory.getInstance().addData(resp.getListArts());
-                        callback.onResult(ArtFilterDataInMemory.getInstance().getAfterData(params.key), params.key + 1);
+                        ArtDataInMemory.getInstance().addData(resp.getListArts());
+                        callback.onResult(ArtDataInMemory.getInstance().getAfterData(params.key), params.key + 1);
                     } else {
                         updateIsListEmptyState(false);
                     }
@@ -123,23 +112,14 @@ public class ArtFilterDataSource extends PageKeyedDataSource<Integer, Art> {
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
-                updateIsLoadingState(false);
                 updateIsListEmptyState(false);
             }
         });
 
     }
 
-    private void updateIsLoadingState(Boolean state) {
-        isLoading.postValue(state);
-    }
-
     private void updateIsListEmptyState(Boolean state) {
         isListEmpty.postValue(state);
-    }
-
-    public LiveData<Boolean> getIsLoading() {
-        return isLoading;
     }
 
     public LiveData<Boolean> getIsListEmpty() {
@@ -147,7 +127,7 @@ public class ArtFilterDataSource extends PageKeyedDataSource<Integer, Art> {
     }
 
     public void refresh() {
-        ArtFilterDataInMemory.getInstance().refresh();
+        ArtDataInMemory.getInstance().refresh();
         invalidate();
     }
 
@@ -178,7 +158,7 @@ public class ArtFilterDataSource extends PageKeyedDataSource<Integer, Art> {
     }
 
     public void setActivity(MainActivity activity) {
-        ArtFilterDataInMemory.getInstance().setArtObserver(activity);
+        ArtDataInMemory.getInstance().setArtObserver(activity);
     }
 
 }

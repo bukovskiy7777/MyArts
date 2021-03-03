@@ -16,6 +16,7 @@ import com.company.art_and_culture.myarts.bottom_menu.home.HomeFragment;
 import com.company.art_and_culture.myarts.create_folder_fragment.CreateFolderFragment;
 import com.company.art_and_culture.myarts.filter_maker_fragment.FilterMakerFragment;
 import com.company.art_and_culture.myarts.maker_fragment.MakerFragment;
+import com.company.art_and_culture.myarts.museum_fragment.MuseumFragment;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Attribute;
 import com.company.art_and_culture.myarts.pojo.Folder;
@@ -36,7 +37,8 @@ public class NavFragments implements
         HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
         MakerFragment.MakerEventListener, ExploreFragment.ExploreEventListener, ArtFilterFragment.ArtFilterEventListener,
         ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener, FilterMakerFragment.FilterMakerEventListener,
-        AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener, BlankFragment.BlankEventListener, FoldersFragment.FoldersEventListener, ShowFolderFragment.ShowFolderEventListener, CreateFolderFragment.CreateFolderEventListener {
+        AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener, BlankFragment.BlankEventListener,
+        FoldersFragment.FoldersEventListener, ShowFolderFragment.ShowFolderEventListener, CreateFolderFragment.CreateFolderEventListener, MuseumFragment.MuseumEventListener {
 
     private NavController navController;
 
@@ -61,6 +63,8 @@ public class NavFragments implements
     private String urlForWebFragment;
 
     private Folder folderForShowFolderFragment, folderForEditFolderFragment;
+
+    private String artProviderIdForMuseumFragment;
 
 
     public NavFragments(MainActivity mainActivity, NavController navController) {
@@ -91,6 +95,24 @@ public class NavFragments implements
 
 
     @Override
+    public void onArtClickEvent(Collection<Art> arts, int position) {
+        this.listArtsForArtShowFragment = arts;
+        this.clickPositionForArtShowFragment = position;
+        navController.navigate(R.id.action_museumFragment_to_artShowFragment);
+    }
+    @Override
+    public void onWebLinkClickEvent(String url) {
+        this.urlForWebFragment = url;
+        navController.navigate(R.id.action_museumFragment_to_webViewFragment);
+    }
+    @Override
+    public void onArtistsClickEvent(Maker maker) {
+        this.makerForMakerFragment = maker;
+        navController.navigate(R.id.action_museumFragment_to_makerFragment);
+    }
+
+
+    @Override
     public void makerArtClickEvent(Collection<Art> arts, int position) {
         this.listArtsForArtShowFragment = arts;
         this.clickPositionForArtShowFragment = position;
@@ -101,6 +123,7 @@ public class NavFragments implements
         this.urlForWebFragment = makerWikiPageUrl;
         navController.navigate(R.id.action_makerFragment_to_webViewFragment);
     }
+
 
 
     @Override
@@ -129,7 +152,11 @@ public class NavFragments implements
         this.keywordTypeForArtFilterFragment = queryType;
         navController.navigate(R.id.action_searchFragment_to_artFilterFragment);
     }
-
+    @Override
+    public void searchMuseumClickEvent(String artProviderId) {
+        artProviderIdForMuseumFragment = artProviderId;
+        navController.navigate(R.id.action_searchFragment_to_museumFragment);
+    }
 
 
     @Override
@@ -165,6 +192,7 @@ public class NavFragments implements
     public void tagFilterPositionEvent(int position) {
         filterPositionForTagsFragment = position;
     }
+
 
 
     @Override
@@ -272,6 +300,7 @@ public class NavFragments implements
 
 
 
+
     @Override
     public void homeScrollEvent(int position) {
         this.homePosition = position;
@@ -297,6 +326,13 @@ public class NavFragments implements
     public void homeSearchClickEvent() {
         navController.navigate(R.id.action_navigation_home_to_searchFragment);
     }
+    @Override
+    public void homeMuseumClickEvent(String artProviderId) {
+        artProviderIdForMuseumFragment = artProviderId;
+        navController.navigate(R.id.action_navigation_home_to_museumFragment);
+    }
+
+
 
 
     public Collection<Art> getListArtsForArtShowFragment() {
@@ -359,4 +395,5 @@ public class NavFragments implements
         return folderForEditFolderFragment;
     }
 
+    public String getArtProviderIdForMuseumFragment() { return artProviderIdForMuseumFragment; }
 }

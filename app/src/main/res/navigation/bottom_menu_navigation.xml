@@ -36,6 +36,13 @@
             app:exitAnim="@anim/exit_to_top"
             app:popEnterAnim="@anim/enter_from_top"
             app:popExitAnim="@anim/exit_to_bottom" />
+        <action
+            android:id="@+id/action_navigation_home_to_museumFragment"
+            app:destination="@id/museumFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
     </fragment>
 
     <fragment
@@ -189,6 +196,13 @@
             app:exitAnim="@anim/exit_to_top"
             app:popEnterAnim="@anim/enter_from_top"
             app:popExitAnim="@anim/exit_to_bottom" />
+        <action
+            android:id="@+id/action_searchFragment_to_museumFragment"
+            app:destination="@id/museumFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
     </fragment>
     <fragment
         android:id="@+id/artFilterFragment"
@@ -262,5 +276,31 @@
             app:popExitAnim="@anim/exit_to_right"
             app:popUpTo="@id/showFolderFragment"
             app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/museumFragment"
+        android:name="com.company.art_and_culture.myarts.museum_fragment.MuseumFragment"
+        android:label="MuseumFragment" >
+        <action
+            android:id="@+id/action_museumFragment_to_artShowFragment"
+            app:destination="@id/artShowFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+        <action
+            android:id="@+id/action_museumFragment_to_webViewFragment"
+            app:destination="@id/webViewFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+        <action
+            android:id="@+id/action_museumFragment_to_makerFragment"
+            app:destination="@id/makerFragment"
+            app:enterAnim="@anim/enter_from_bottom"
+            app:exitAnim="@anim/exit_to_top"
+            app:popEnterAnim="@anim/enter_from_top"
+            app:popExitAnim="@anim/exit_to_bottom" />
     </fragment>
 </navigation>

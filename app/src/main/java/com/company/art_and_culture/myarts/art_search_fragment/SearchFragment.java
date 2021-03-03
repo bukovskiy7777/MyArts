@@ -495,7 +495,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onLogoClick(Art art) {
-
+                searchEventListener.searchMuseumClickEvent(art.getArtProviderId());
             }
         };
 
@@ -655,6 +655,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         void searchArtClickEvent(Collection<Art> arts, int position);
         void searchMakerClickEvent(Maker maker);
         void searchClassificationClickEvent(String artClassification, String queryType);
+        void searchMuseumClickEvent(String artProviderId);
     }
 
     private int getTargetScrollPosition () {

@@ -21,6 +21,8 @@ public class ServerRequest {
     private String keywordFilter;
     private String keywordType;
 
+    private String artProviderId;
+
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -76,4 +78,6 @@ public class ServerRequest {
     public void setKeywordType(String keywordType) {
         this.keywordType = keywordType;
     }
+
+    public void setArtProviderId(String artProviderId) { this.artProviderId = artProviderId; }
 }
