@@ -32,12 +32,16 @@
 
     <ProgressBar
         android:id="@+id/progress_bar_museum"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="?android:attr/progressBarStyleHorizontal"
         android:indeterminateTint="@color/colorBlue"
+        android:indeterminate="true"
+        android:maxHeight="4dp"
+        android:minHeight="4dp"
+        android:scaleY="3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

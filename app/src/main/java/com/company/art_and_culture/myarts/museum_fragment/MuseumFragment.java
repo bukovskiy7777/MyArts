@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -197,6 +199,7 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
         museumViewModel.getArtList().observe(getViewLifecycleOwner(), new Observer<PagedList<Art>>() {
             @Override
             public void onChanged(PagedList<Art> arts) {
+                setAnimationRecyclerViewArts();
                 artMuseumAdapter.submitList(arts);
                 hideText();
             }
@@ -226,11 +229,24 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
                 if (makers == null) {
                     artistsAdapter.clearItems();
                 } else {
+                    setAnimationRecyclerViewArtists();
                     artistsAdapter.clearItems();
                     artistsAdapter.setItems(makers);
                 }
             }
         });
+    }
+
+    private void setAnimationRecyclerViewArtists() {
+        LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_fade_in);
+        recycler_view_artists.setLayoutAnimation(layoutAnimationController);
+        recycler_view_artists.scheduleLayoutAnimation();
+    }
+
+    private void setAnimationRecyclerViewArts() {
+        LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_fade_in);
+        recycler_view_art.setLayoutAnimation(layoutAnimationController);
+        recycler_view_art.scheduleLayoutAnimation();
     }
 
     private void setMuseumDataInViews(ArtProvider artProvider) {
@@ -278,13 +294,13 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
 
     private void showProgressBar(){
         progress_bar_museum.setVisibility(View.VISIBLE);
-        coordinator.setVisibility(View.GONE);
+        //coordinator.setVisibility(View.GONE);
         floating_button.setImageDrawable(res.getDrawable(R.drawable.ic_outline_change_circle_gray));
     }
 
     private void hideProgressBar(){
         progress_bar_museum.setVisibility(View.GONE);
-        coordinator.setVisibility(View.VISIBLE);
+        //coordinator.setVisibility(View.VISIBLE);
         floating_button.setImageDrawable(res.getDrawable(R.drawable.ic_outline_change_circle_blue));
     }
 
