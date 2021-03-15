@@ -1,9 +1,5 @@
 package com.company.art_and_culture.myarts.arts_show_fragment;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -15,17 +11,8 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.PagerSnapHelper;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SnapHelper;
-import de.hdodenhof.circleimageview.CircleImageView;
-
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -48,6 +35,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadFadeIn;
@@ -212,7 +212,12 @@ public class ArtShowFragment extends Fragment {
 
             @Override
             public void onLogoClick(Art art) {
-                artShowEventListener.logoClickEvent(art.getArtLink());
+                //artShowEventListener.logoClickEvent(art.getArtLink());
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                builder.setStartAnimations(getContext(), R.anim.enter_from_right, R.anim.exit_to_left);
+                builder.setExitAnimations(getContext(), R.anim.enter_from_left, R.anim.exit_to_right);
+                CustomTabsIntent customTabsIntent = builder.build();
+                customTabsIntent.launchUrl(getContext(), Uri.parse(art.getArtLink()));
             }
 
             @Override
