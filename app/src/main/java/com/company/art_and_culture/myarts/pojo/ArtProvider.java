@@ -14,6 +14,7 @@ public class ArtProvider {
     private String providerAddress;
     private String providerDescription;
     private String providerWikiUrl;
+    private boolean isLiked;
 
     public String getProviderId() {
         return providerId;
@@ -111,4 +112,11 @@ public class ArtProvider {
         this.providerWikiUrl = providerWikiUrl;
     }
 
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
+    }
 }

@@ -84,4 +84,11 @@ public class MuseumRepository {
         artDataSource.setActivity(activity);
     }
 
+    public boolean likeMuseum(ArtProvider museum, String userUniqueId) {
+        boolean isConnected = artDataSource.isNetworkAvailable();
+        if (isConnected){
+            museumInfoDataSource.likeMuseum(museum, userUniqueId);
+        }
+        return isConnected;
+    }
 }

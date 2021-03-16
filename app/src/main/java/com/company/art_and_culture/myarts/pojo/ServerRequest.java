@@ -23,6 +23,8 @@ public class ServerRequest {
 
     private String artProviderId;
 
+    private ArtProvider artProvider;
+
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -80,4 +82,8 @@ public class ServerRequest {
     }
 
     public void setArtProviderId(String artProviderId) { this.artProviderId = artProviderId; }
+
+    public void setArtProvider(ArtProvider artProvider) {
+        this.artProvider = artProvider;
+    }
 }

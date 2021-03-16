@@ -3,6 +3,7 @@ package com.company.art_and_culture.myarts.museum_fragment;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,7 +18,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
@@ -40,6 +43,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeFadeIn;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeScaleDown;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleDown;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleUp;
 
@@ -67,6 +72,8 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
     private boolean isLabelVisible = false;
     public enum State{collapsed, expanded}
     private State appBarState;
+    private SharedPreferences preferences;
+    private boolean isMuseumDataLoaded = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -87,6 +94,7 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
 
         if (activity != null && artProviderId == null) artProviderId = activity.getNavFragments().getArtProviderIdForMuseumFragment();
         if (activity != null) museumEventListener = activity.getNavFragments();
+        if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
 
         museumViewModel.setArtProviderId(artProviderId);
         museumViewModel.setActivity(activity);
@@ -258,6 +266,15 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
         museum_phone_number.setText(artProvider.getProviderPhone());
         museum_web_address.setText(artProvider.getProviderSiteUrl());
         museum_description.setText(artProvider.getProviderDescription());
+
+        if(artProvider.isLiked()) museum_like.setImageResource(R.drawable.ic_favorite_red_100dp);
+        else museum_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
+        museum_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        if (isMuseumDataLoaded) {
+            AnimatorSet set = new AnimatorSet();
+            set.playSequentially(likeFadeIn(museum_like), likeScaleDown(museum_like));
+            set.start();
+        } else isMuseumDataLoaded = true;
     }
 
     private void initRecyclerView(final MuseumViewModel museumViewModel, int displayWidth, int displayHeight){
@@ -349,6 +366,7 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
 
         } else if(view.getId() == floating_button.getId()) {
             museumViewModel.refresh();
+            isMuseumDataLoaded = false;
 
         } else if(view.getId() == museum_close_btn.getId()) {
             activity.getNavFragments().popBackStack();
@@ -366,7 +384,10 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
             startActivity(shareIntent);
 
         } else if(view.getId() == museum_like.getId()) {
-
+            boolean networkState = museumViewModel.likeMuseum (museum, preferences.getString(Constants.USER_UNIQUE_ID,""));
+            if (!networkState) {
+                Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_SHORT).show();
+            }
         }
 
     }

@@ -129,7 +129,26 @@ public class MuseumInfoDataSource {
         });
     }
 
+    public void likeMuseum(ArtProvider museum, String userUniqueId) {
+        ServerRequest request = new ServerRequest();
+        request.setUserUniqueId(userUniqueId);
+        request.setOperation(Constants.MUSEUM_LIKE_OPERATION);
+        request.setArtProvider(museum);
+        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
+        response.enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                if (response.isSuccessful()) {
+                    ServerResponse resp = response.body();
+                    if(resp.getResult().equals(Constants.SUCCESS)) {
 
+                        updateArtProvider(resp.getArtProvider());
 
-
+                    } else { }
+                } else { }
+            }
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) { }
+        });
+    }
 }

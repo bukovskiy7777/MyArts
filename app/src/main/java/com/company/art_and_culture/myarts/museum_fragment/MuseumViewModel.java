@@ -77,4 +77,8 @@ public class MuseumViewModel extends AndroidViewModel {
     public void setActivity(MainActivity activity) {
         museumRepository.setActivity(activity);
     }
+
+    public boolean likeMuseum(ArtProvider museum, String userUniqueId) {
+        return museumRepository.likeMuseum(museum, userUniqueId);
+    }
 }
