@@ -57,5 +57,6 @@
     <string name="century">-century</string>
     <string name="search_artists">Search artists</string>
     <string name="search_keywords">Search keywords</string>
+    <string name="popular_artists">Popular artists</string>
 
 </resources>
