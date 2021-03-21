@@ -73,7 +73,7 @@ public class MuseumRepository {
 
     public void setArtProviderId(String artProviderId) {
 
-        if (!this.artProviderId.equals(artProviderId)) {
+        if (this.artProviderId != null && !this.artProviderId.equals(artProviderId)) {
             this.artProviderId = artProviderId;
             artDataSourceFactory.setArtProviderId(artProviderId);
             museumInfoDataSource.setArtProviderId(artProviderId);
