@@ -78,7 +78,6 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_museum, container, false);
-
         bindViews(root);
 
         museumViewModel = new ViewModelProvider(this).get(MuseumViewModel.class);
@@ -87,21 +86,23 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
         displayWidth = res.getDisplayMetrics().widthPixels;
         displayHeight = res.getDisplayMetrics().heightPixels;
 
-        initRecyclerView(museumViewModel, displayWidth, displayHeight);
-        initArtistsRecyclerView(displayWidth, displayHeight);
-
         activity = (MainActivity) getActivity();
-
         if (activity != null && artProviderId == null) artProviderId = activity.getNavFragments().getArtProviderIdForMuseumFragment();
         if (activity != null) museumEventListener = activity.getNavFragments();
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
 
-        museumViewModel.setArtProviderId(artProviderId);
-        museumViewModel.setActivity(activity);
+        if(artProviderId == null) {
+            activity.getNavFragments().popBackStack();
+        } else {
+            museumViewModel.setArtProviderId(artProviderId);
+            museumViewModel.setActivity(activity);
+            subscribeObservers();
 
-        subscribeObservers();
-        setOnBackPressedListener(root);
-        initAppBar();
+            initRecyclerView(museumViewModel, displayWidth, displayHeight);
+            initArtistsRecyclerView(displayWidth, displayHeight);
+            setOnBackPressedListener(root);
+            initAppBar();
+        }
 
         return root;
     }

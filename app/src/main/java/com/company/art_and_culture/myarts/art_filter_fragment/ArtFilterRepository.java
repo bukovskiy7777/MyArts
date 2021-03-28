@@ -83,10 +83,8 @@ public class ArtFilterRepository {
 
     public void setFilters(String keyword, String makerFilter, String centuryFilter, String keywordType) {
 
-        if ((this.keyword != null && !this.keyword.equals(keyword)) ||
-                (this.makerFilter != null && !this.makerFilter.equals(makerFilter)) ||
-                (this.centuryFilter != null && !this.centuryFilter.equals(centuryFilter)) ||
-                (this.keywordType != null && !this.keywordType.equals(keywordType))) {
+        if (!this.keyword.equals(keyword) || !this.makerFilter.equals(makerFilter) ||
+                !this.centuryFilter.equals(centuryFilter) || !this.keywordType.equals(keywordType)) {
             this.keyword = keyword;
             this.makerFilter = makerFilter;
             this.centuryFilter = centuryFilter;

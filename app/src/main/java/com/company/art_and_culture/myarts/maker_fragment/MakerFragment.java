@@ -91,14 +91,18 @@ public class MakerFragment extends Fragment {
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
         if (activity != null) makerEventListener = activity.getNavFragments();
 
-        makerViewModel.setArtMaker(maker);
-        makerViewModel.setActivity(activity);
+        if(maker == null) {
+            activity.getNavFragments().popBackStack();
+        } else {
+            makerViewModel.setArtMaker(maker);
+            makerViewModel.setActivity(activity);
 
-        initRecyclerView(makerViewModel, displayWidth, displayHeight, maker);
-        initSwipeRefreshLayout();
-        subscribeObservers();
-        initDownloadViews(root);
-        setOnBackPressedListener(root);
+            initRecyclerView(makerViewModel, displayWidth, displayHeight, maker);
+            initSwipeRefreshLayout();
+            subscribeObservers();
+            initDownloadViews(root);
+            setOnBackPressedListener(root);
+        }
 
         return root;
     }

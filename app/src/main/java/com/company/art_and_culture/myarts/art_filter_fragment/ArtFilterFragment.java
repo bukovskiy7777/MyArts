@@ -67,12 +67,8 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_art_filter, container, false);
-
         bindViews(root);
-
         setFilterProgressesVisibility(View.GONE);
-
-        initEditTexts();
 
         artFilterViewModel = new ViewModelProvider(this).get(ArtFilterViewModel.class);
 
@@ -80,22 +76,26 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
-        initRecyclerView(artFilterViewModel, displayWidth, displayHeight);
-        initFiltersRecyclerView(root);
-
         activity = (MainActivity) getActivity();
-
         if (activity != null && keyword == null) keyword = activity.getNavFragments().getKeywordForArtFilterFragment();
         if (activity != null && keywordType == null) keywordType = activity.getNavFragments().getKeywordTypeForArtFilterFragment();
         if (activity != null) artFilterEventListener = activity.getNavFragments();
-        setAppBarText();
 
-        artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
-        artFilterViewModel.setActivity(activity);
+        if(keyword == null) {
+            activity.getNavFragments().popBackStack();
+        } else {
 
-        initSwipeRefreshLayout();
-        subscribeObservers();
-        setOnBackPressedListener(root);
+            artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+            artFilterViewModel.setActivity(activity);
+            subscribeObservers();
+
+            initEditTexts();
+            initRecyclerView(artFilterViewModel, displayWidth, displayHeight);
+            initFiltersRecyclerView(root);
+            setAppBarText();
+            initSwipeRefreshLayout();
+            setOnBackPressedListener(root);
+        }
 
         return root;
     }
