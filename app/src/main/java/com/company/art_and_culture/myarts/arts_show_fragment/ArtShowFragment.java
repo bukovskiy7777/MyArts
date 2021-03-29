@@ -9,12 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,16 +19,13 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.ImageDownloader;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -40,7 +33,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -54,13 +46,12 @@ import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadFadeOut;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadTranslation;
 
-public class ArtShowFragment extends Fragment {
+public class ArtShowFragment extends Fragment implements ImageDownloader.IDownLoadResult {
 
     private ArtShowViewModel artShowViewModel;
     private RecyclerView artRecyclerView;
     private ArtShowAdapter artShowAdapter;
     private SharedPreferences preferences;
-    private Target target;
     private View download_view, done_view;
     private CircleImageView add_view;
     private ConstraintLayout download_linear;
@@ -162,51 +153,28 @@ public class ArtShowFragment extends Fragment {
             @Override
             public void onArtDownloadClick(final Art art, final int x, final int y, final int artWidth, final int artHeight) {
 
-                ArrayList<String> arrPerm = checkPermission();
+                ImageDownloader imageDownloader = ImageDownloader.getInstance(ArtShowFragment.this);
+                ArrayList<String> arrPerm = imageDownloader.checkPermission(getContext());
                 if(arrPerm.isEmpty()) {
 
-                    final Handler handler = new Handler();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            final File file = getFile (art);
-                            if (file.exists()) {
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(getContext(), R.string.file_already_downloaded, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            } else {
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        AnimatorSet set = startDownloadAnimation(x, y);
-                                        set.addListener(new AnimatorListenerAdapter() {
-                                            @Override
-                                            public void onAnimationEnd(Animator animation) {
-                                                super.onAnimationEnd(animation);
-
-                                                Target target = getTarget(file);
-                                                int downloadWidth, downloadHeight;
-                                                if (((float)artWidth/(float)artHeight) > 1) {
-                                                    downloadWidth = 1600; downloadHeight = (int) (downloadWidth/((float)artWidth/(float)artHeight));
-                                                } else {
-                                                    downloadHeight = 1600; downloadWidth = (int) (downloadHeight/((float)artHeight/(float)artWidth));
-                                                }
-                                                Picasso.get().load(art.getArtImgUrl()).resize(downloadWidth,downloadHeight).onlyScaleDown().into(target);
-                                            }
-                                        });
-                                        set.start();
-                                    }
-                                });
+                    String folderName = res.getString(R.string.folder_my_arts_pictures);
+                    boolean isExists = imageDownloader.isFileExists(art, folderName);
+                    if (isExists)
+                        Toast.makeText(getContext(), R.string.file_already_downloaded, Toast.LENGTH_SHORT).show();
+                    else {
+                        AnimatorSet set = startDownloadAnimation(x, y);
+                        set.addListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                imageDownloader.downloadImage(art, artWidth, artHeight, folderName);
                             }
-                        }
-                    }).start();
+                        });
+                        set.start();
+                    }
 
                 } else {
-                    requestPermissions (arrPerm);
+                    imageDownloader.requestPermissions (arrPerm, activity);
                 }
             }
 
@@ -242,70 +210,21 @@ public class ArtShowFragment extends Fragment {
         snapHelper.attachToRecyclerView(artRecyclerView);
     }
 
-    private File getFile(Art art) {
-        File pictureFolder = Environment.getExternalStorageDirectory();
-        File mainFolder = new File(pictureFolder, res.getString(R.string.folder_my_arts_pictures));
-        if (!mainFolder.exists()) {
-            mainFolder.mkdirs();
-        }
-        return new File(mainFolder, art.getArtMaker()+" - "+art.getArtTitle()+".jpg");
+    @Override
+    public void onDownloadSuccess(File file) {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DATA, file.getAbsolutePath());
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        stopDownloadAnimation();
+        runDownLoadSuccessAnimation ();
     }
 
-    private Target getTarget(final File file) {
-
-        target = new Target() {
-            @Override
-            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-
-                final Handler handler = new Handler();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        try {
-                            file.createNewFile();
-                            FileOutputStream ostream = new FileOutputStream(file);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, ostream);
-                            ostream.flush();
-                            ostream.close();
-
-                            ContentValues values = new ContentValues();
-                            values.put(MediaStore.Images.Media.DATA, file.getAbsolutePath());
-                            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-                            getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    stopDownloadAnimation();
-                                    runDownLoadSuccessAnimation ();
-                                }
-                            });
-
-                        } catch (IOException e) {
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(getContext(), R.string.download_error, Toast.LENGTH_LONG).show();
-                                    stopDownloadAnimation();
-                                }
-                            });
-                        }
-                    }
-                }).start();
-
-            }
-
-            @Override
-            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                Toast.makeText(getContext(), R.string.download_error, Toast.LENGTH_LONG).show();
-                stopDownloadAnimation();
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) { }
-        };
-        return target;
+    @Override
+    public void onDownloadFailure() {
+        Toast.makeText(getContext(), R.string.download_error, Toast.LENGTH_LONG).show();
+        stopDownloadAnimation();
     }
 
     private void runDownLoadSuccessAnimation () {
@@ -349,24 +268,6 @@ public class ArtShowFragment extends Fragment {
         );
 
         return set;
-    }
-
-    private ArrayList<String> checkPermission() {
-
-        ArrayList<String> arrPerm = new ArrayList<>();
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            arrPerm.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-        }
-        if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            arrPerm.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-        return arrPerm;
-    }
-
-    private void requestPermissions (ArrayList<String> arrPerm) {
-        String[] permissions = new String[arrPerm.size()];
-        permissions = arrPerm.toArray(permissions);
-        ActivityCompat.requestPermissions(getActivity(), permissions, PERMISSION_REQUEST_CODE);
     }
 
     @Override
