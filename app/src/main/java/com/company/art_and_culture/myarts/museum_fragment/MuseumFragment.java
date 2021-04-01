@@ -36,9 +36,7 @@ import java.util.Collection;
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -73,7 +71,6 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
     public enum State{collapsed, expanded}
     private State appBarState;
     private SharedPreferences preferences;
-    private boolean isMuseumDataLoaded = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -103,6 +100,7 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
             setOnBackPressedListener(root);
             initAppBar();
         }
+        coordinator.setVisibility(View.GONE);
 
         return root;
     }
@@ -205,43 +203,36 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
 
     private void subscribeObservers() {
 
-        museumViewModel.getArtList().observe(getViewLifecycleOwner(), new Observer<PagedList<Art>>() {
-            @Override
-            public void onChanged(PagedList<Art> arts) {
-                setAnimationRecyclerViewArts();
-                artMuseumAdapter.submitList(arts);
-                hideText();
-            }
+        museumViewModel.getArtList().observe(getViewLifecycleOwner(), arts -> {
+            setAnimationRecyclerViewArts();
+            artMuseumAdapter.submitList(arts);
+            hideText();
         });
-        museumViewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) { showProgressBar(); } else { hideProgressBar(); }
-            }
+        museumViewModel.getIsLoading().observe(getViewLifecycleOwner(), aBoolean -> {
+            if (aBoolean) { showProgressBar(); } else { hideProgressBar(); }
         });
-        museumViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) { showText(); } else { hideText(); }
-            }
+        museumViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), aBoolean -> {
+            if (aBoolean) { showText(); } else { hideText(); }
         });
-        museumViewModel.getArtProvider().observe(getViewLifecycleOwner(), new Observer<ArtProvider>() {
-            @Override
-            public void onChanged(ArtProvider artProvider) {
-                setMuseumDataInViews(artProvider);
-                museum = artProvider;
-            }
+        museumViewModel.getArtProvider().observe(getViewLifecycleOwner(), artProvider -> {
+            setMuseumDataInViews(artProvider);
+            museum = artProvider;
         });
-        museumViewModel.getListMakers().observe(getViewLifecycleOwner(), new Observer<ArrayList<Maker>>() {
-            @Override
-            public void onChanged(ArrayList<Maker> makers) {
-                if (makers == null) {
-                    artistsAdapter.clearItems();
-                } else {
-                    setAnimationRecyclerViewArtists();
-                    artistsAdapter.clearItems();
-                    artistsAdapter.setItems(makers);
-                }
+        museumViewModel.getArtProviderLike().observe(getViewLifecycleOwner(), aBoolean -> {
+            if(aBoolean) museum_like.setImageResource(R.drawable.ic_favorite_red_100dp);
+            else museum_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
+            museum_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            AnimatorSet set = new AnimatorSet();
+            set.playSequentially(likeFadeIn(museum_like), likeScaleDown(museum_like));
+            set.start();
+        });
+        museumViewModel.getListMakers().observe(getViewLifecycleOwner(), makers -> {
+            if (makers == null) {
+                artistsAdapter.clearItems();
+            } else {
+                setAnimationRecyclerViewArtists();
+                artistsAdapter.clearItems();
+                artistsAdapter.setItems(makers);
             }
         });
     }
@@ -271,23 +262,13 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
         if(artProvider.isLiked()) museum_like.setImageResource(R.drawable.ic_favorite_red_100dp);
         else museum_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
         museum_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        if (isMuseumDataLoaded) {
-            AnimatorSet set = new AnimatorSet();
-            set.playSequentially(likeFadeIn(museum_like), likeScaleDown(museum_like));
-            set.start();
-        } else isMuseumDataLoaded = true;
     }
 
     private void initRecyclerView(final MuseumViewModel museumViewModel, int displayWidth, int displayHeight){
 
-        ArtMuseumAdapter.OnArtClickListener onArtClickListener = new ArtMuseumAdapter.OnArtClickListener() {
-
-            @Override
-            public void onArtImageClick(Art art, int position) {
-                ArrayList<Art> artInMemory = ArtDataInMemory.getInstance().getAllData();
-                museumEventListener.onArtClickEvent(artInMemory, position);
-            }
-
+        ArtMuseumAdapter.OnArtClickListener onArtClickListener = (art, position) -> {
+            ArrayList<Art> artInMemory = ArtDataInMemory.getInstance().getAllData();
+            museumEventListener.onArtClickEvent(artInMemory, position);
         };
 
         artMuseumAdapter = new ArtMuseumAdapter(museumViewModel, getContext(), onArtClickListener, displayWidth, displayHeight, spanCount);
@@ -298,12 +279,7 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
 
     private void initArtistsRecyclerView(int displayWidth, int displayHeight) {
 
-        ArtistsAdapter.OnMakerClickListener onMakerClickListener = new ArtistsAdapter.OnMakerClickListener() {
-            @Override
-            public void onMakerImageClick(Maker maker, int position) {
-                museumEventListener.onArtistsClickEvent(maker);
-            }
-        };
+        ArtistsAdapter.OnMakerClickListener onMakerClickListener = (maker, position) -> museumEventListener.onArtistsClickEvent(maker);
         artistsAdapter = new ArtistsAdapter(getContext(), onMakerClickListener, displayWidth, displayHeight);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false);
         recycler_view_artists.setLayoutManager(layoutManager);
@@ -318,7 +294,7 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
 
     private void hideProgressBar(){
         progress_bar_museum.setVisibility(View.GONE);
-        //coordinator.setVisibility(View.VISIBLE);
+        coordinator.setVisibility(View.VISIBLE);
         floating_button.setImageDrawable(res.getDrawable(R.drawable.ic_outline_change_circle_blue));
     }
 
@@ -367,7 +343,6 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
 
         } else if(view.getId() == floating_button.getId()) {
             museumViewModel.refresh();
-            isMuseumDataLoaded = false;
 
         } else if(view.getId() == museum_close_btn.getId()) {
             activity.getNavFragments().popBackStack();

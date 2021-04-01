@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.CollapsingToolbarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:minHeight="44dp"
+    android:fitsSystemWindows="false"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+   <androidx.constraintlayout.widget.ConstraintLayout
+       app:layout_constraintTop_toTopOf="parent"
+       android:id="@+id/maker_layout_header"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+
+      <ImageView
+          android:id="@+id/art_image_header"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:minHeight="200dp"
+          android:maxHeight="600dp"
+          android:adjustViewBounds="true"
+          android:scaleType="fitCenter"
+          app:layout_constraintTop_toTopOf="parent" />
+
+      <de.hdodenhof.circleimageview.CircleImageView
+          android:src="@color/colorSilver"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/art_image_header"
+          android:layout_marginLeft="10dp"
+          android:layout_marginTop="10dp"
+          android:id="@+id/maker_image"
+          android:layout_width="96dp"
+          android:layout_height="96dp">
+      </de.hdodenhof.circleimageview.CircleImageView>
+
+      <TextView
+          android:id="@+id/maker_name"
+          android:layout_marginLeft="10dp"
+          android:layout_marginRight="5dp"
+          android:layout_marginTop="10dp"
+          android:gravity="left"
+          android:maxLines="2"
+          android:ellipsize="end"
+          app:layout_constraintTop_toBottomOf="@+id/art_image_header"
+          app:layout_constraintLeft_toRightOf="@+id/maker_image"
+          app:layout_constraintRight_toRightOf="parent"
+          android:textColor="@color/colorBlack"
+          android:textSize="22sp"
+          android:fontFamily="@string/font_sans_serif"
+          android:text="Vincent van Gogh"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"/>
+
+      <TextView
+          android:id="@+id/maker_bio"
+          android:layout_marginLeft="10dp"
+          android:layout_marginRight="5dp"
+          android:layout_marginTop="5dp"
+          android:gravity="left"
+          android:maxLines="2"
+          android:ellipsize="end"
+          app:layout_constraintTop_toBottomOf="@+id/maker_name"
+          app:layout_constraintLeft_toRightOf="@+id/maker_image"
+          app:layout_constraintRight_toRightOf="parent"
+          android:textColor="@color/colorText"
+          android:textSize="16sp"
+          android:fontFamily="@string/font_sans_serif"
+          android:text="30 Mar 1853 - 29 Jul 1890"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"/>
+
+      <ImageButton
+          android:layout_marginTop="30dp"
+          android:layout_marginRight="70dp"
+          android:id="@+id/maker_like"
+          android:background="@drawable/ic_favorite_border_black_100dp"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintRight_toRightOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/maker_bio"
+          android:layout_width="26dp"
+          android:layout_height="26dp" />
+
+      <ImageButton
+          android:layout_marginTop="30dp"
+          android:layout_marginLeft="70dp"
+          android:id="@+id/maker_share"
+          android:background="@drawable/ic_share_black"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintRight_toRightOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/maker_bio"
+          android:layout_width="26dp"
+          android:layout_height="26dp" />
+
+      <TextView
+          android:id="@+id/maker_description"
+          android:layout_marginLeft="16dp"
+          android:layout_marginRight="16dp"
+          android:layout_marginTop="30dp"
+          android:gravity="left"
+          android:maxLines="4"
+          android:ellipsize="end"
+          app:layout_constraintTop_toBottomOf="@+id/maker_like"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintRight_toRightOf="parent"
+          android:textColor="@color/colorBlack"
+          android:textSize="@dimen/text_size_maker_description"
+          android:fontFamily="@string/font_sans_serif_light"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"/>
+
+      <TextView
+          android:text="@string/read_more"
+          android:textColor="@color/colorBlueLight"
+          android:fontFamily="@string/font_sans_serif"
+          android:textSize="15sp"
+          android:minLines="1"
+          android:maxLines="1"
+          android:ellipsize="end"
+          android:id="@+id/read_more"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="6dp"
+          android:layout_marginLeft="16dp"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/maker_description" />
+
+      <TextView
+          android:text="@string/wikipedia"
+          android:textColor="@color/colorText"
+          android:fontFamily="@string/font_sans_serif"
+          android:textSize="15sp"
+          android:minLines="1"
+          android:maxLines="1"
+          android:ellipsize="end"
+          android:id="@+id/wikipedia"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="6dp"
+          android:layout_marginRight="16dp"
+          app:layout_constraintRight_toRightOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/maker_description" />
+
+      <TextView
+          android:id="@+id/art_count"
+          android:layout_marginLeft="16dp"
+          android:layout_marginTop="16dp"
+          android:gravity="left"
+          android:maxLines="1"
+          android:ellipsize="end"
+          app:layout_constraintTop_toBottomOf="@+id/wikipedia"
+          app:layout_constraintLeft_toLeftOf="parent"
+          android:textColor="@color/colorBlack"
+          android:textSize="18sp"
+          android:fontFamily="@string/font_sans_serif_light"
+          android:text="@string/artworks_count"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"/>
+
+      <ImageButton
+          android:layout_marginRight="16dp"
+          android:id="@+id/arts_in_list"
+          android:background="@drawable/ic_baseline_format_list_bulleted_24"
+          android:scaleType="fitCenter"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintBottom_toBottomOf="@+id/art_count"
+          android:layout_width="26dp"
+          android:layout_height="26dp" />
+
+      <ImageButton
+          android:layout_marginRight="16dp"
+          android:id="@+id/arts_in_columns"
+          android:background="@drawable/ic_apps_black_100dp"
+          android:scaleType="fitCenter"
+          app:layout_constraintEnd_toStartOf="@+id/arts_in_list"
+          app:layout_constraintBottom_toBottomOf="@+id/art_count"
+          android:layout_width="26dp"
+          android:layout_height="26dp" />
+
+      <View
+          android:layout_marginTop="8dp"
+          android:background="@color/colorSilver"
+          app:layout_constraintTop_toBottomOf="@+id/art_count"
+          android:layout_width="match_parent"
+          android:layout_height="6dp"/>
+
+   </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.appbar.CollapsingToolbarLayout>

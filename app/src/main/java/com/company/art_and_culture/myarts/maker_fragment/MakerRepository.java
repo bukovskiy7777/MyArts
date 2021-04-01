@@ -16,6 +16,7 @@ public class MakerRepository {
     private static MakerRepository instance;
     private LiveData<PagedList<Art>> artList;
     private MakerDataSource makerDataSource;
+    private MakerInfoDataSource makerInfoDataSource;
     private MakerDataSourceFactory makerDataSourceFactory;
     private Maker artMaker;
     private Application application;
@@ -42,6 +43,8 @@ public class MakerRepository {
         artList = new LivePagedListBuilder<>(makerDataSourceFactory, config).build();
 
         makerDataSource = (MakerDataSource) makerDataSourceFactory.create();//if remove this line artLike will not working after refresh
+
+        makerInfoDataSource = new MakerInfoDataSource(application, artMaker);
     }
 
     public LiveData<PagedList<Art>> getArtList(){
@@ -49,19 +52,19 @@ public class MakerRepository {
     }
 
     public LiveData<Boolean> getIsLoading() {
-        return makerDataSource.getIsLoading();
+        return makerInfoDataSource.getIsLoading();
     }
 
     public LiveData<Boolean> getIsListEmpty() {
         return makerDataSource.getIsListEmpty();
     }
 
-    public LiveData<Maker> getMaker() {
-        return makerDataSource.getMaker();
+    public LiveData<Boolean> getIsMakerLiked() {
+        return makerInfoDataSource.getIsMakerLiked();
     }
 
-    public LiveData<Maker> getMakerFirstTime() {
-        return makerDataSource.getMakerFirstTime();
+    public LiveData<Maker> getMaker() {
+        return makerInfoDataSource.getMaker();
     }
 
     public boolean likeArt(Art art, int position, String userUniqueId) {
@@ -74,6 +77,7 @@ public class MakerRepository {
     }
 
     public boolean refresh() {
+        makerInfoDataSource.refresh();
         return makerDataSourceFactory.refresh();
     }
 
@@ -82,6 +86,7 @@ public class MakerRepository {
     }
 
     public MakerRepository setArtMaker(Maker artMaker) {
+        makerInfoDataSource.setArtMaker(artMaker);
         makerDataSourceFactory.setArtMaker(artMaker);
         instance = new MakerRepository(application, artMaker);
 
@@ -96,7 +101,7 @@ public class MakerRepository {
 
         boolean isConnected = makerDataSource.isNetworkAvailable();
         if (isConnected){
-            makerDataSource.likeMaker(maker, userUniqueId);
+            makerInfoDataSource.likeMaker(maker, userUniqueId);
         }
         return isConnected;
     }

@@ -4,11 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
-import com.company.art_and_culture.myarts.bottom_menu.favorites.Artists.ArtistsRepository;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
@@ -25,10 +23,9 @@ import retrofit2.Response;
 
 public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
 
-    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+
     private MutableLiveData<Boolean> isListEmpty = new MutableLiveData<>();
-    private MutableLiveData<Maker> maker = new MutableLiveData<>();
-    private MutableLiveData<Maker> makerFirstTime = new MutableLiveData<>();
+
     private Application application;
     private Maker artMaker;
     private MainActivity activity;
@@ -44,9 +41,7 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull final LoadInitialCallback<Integer, Art> callback) {
 
-        updateIsLoadingState(true);
         updateIsListEmptyState(false);
-        getMakerObject();
 
         String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
 
@@ -60,7 +55,7 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
         response.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                updateIsLoadingState(false);
+
                 if (response.isSuccessful()) {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
@@ -78,7 +73,6 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
-                updateIsLoadingState(false);
                 updateIsListEmptyState(true);
             }
         });
@@ -100,7 +94,7 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
         response.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                updateIsLoadingState(false);
+
                 if (response.isSuccessful()) {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
@@ -118,39 +112,14 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
-                updateIsLoadingState(false);
                 updateIsListEmptyState(false);
             }
         });
 
     }
 
-    private void updateIsLoadingState(Boolean state) {
-        isLoading.postValue(state);
-    }
-
     private void updateIsListEmptyState(Boolean state) {
         isListEmpty.postValue(state);
-    }
-
-    private void updateArtMaker(Maker artMaker) {
-        maker.postValue(artMaker);
-    }
-
-    private void updateArtMakerFirstTime(Maker artMaker) {
-        makerFirstTime.postValue(artMaker);
-    }
-
-    public MutableLiveData<Maker> getMaker() {
-        return maker;
-    }
-
-    public MutableLiveData<Maker> getMakerFirstTime() {
-        return makerFirstTime;
-    }
-
-    public LiveData<Boolean> getIsLoading() {
-        return isLoading;
     }
 
     public LiveData<Boolean> getIsListEmpty() {
@@ -217,71 +186,6 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) { }
         });
-    }
-
-    private void getMakerObject() {
-
-        String userUniqueId = application.getSharedPreferences(Constants.TAG,0).getString(Constants.USER_UNIQUE_ID,"");
-        ServerRequest request = new ServerRequest();
-        request.setUserUniqueId(userUniqueId);
-        request.setMaker(artMaker);
-        request.setOperation(Constants.GET_MAKER_OBJECT);
-
-        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
-        response.enqueue(new Callback<ServerResponse>() {
-            @Override
-            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                if (response.isSuccessful()) {
-                    ServerResponse resp = response.body();
-                    if(resp.getResult().equals(Constants.SUCCESS)) {
-
-                        updateArtMakerFirstTime(resp.getArtMaker());
-                    } else {
-
-                    }
-                } else {
-
-                }
-            }
-            @Override
-            public void onFailure(Call<ServerResponse> call, Throwable t) { }
-        });
-    }
-
-    public void likeMaker(Maker maker, String userUniqueId) {
-
-        ServerRequest request = new ServerRequest();
-        request.setUserUniqueId(userUniqueId);
-        request.setOperation(Constants.MAKER_LIKE_OPERATION);
-        request.setMaker(maker);
-        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
-        response.enqueue(new Callback<ServerResponse>() {
-            @Override
-            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                if (response.isSuccessful()) {
-                    ServerResponse resp = response.body();
-                    Log.i("response", resp.getMessage());
-                    if(resp.getResult().equals(Constants.SUCCESS)) {
-
-                        updateArtMaker(resp.getArtMaker());
-
-                        ArtistsRepository artistsRepository = ArtistsRepository.getInstance(application);
-                        artistsRepository.refresh();
-                    } else {
-
-                    }
-                } else {
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ServerResponse> call, Throwable t) {
-
-            }
-        });
-
-
     }
 
     public void setActivity(MainActivity activity) {

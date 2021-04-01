@@ -1,15 +1,14 @@
 package com.company.art_and_culture.myarts.maker_fragment;
 
 import android.animation.AnimatorSet;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,12 +17,10 @@ import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.bottom_menu.home.LifecycleViewHolder;
 import com.company.art_and_culture.myarts.pojo.Art;
-import com.company.art_and_culture.myarts.pojo.Maker;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 
@@ -32,36 +29,36 @@ import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleDown;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleUp;
 
-public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHolder> {
+public class MakerAdapter extends PagedListAdapter<Art, LifecycleViewHolder> {
 
-    private Maker globalMaker;
     private Context context;
     private OnArtClickListener onArtClickListener;
     private int displayWidth, displayHeight;
     private MakerViewModel makerViewModel;
     private double k = 0.4;
+    private int spanCount;
+    private int lastPosition = -1;
 
 
     public MakerAdapter(MakerViewModel makerViewModel, Context context, OnArtClickListener onArtClickListener,
-                        int displayWidth, int displayHeight, Maker maker) {
+                        int displayWidth, int displayHeight, int spanCount) {
         super(itemDiffUtilCallback);
         this.context = context;
         this.makerViewModel = makerViewModel;
         this.onArtClickListener = onArtClickListener;
         this.displayWidth = displayWidth;
         this.displayHeight = displayHeight;
-
-        this.globalMaker = maker;
+        this.spanCount = spanCount;
     }
 
     @Override
-    public void onViewAttachedToWindow(@NonNull MakerViewHolder holder) {
+    public void onViewAttachedToWindow(@NonNull LifecycleViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         holder.onAttached();
     }
 
     @Override
-    public void onViewDetachedFromWindow(@NonNull MakerViewHolder holder) {
+    public void onViewDetachedFromWindow(@NonNull LifecycleViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
         holder.onDetached();
     }
@@ -71,15 +68,12 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
         void onArtLikeClick(Art art, int position);
         void onArtShareClick(Art art);
         void onArtDownloadClick(Art art, int x, int y, int viewWidth, int viewHeight);
-        void onMakerLikeClick(Maker maker);
-        void onMakerShareClick(String makerName, String makerBio, String makerWikiPageUrl, String artHeaderImageUrl);
-        void onMakerWikiClick(String makerWikiPageUrl);
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(position == 0) {
-            return 0;
+        if (spanCount == 3) {
+            return 3;
         } else {
             return 1;
         }
@@ -87,21 +81,29 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
 
     @NonNull
     @Override
-    public MakerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public LifecycleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
-        if(viewType == 0) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_maker_with_header, parent, false);
+        if (viewType == 3) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_maker_3, parent, false);
+            return new MakerViewHolder_3 (view);
         } else {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_maker, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_maker_1, parent, false);
+            return new MakerViewHolder_1 (view);
         }
-        return new MakerViewHolder(view, viewType);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MakerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull LifecycleViewHolder holder, int position) {
         Art art = getItem(position);
         if (art != null) {
-            holder.bind(art, position);
+            if (holder.getItemViewType() == 1) {
+                MakerViewHolder_1 viewHolder = (MakerViewHolder_1) holder;
+                viewHolder.bind(art, position);
+            } else if (holder.getItemViewType() == 3) {
+                MakerViewHolder_3 viewHolder = (MakerViewHolder_3) holder;
+                viewHolder.bind(art, position);
+            }
+            setAnimation(holder.itemView, position);
         } else {
             // Null defines a placeholder item - PagedListAdapter will automatically invalidate
             // this row when the actual object is loaded from the database
@@ -109,14 +111,23 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
         }
     }
 
-    class MakerViewHolder extends LifecycleViewHolder implements View.OnClickListener, View.OnTouchListener {
+    private void setAnimation(View viewToAnimate, int position) {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition) {
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.item_fade_in);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
+    }
+
+    class MakerViewHolder_1 extends LifecycleViewHolder implements View.OnClickListener {
 
         private Art art;
         private int position;
-        private ImageView art_image, art_image_header, maker_image;
-        private TextView art_title, art_maker, maker_name, maker_bio, maker_description, read_more, wikipedia, art_count;
-        private ImageButton art_share, art_download, art_like, maker_like, maker_share;
-        private String artImgUrl, makerWikiImageUrl, makerWikiPageUrl;
+        private ImageView art_image;
+        private TextView art_title, art_maker;
+        private ImageButton art_share, art_download, art_like;
+        private String artImgUrl;
         private final Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -132,28 +143,9 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
             public void onPrepareLoad(Drawable placeHolderDrawable) { }
         };
 
-        MakerViewHolder(@NonNull View itemView, int viewType) {
+        MakerViewHolder_1(@NonNull View itemView) {
             super(itemView);
 
-            if(viewType == 0) {
-                art_image_header = itemView.findViewById(R.id.art_image_header);
-                maker_image = itemView.findViewById(R.id.maker_image);
-                maker_name = itemView.findViewById(R.id.maker_name);
-                maker_bio = itemView.findViewById(R.id.maker_bio);
-                maker_description = itemView.findViewById(R.id.maker_description);
-                maker_like = itemView.findViewById(R.id.maker_like);
-                maker_share = itemView.findViewById(R.id.maker_share);
-                read_more = itemView.findViewById(R.id.read_more);
-                wikipedia = itemView.findViewById(R.id.wikipedia);
-                art_count = itemView.findViewById(R.id.art_count);
-                maker_like.setOnClickListener(this);
-                maker_share.setOnClickListener(this);
-                read_more.setOnClickListener(this);
-                read_more.setVisibility(View.GONE);
-                wikipedia.setOnClickListener(this);
-                wikipedia.setOnTouchListener(this);
-                wikipedia.setVisibility(View.GONE);
-            }
             art_title = itemView.findViewById(R.id.art_title);
             art_maker = itemView.findViewById(R.id.art_maker);
             art_share = itemView.findViewById(R.id.art_share);
@@ -174,94 +166,9 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
             this.art = art;
             this.position = position;
 
-            if (position == 0) {
-
-                maker_name.setText(globalMaker.getArtMaker());
-                maker_bio.setText(globalMaker.getArtistBio());
-
-                if (globalMaker.getArtWidth() > 0) {
-                    int imgWidth = displayWidth;
-                    int imgHeight = (globalMaker.getArtHeight() * imgWidth) / globalMaker.getArtWidth();
-                    if (imgHeight <= art_image_header.getMaxHeight()) {
-                        art_image_header.getLayoutParams().height = imgHeight;
-                    } else {
-                        art_image_header.getLayoutParams().height = art_image_header.getMaxHeight();
-                    }
-                    Picasso.get().load(globalMaker.getArtHeaderImageUrl()).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image_header);
-                } else {
-                    Picasso.get().load(globalMaker.getArtHeaderImageUrl()).placeholder(R.color.colorSilver).into(art_image_header);
-                }
-
-                makerViewModel.getMakerFirstTime().observe(this, new Observer<Maker>() {
-                    @Override
-                    public void onChanged(Maker maker) {
-
-                        if (maker.getMakerWikiDescription() != null) {
-                            maker_description.setVisibility(View.VISIBLE);
-                            wikipedia.setVisibility(View.VISIBLE);
-
-                            maker_description.setText(maker.getMakerWikiDescription());
-                            Paint paint = new Paint();
-                            paint.setTextSize(context.getResources().getDimension(R.dimen.text_size_maker_description));
-                            float widthText = paint.measureText(maker_description.getText().toString());
-                            float numLines = (float) ((widthText/displayWidth) * 1.2);
-                            if (numLines > 3) { read_more.setVisibility(View.VISIBLE); } else { read_more.setVisibility(View.GONE); }
-                        } else {
-                            maker_description.setVisibility(View.GONE);
-                            wikipedia.setVisibility(View.GONE);
-                            read_more.setVisibility(View.GONE);
-                        }
-
-                        makerWikiImageUrl = "";
-                        if(maker.getMakerWikiImageUrl() != null && maker.getMakerWikiImageUrl().length() > 0) {
-                            makerWikiImageUrl = maker.getMakerWikiImageUrl();
-                            Picasso.get().load(maker.getMakerWikiImageUrl()).placeholder(R.color.colorSilver).into(maker_image);
-                        }
-
-                        if(maker.isLiked()){
-                            maker_like.setImageResource(R.drawable.ic_favorite_red_100dp);
-                            maker_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                        } else {
-                            maker_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
-                            maker_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                        }
-
-                        String artCount = context.getResources().getString(R.string.artworks_count) +" "+ maker.getArtCount();
-                        art_count.setText(artCount);
-
-                        makerWikiPageUrl = maker.getMakerWikiPageUrl();
-                    }
-                });
-
-                makerViewModel.getMaker().observe(this, new Observer<Maker>() {
-                    @Override
-                    public void onChanged(Maker maker) {
-
-                        if(maker.isLiked()){
-                            maker_like.setImageResource(R.drawable.ic_favorite_red_100dp);
-                            maker_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                            AnimatorSet set = new AnimatorSet();
-                            set.playSequentially(likeFadeIn(maker_like), likeScaleDown(maker_like));
-                            set.start();
-                        } else {
-                            maker_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
-                            maker_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                            AnimatorSet set = new AnimatorSet();
-                            set.playSequentially(likeFadeIn(maker_like), likeScaleDown(maker_like));
-                            set.start();
-                        }
-                    }
-                });
-
-            }
-
-            if(MakerDataInMemory.getInstance().getSingleItem(position).getIsLiked()){
-                art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
-                art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            } else {
-                art_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
-                art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            }
+            if(MakerDataInMemory.getInstance().getSingleItem(position).getIsLiked()) art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
+            else art_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
+            art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
             if (art.getArtImgUrlSmall() != null && art.getArtImgUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
                 artImgUrl = art.getArtImgUrlSmall();
@@ -279,24 +186,17 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
             }
 
             MainActivity activity = (MainActivity) context;
-            activity.getArt().observe(this, new Observer<Art>() {
-                @Override
-                public void onChanged(Art newArt) {
-                    if (newArt.getArtId().equals(art.getArtId()) && newArt.getArtProvider().equals(art.getArtProvider())) {
-                        if(newArt.getIsLiked()){
-                            art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
-                            art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                            AnimatorSet set = new AnimatorSet();
-                            set.playSequentially(likeFadeIn(art_like), likeScaleDown(art_like));
-                            set.start();
-                        } else {
-                            art_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
-                            art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                            AnimatorSet set = new AnimatorSet();
-                            set.playSequentially(likeFadeIn(art_like), likeScaleDown(art_like));
-                            set.start();
-                        }
+            activity.getArt().observe(this, newArt -> {
+                if (newArt.getArtId().equals(art.getArtId()) && newArt.getArtProvider().equals(art.getArtProvider())) {
+                    if(newArt.getIsLiked()){
+                        art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
+                    } else {
+                        art_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
                     }
+                    art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    AnimatorSet set = new AnimatorSet();
+                    set.playSequentially(likeFadeIn(art_like), likeScaleDown(art_like));
+                    set.start();
                 }
             });
 
@@ -326,52 +226,70 @@ public class MakerAdapter extends PagedListAdapter<Art, MakerAdapter.MakerViewHo
 
             } else if (v.getId() == art_like.getId()) {
                 onArtClickListener.onArtLikeClick(art, position);
-
-            } else if(v.getId() == read_more.getId()) {
-                if (maker_description.getMaxLines() == 4) {
-                    Paint paint = new Paint();
-                    paint.setTextSize(context.getResources().getDimension(R.dimen.text_size_maker_description));
-                    float widthText = paint.measureText(maker_description.getText().toString());
-                    float numLines = (float) ((widthText/displayWidth) * 1.2);
-                    maker_description.setMaxLines((int) (numLines + 10));
-                    read_more.setText(context.getResources().getString(R.string.show_less));
-                } else {
-                    maker_description.setMaxLines(4);
-                    read_more.setText(context.getResources().getString(R.string.read_more));
-                }
-
-            } else if (v.getId() == maker_like.getId()) {
-                Maker maker = new Maker (globalMaker.getArtMaker(), globalMaker.getArtistBio(), globalMaker.getArtHeaderImageUrl(),
-                        globalMaker.getArtWidth(), globalMaker.getArtHeight(), makerWikiImageUrl, globalMaker.getArtHeaderId(), globalMaker.getArtHeaderProviderId());
-                onArtClickListener.onMakerLikeClick(maker);
-
-            } else if(v.getId() == maker_share.getId()) {
-                onArtClickListener.onMakerShareClick(globalMaker.getArtMaker(), globalMaker.getArtistBio(), makerWikiPageUrl, globalMaker.getArtHeaderImageUrl());
-                AnimatorSet set = new AnimatorSet();
-                set.playSequentially(shareScaleUp(maker_share), shareScaleDown(maker_share));
-                set.start();
-
-            } else if(v.getId() == wikipedia.getId()) {
-                onArtClickListener.onMakerWikiClick(makerWikiPageUrl);
             }
         }
 
-        @SuppressLint("ClickableViewAccessibility")
+    }
+
+    class MakerViewHolder_3 extends LifecycleViewHolder implements View.OnClickListener {
+
+        private Art art;
+        private int position;
+        private ImageView art_image;
+        private String artImgUrl;
+        private final Target target = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                art.setArtWidth(bitmap.getWidth());
+                art.setArtHeight(bitmap.getHeight());
+                makerViewModel.writeDimentionsOnServer(art);
+                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(art_image);
+            }
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) { }
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) { }
+        };
+
+        MakerViewHolder_3(@NonNull View itemView) {
+            super(itemView);
+
+            itemView.getLayoutParams().width = displayWidth/spanCount;
+            itemView.getLayoutParams().height = displayWidth/spanCount;
+
+            art_image = itemView.findViewById(R.id.art_image);
+            art_image.setOnClickListener(this);
+        }
+
+        void bind(final Art art, final int position) {
+            this.art = art;
+            this.position = position;
+
+            if (art.getArtImgUrlSmall() != null && art.getArtImgUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
+                artImgUrl = art.getArtImgUrlSmall();
+            } else {
+                artImgUrl= art.getArtImgUrl();
+            }
+
+            art_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
+            if (art.getArtWidth() > 0) {
+                int imgWidth = displayWidth / 2;
+                int imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
+                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image);
+            } else {
+                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);
+            }
+
+        }
+
         @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (view.getId() == wikipedia.getId()) {
-                switch(motionEvent.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        ((TextView)view).setTextColor(context.getResources().getColor(R.color.colorBlack));
-                        break;
-                    case MotionEvent.ACTION_CANCEL:
-                    case MotionEvent.ACTION_UP:
-                        ((TextView)view).setTextColor(context.getResources().getColor(R.color.colorText));
-                        break;
-                }
+        public void onClick(View v) {
+            if (v.getId() == art_image.getId()) {
+                onArtClickListener.onArtImageClick(art, position);
             }
-            return false;
         }
+
     }
 
     private static DiffUtil.ItemCallback<Art> itemDiffUtilCallback = new DiffUtil.ItemCallback<Art>() {

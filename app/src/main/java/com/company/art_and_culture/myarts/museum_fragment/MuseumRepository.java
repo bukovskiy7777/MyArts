@@ -58,6 +58,10 @@ public class MuseumRepository {
         return museumInfoDataSource.getArtProvider();
     }
 
+    public LiveData<Boolean> getArtProviderLike() {
+        return museumInfoDataSource.getArtProviderLike();
+    }
+
     public LiveData<ArrayList<Maker>> getListMakers() {
         return museumInfoDataSource.getListMakers();
     }

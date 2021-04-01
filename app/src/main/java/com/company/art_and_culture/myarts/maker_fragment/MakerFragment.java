@@ -4,17 +4,22 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +30,8 @@ import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,27 +39,32 @@ import java.util.Collection;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.paging.PagedList;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
+import static com.company.art_and_culture.myarts.bottom_menu.favorites.Favorites.FavoritesAnimations.scaleDown;
+import static com.company.art_and_culture.myarts.bottom_menu.favorites.Favorites.FavoritesAnimations.scaleUp;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadFadeIn;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadFadeOut;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadTranslation;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeFadeIn;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeScaleDown;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleDown;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleUp;
 
-public class MakerFragment extends Fragment implements ImageDownloader.IDownLoadResult {
+public class MakerFragment extends Fragment implements ImageDownloader.IDownLoadResult, View.OnClickListener, View.OnTouchListener {
 
     private MakerViewModel makerViewModel;
     private RecyclerView makerRecyclerView;
     private MakerAdapter makerAdapter;
     private MakerEventListener makerEventListener;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private CoordinatorLayout coordinator;
     private android.content.res.Resources res;
     private MainActivity activity;
     private Maker maker;
@@ -62,20 +74,50 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
     private CircleImageView add_view;
     private ConstraintLayout download_linear;
     private SharedPreferences preferences;
+    private ImageView art_image_header, maker_image;
+    private TextView maker_name, maker_bio, maker_description, read_more, wikipedia, art_count;
+    private ImageButton maker_like, maker_share, arts_in_list, arts_in_columns;
+    private String makerWikiImageUrl, makerWikiPageUrl;
+    private FloatingActionButton floating_button;
+    private int displayWidth, displayHeight;
+    private int spanCount = 1;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_art_maker, container, false);
         makerRecyclerView = root.findViewById(R.id.recycler_view_maker);
-        swipeRefreshLayout = root.findViewById(R.id.maker_swipeRefreshLayout);
+        coordinator = root.findViewById(R.id.coordinator);
         textView = root.findViewById(R.id.text_maker);
         makerProgressBar = root.findViewById(R.id.progress_bar_maker);
+        art_image_header = root.findViewById(R.id.art_image_header);
+        maker_image = root.findViewById(R.id.maker_image);
+        maker_name = root.findViewById(R.id.maker_name);
+        maker_bio = root.findViewById(R.id.maker_bio);
+        maker_description = root.findViewById(R.id.maker_description);
+        maker_like = root.findViewById(R.id.maker_like);
+        maker_share = root.findViewById(R.id.maker_share);
+        read_more = root.findViewById(R.id.read_more);
+        wikipedia = root.findViewById(R.id.wikipedia);
+        art_count = root.findViewById(R.id.art_count);
+        floating_button = root.findViewById(R.id.floating_button);
+        arts_in_list = root.findViewById(R.id.arts_in_list);
+        arts_in_columns = root.findViewById(R.id.arts_in_columns);
+        arts_in_list.setOnClickListener(this);
+        arts_in_columns.setOnClickListener(this);
+        floating_button.setOnClickListener(this);
+        maker_like.setOnClickListener(this);
+        maker_share.setOnClickListener(this);
+        read_more.setOnClickListener(this);
+        read_more.setVisibility(View.GONE);
+        wikipedia.setOnClickListener(this);
+        wikipedia.setOnTouchListener(this);
+        wikipedia.setVisibility(View.GONE);
 
         makerViewModel = new ViewModelProvider(this).get(MakerViewModel.class);
 
         res = getResources();
-        int displayWidth = res.getDisplayMetrics().widthPixels;
-        int displayHeight = res.getDisplayMetrics().heightPixels;
+        displayWidth = res.getDisplayMetrics().widthPixels;
+        displayHeight = res.getDisplayMetrics().heightPixels;
 
         activity = (MainActivity) getActivity();
         if (activity != null) maker = activity.getNavFragments().getMakerForMakerFragment();
@@ -88,15 +130,131 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
             makerViewModel.setArtMaker(maker);
             makerViewModel.setActivity(activity);
 
-            initRecyclerView(makerViewModel, displayWidth, displayHeight, maker);
-            initSwipeRefreshLayout();
-            subscribeObservers();
+            initRecyclerView(makerViewModel, displayWidth, displayHeight, spanCount);
+            subscribeObserverMakerData();
+            subscribeObserverArtsData();
             initDownloadViews(root);
             setOnBackPressedListener(root);
+            setMakerInfo(maker);
         }
+
+        if (spanCount == 3) {
+            arts_in_columns.setImageResource(R.drawable.ic_apps_blue_100dp);
+        } else if (spanCount == 1) {
+            arts_in_list.setImageResource(R.drawable.ic_baseline_format_list_bulleted_24_blue);
+        }
+        coordinator.setVisibility(View.GONE);
 
         return root;
     }
+
+    private void setMakerInfo(Maker maker) {
+        maker_name.setText(maker.getArtMaker());
+        maker_bio.setText(maker.getArtistBio());
+
+        if (maker.getArtWidth() > 0) {
+            int imgWidth = displayWidth;
+            int imgHeight = (maker.getArtHeight() * imgWidth) / maker.getArtWidth();
+            art_image_header.getLayoutParams().height = Math.min(imgHeight, art_image_header.getMaxHeight());
+            Picasso.get().load(maker.getArtHeaderImageUrl()).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image_header);
+        } else {
+            Picasso.get().load(maker.getArtHeaderImageUrl()).placeholder(R.color.colorSilver).into(art_image_header);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == read_more.getId()) {
+            if (maker_description.getMaxLines() == 4) {
+                Paint paint = new Paint();
+                paint.setTextSize(getContext().getResources().getDimension(R.dimen.text_size_maker_description));
+                float widthText = paint.measureText(maker_description.getText().toString());
+                float numLines = (float) ((widthText/displayWidth) * 1.2);
+                read_more.setText(getContext().getResources().getString(R.string.show_less));
+
+                ObjectAnimator animation = ObjectAnimator.ofInt(maker_description, "maxLines", (int) (numLines + 10));
+                animation.setDuration(600).start();
+            } else {
+                ObjectAnimator animation = ObjectAnimator.ofInt(maker_description, "maxLines", 4);
+                animation.setDuration(600).start();
+                read_more.setText(getContext().getResources().getString(R.string.read_more));
+            }
+
+        } else if (v.getId() == maker_like.getId()) {
+            Maker newMaker = new Maker (maker.getArtMaker(), maker.getArtistBio(), maker.getArtHeaderImageUrl(),
+                            maker.getArtWidth(), maker.getArtHeight(), makerWikiImageUrl, maker.getArtHeaderId(), maker.getArtHeaderProviderId());
+            boolean networkState = makerViewModel.likeMaker (newMaker, preferences.getString(Constants.USER_UNIQUE_ID,""));
+            if (!networkState) {
+                Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_SHORT).show();
+            }
+
+        } else if(v.getId() == maker_share.getId()) {
+            AnimatorSet set = new AnimatorSet();
+            set.playSequentially(shareScaleUp(maker_share), shareScaleDown(maker_share));
+            set.start();
+
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            String text;
+            if (makerWikiPageUrl != null) {
+                text = maker.getArtMaker()+" - "+maker.getArtistBio() + System.getProperty ("line.separator") + makerWikiPageUrl;
+            } else {
+                text = maker.getArtMaker()+" - "+maker.getArtistBio() + System.getProperty ("line.separator") + maker.getArtHeaderImageUrl();
+            }
+            //String text = art.getArtLink();
+            sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+            sendIntent.setType("text/plain");
+            Intent shareIntent = Intent.createChooser(sendIntent, null);
+            startActivity(shareIntent);
+
+        } else if(v.getId() == wikipedia.getId()) {
+            makerEventListener.makerWikiClick(makerWikiPageUrl);
+
+        } else if(v.getId() == floating_button.getId()) {
+            makerViewModel.refresh();
+
+        } else if(v.getId() == arts_in_list.getId()) {
+
+            spanCount = 1;
+            initRecyclerView(makerViewModel, displayWidth, displayHeight, spanCount);
+            subscribeObserverArtsData();
+
+            arts_in_columns.setImageResource(R.drawable.ic_apps_black_100dp);
+            arts_in_list.setImageResource(R.drawable.ic_baseline_format_list_bulleted_24_blue);
+            AnimatorSet set = new AnimatorSet();
+            set.playSequentially(scaleUp(arts_in_list), scaleDown(arts_in_list));
+            set.start();
+
+        } else if(v.getId() == arts_in_columns.getId()) {
+
+            spanCount = 3;
+            initRecyclerView(makerViewModel, displayWidth, displayHeight, spanCount);
+            subscribeObserverArtsData();
+
+            arts_in_columns.setImageResource(R.drawable.ic_apps_blue_100dp);
+            arts_in_list.setImageResource(R.drawable.ic_baseline_format_list_bulleted_24);
+            AnimatorSet set = new AnimatorSet();
+            set.playSequentially(scaleUp(arts_in_columns), scaleDown(arts_in_columns));
+            set.start();
+        }
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (view.getId() == wikipedia.getId()) {
+            switch(motionEvent.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    ((TextView)view).setTextColor(getContext().getResources().getColor(R.color.colorBlack));
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                case MotionEvent.ACTION_UP:
+                    ((TextView)view).setTextColor(getContext().getResources().getColor(R.color.colorText));
+                    break;
+            }
+        }
+        return false;
+    }
+
 
     private void initDownloadViews(View root) {
         download_linear = root.findViewById(R.id.download_linear);
@@ -135,51 +293,72 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
         } );
     }
 
-    private void initSwipeRefreshLayout() {
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                boolean networkState = makerViewModel.refresh();
-                if (!networkState) {
-                    Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-            }
+    private void subscribeObserverMakerData() {
+
+        makerViewModel.getIsLoading().observe(getViewLifecycleOwner(), aBoolean -> {
+            if (aBoolean) { showProgressBar(); } else { hideProgressBar(); }
         });
-        swipeRefreshLayout.setColorSchemeResources(
-                android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light
-        );
+        makerViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), aBoolean -> {
+            if (aBoolean) { showText(); } else { hideText(); }
+        });
+        makerViewModel.getMaker().observe(getViewLifecycleOwner(), maker -> {
+
+            setMakerDataInViews(maker);
+        });
+        makerViewModel.getIsMakerLiked().observe(getViewLifecycleOwner(), isLiked -> {
+
+            if(isLiked) maker_like.setImageResource(R.drawable.ic_favorite_red_100dp);
+            else maker_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
+            maker_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            AnimatorSet set = new AnimatorSet();
+            set.playSequentially(likeFadeIn(maker_like), likeScaleDown(maker_like));
+            set.start();
+        });
 
     }
 
-    private void subscribeObservers() {
-
-        makerViewModel.getArtList().observe(getViewLifecycleOwner(), new Observer<PagedList<Art>>() {
-            @Override
-            public void onChanged(PagedList<Art> arts) {
-                makerAdapter.submitList(arts);
-                hideText();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-        makerViewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) { showProgressBar(); } else { hideProgressBar(); }
-            }
-        });
-        makerViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) { showText(); } else { hideText(); }
-            }
+    private void subscribeObserverArtsData(){
+        makerViewModel.getArtList().observe(getViewLifecycleOwner(), arts -> {
+            makerAdapter.submitList(arts);
+            hideText();
         });
     }
 
-    private void initRecyclerView(final MakerViewModel makerViewModel, int displayWidth, int displayHeight, Maker maker){
+    private void setMakerDataInViews(Maker maker) {
+        if (maker.getMakerWikiDescription() != null) {
+            maker_description.setVisibility(View.VISIBLE);
+            wikipedia.setVisibility(View.VISIBLE);
+
+            maker_description.setText(maker.getMakerWikiDescription());
+            Paint paint = new Paint();
+            paint.setTextSize(getContext().getResources().getDimension(R.dimen.text_size_maker_description));
+            float widthText = paint.measureText(maker_description.getText().toString());
+            float numLines = (float) ((widthText/displayWidth) * 1.2);
+            if (numLines > 3) { read_more.setVisibility(View.VISIBLE); } else { read_more.setVisibility(View.GONE); }
+        } else {
+            maker_description.setVisibility(View.GONE);
+            wikipedia.setVisibility(View.GONE);
+            read_more.setVisibility(View.GONE);
+        }
+
+        makerWikiImageUrl = "";
+        if(maker.getMakerWikiImageUrl() != null && maker.getMakerWikiImageUrl().length() > 0) {
+            makerWikiImageUrl = maker.getMakerWikiImageUrl();
+            Picasso.get().load(maker.getMakerWikiImageUrl()).placeholder(R.color.colorSilver).into(maker_image);
+        }
+
+        if(maker.isLiked()) maker_like.setImageResource(R.drawable.ic_favorite_red_100dp);
+        else maker_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
+        maker_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+        String artCount = getContext().getResources().getString(R.string.artworks_count) +" "+ maker.getArtCount();
+        art_count.setText(artCount);
+
+        makerWikiPageUrl = maker.getMakerWikiPageUrl();
+    }
+
+
+    private void initRecyclerView(final MakerViewModel makerViewModel, int displayWidth, int displayHeight, int spanCount){
 
         MakerAdapter.OnArtClickListener onArtClickListener = new MakerAdapter.OnArtClickListener() {
 
@@ -238,41 +417,10 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
                 }
             }
 
-            @Override
-            public void onMakerLikeClick(Maker maker) {
-                //Maker maker = new Maker (artMaker, artistBio, artistImageUrl, artHeaderImageUrl, artWidth, artHeight);
-                boolean networkState = MakerFragment.this.makerViewModel.likeMaker (maker, preferences.getString(Constants.USER_UNIQUE_ID,""));
-                if (!networkState) {
-                    Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onMakerShareClick(String makerName, String makerBio, String makerWikiPageUrl, String artHeaderImageUrl) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                String text;
-                if (makerWikiPageUrl != null) {
-                    text = makerName+" - "+makerBio + System.getProperty ("line.separator") + makerWikiPageUrl;
-                } else {
-                    text = makerName+" - "+makerBio + System.getProperty ("line.separator") + artHeaderImageUrl;
-                }
-                //String text = art.getArtLink();
-                sendIntent.putExtra(Intent.EXTRA_TEXT, text);
-                sendIntent.setType("text/plain");
-                Intent shareIntent = Intent.createChooser(sendIntent, null);
-                startActivity(shareIntent);
-            }
-
-            @Override
-            public void onMakerWikiClick(String makerWikiPageUrl) {
-                makerEventListener.makerWikiClick(makerWikiPageUrl);
-            }
-
         };
 
-        makerAdapter = new MakerAdapter(makerViewModel,getContext(), onArtClickListener, displayWidth, displayHeight, maker);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        makerAdapter = new MakerAdapter(makerViewModel, getContext(), onArtClickListener, displayWidth, displayHeight, spanCount);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
         makerRecyclerView.setLayoutManager(layoutManager);
         makerRecyclerView.setAdapter(makerAdapter);
     }
@@ -296,10 +444,13 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
 
     private void showProgressBar(){
         makerProgressBar.setVisibility(View.VISIBLE);
+        //coordinator.setVisibility(View.GONE);
     }
 
     private void hideProgressBar(){
         makerProgressBar.setVisibility(View.GONE);
+        coordinator.setVisibility(View.VISIBLE);
+
     }
 
     private void showText(){

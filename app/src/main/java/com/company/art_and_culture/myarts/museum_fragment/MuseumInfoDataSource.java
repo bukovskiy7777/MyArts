@@ -23,6 +23,7 @@ public class MuseumInfoDataSource {
     private String artProviderId;
     private MutableLiveData<ArtProvider> artProvider = new MutableLiveData<>();
     private MutableLiveData<ArrayList<Maker>> listMakers = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isLiked = new MutableLiveData<>();
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
     public MuseumInfoDataSource(Application application, String museumId) {
@@ -60,6 +61,14 @@ public class MuseumInfoDataSource {
 
     private void updateMakersList(ArrayList<Maker> listMakers) {
         this.listMakers.postValue(listMakers);
+    }
+
+    private void updateArtProviderLike(boolean liked) {
+        isLiked.postValue(liked);
+    }
+
+    public LiveData<Boolean> getArtProviderLike() {
+        return isLiked;
     }
 
     private void updateIsLoadingState(Boolean state) {
@@ -142,7 +151,7 @@ public class MuseumInfoDataSource {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
-                        updateArtProvider(resp.getArtProvider());
+                        updateArtProviderLike(resp.getArtProvider().isLiked());
 
                     } else { }
                 } else { }

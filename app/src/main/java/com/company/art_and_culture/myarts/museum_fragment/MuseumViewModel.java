@@ -21,6 +21,7 @@ public class MuseumViewModel extends AndroidViewModel {
     private LiveData<Boolean> isLoading;
     private LiveData<Boolean> isListEmpty;
     private LiveData<ArtProvider> artProvider;
+    private LiveData<Boolean> isLiked;
     private LiveData<ArrayList<Maker>> listMakers;
     private MuseumRepository museumRepository;
     private android.content.res.Resources res;
@@ -53,6 +54,10 @@ public class MuseumViewModel extends AndroidViewModel {
         return listMakers;
     }
 
+    public LiveData<Boolean> getArtProviderLike() {
+        return isLiked;
+    }
+
     public void writeDimentionsOnServer(Art art) {
         museumRepository.writeDimentionsOnServer(art);
     }
@@ -70,6 +75,7 @@ public class MuseumViewModel extends AndroidViewModel {
             isListEmpty = museumRepository.getIsListEmpty();
             artProvider = museumRepository.getArtProvider();
             listMakers = museumRepository.getListMakers();
+            isLiked = museumRepository.getArtProviderLike();
         } else
             museumRepository.setArtProviderId(artProviderId);
     }

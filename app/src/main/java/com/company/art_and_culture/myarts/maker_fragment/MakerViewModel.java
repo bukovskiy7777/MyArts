@@ -17,10 +17,11 @@ public class MakerViewModel extends AndroidViewModel {
     private LiveData<PagedList<Art>> artList;
     private LiveData<Boolean> isLoading;
     private LiveData<Boolean> isListEmpty;
+    private LiveData<Boolean> isMakerLiked;
     private MakerRepository makerRepository;
     private android.content.res.Resources res;
     private Application application;
-    private LiveData<Maker> maker, makerFirstTime;
+    private LiveData<Maker> maker;
 
     public MakerViewModel(@NonNull Application application) {
         super(application);
@@ -41,12 +42,12 @@ public class MakerViewModel extends AndroidViewModel {
         return isListEmpty;
     }
 
-    public LiveData<Maker> getMaker() {
-        return maker;
+    public LiveData<Boolean> getIsMakerLiked() {
+        return isMakerLiked;
     }
 
-    public LiveData<Maker> getMakerFirstTime() {
-        return makerFirstTime;
+    public LiveData<Maker> getMaker() {
+        return maker;
     }
 
     public boolean likeArt(Art art, int position, String userUniqueId) {
@@ -69,8 +70,8 @@ public class MakerViewModel extends AndroidViewModel {
         artList = makerRepository.getArtList();
         isLoading = makerRepository.getIsLoading();
         isListEmpty = makerRepository.getIsListEmpty();
+        isMakerLiked = makerRepository.getIsMakerLiked();
         maker = makerRepository.getMaker();
-        makerFirstTime = makerRepository.getMakerFirstTime();
     }
 
     public boolean likeMaker(Maker maker, String userUniqueId) {
