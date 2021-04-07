@@ -38,7 +38,7 @@
       <TextView
           android:id="@+id/maker_name"
           android:layout_marginLeft="10dp"
-          android:layout_marginRight="5dp"
+          android:layout_marginRight="16dp"
           android:layout_marginTop="10dp"
           android:gravity="left"
           android:maxLines="2"
@@ -56,7 +56,7 @@
       <TextView
           android:id="@+id/maker_bio"
           android:layout_marginLeft="10dp"
-          android:layout_marginRight="5dp"
+          android:layout_marginRight="16dp"
           android:layout_marginTop="5dp"
           android:gravity="left"
           android:maxLines="2"
@@ -143,13 +143,53 @@
           app:layout_constraintTop_toBottomOf="@+id/maker_description" />
 
       <TextView
-          android:id="@+id/art_count"
+          android:id="@+id/art_tags"
           android:layout_marginLeft="16dp"
-          android:layout_marginTop="30dp"
+          android:layout_marginTop="26dp"
           android:gravity="left"
           android:maxLines="1"
           android:ellipsize="end"
           app:layout_constraintTop_toBottomOf="@+id/wikipedia"
+          app:layout_constraintLeft_toLeftOf="parent"
+          android:textColor="@color/colorBlack"
+          android:textSize="18sp"
+          android:fontFamily="@string/font_sans_serif_light"
+          android:text="@string/art_tags"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"/>
+
+      <TextView
+          android:id="@+id/tags_clear"
+          android:layout_marginRight="16dp"
+          android:layout_marginLeft="16dp"
+          android:gravity="right"
+          android:maxLines="1"
+          android:ellipsize="end"
+          app:layout_constraintBottom_toBottomOf="@+id/art_tags"
+          app:layout_constraintRight_toRightOf="parent"
+          android:textColor="@color/colorText"
+          android:fontFamily="@string/font_sans_serif"
+          android:textSize="15sp"
+          android:text="@string/clear_filter"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"/>
+
+      <androidx.recyclerview.widget.RecyclerView
+          app:layout_constraintTop_toBottomOf="@+id/art_tags"
+          android:layout_marginLeft="16dp"
+          android:layout_marginRight="16dp"
+          android:id="@+id/recycler_view_keywords"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"/>
+
+      <TextView
+          android:id="@+id/art_count"
+          android:layout_marginLeft="16dp"
+          android:layout_marginTop="26dp"
+          android:gravity="left"
+          android:maxLines="1"
+          android:ellipsize="end"
+          app:layout_constraintTop_toBottomOf="@+id/recycler_view_keywords"
           app:layout_constraintLeft_toLeftOf="parent"
           android:textColor="@color/colorBlack"
           android:textSize="18sp"

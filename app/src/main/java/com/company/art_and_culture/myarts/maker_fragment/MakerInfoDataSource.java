@@ -5,9 +5,12 @@ import android.app.Application;
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.bottom_menu.favorites.Artists.ArtistsRepository;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
+import com.company.art_and_culture.myarts.pojo.FilterObject;
 import com.company.art_and_culture.myarts.pojo.Maker;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
+
+import java.util.ArrayList;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -19,26 +22,68 @@ public class MakerInfoDataSource {
 
     private Application application;
     private Maker artMaker;
+    private FilterObject filterObject;
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Boolean> isMakerLiked = new MutableLiveData<>();
     private MutableLiveData<Maker> maker = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<FilterObject>> keywords = new MutableLiveData<>();
+    private MutableLiveData<Integer> artCountMaker = new MutableLiveData<>();
 
-    public MakerInfoDataSource(Application application, Maker artMaker) {
+    public MakerInfoDataSource(Application application, Maker artMaker, FilterObject filterObject) {
         this.artMaker = artMaker;
         this.application = application;
+        this.filterObject = filterObject;
         updateIsLoadingState(true);
         loadMakerInfo();
+        //loadMakerKeywords();
+        //loadArtsCountMaker(filterObject);
     }
 
     public void refresh() {
         updateIsLoadingState(true);
         loadMakerInfo();
+        //loadMakerKeywords();
+        //loadArtsCountMaker(filterObject);
+        loadArtsCountMakerByKeyword(filterObject);
     }
-
+/*
     public void setArtMaker(Maker artMaker) {
         this.artMaker = artMaker;
         updateIsLoadingState(true);
         loadMakerInfo();
+        //loadMakerKeywords();
+        //loadArtsCountMaker(filterObject);
+    }
+*/
+    public void makerTagClick(FilterObject filterObject) {
+        this.filterObject = filterObject;
+        loadArtsCountMakerByKeyword(filterObject);
+    }
+
+    private void loadArtsCountMakerByKeyword(FilterObject filterObject) {
+
+        ServerRequest request = new ServerRequest();
+        request.setMakerFilter(artMaker.getArtMaker());
+        request.setKeywordFilter(filterObject.getText());
+        request.setKeywordType(filterObject.getType());
+        request.setOperation(Constants.GET_ARTS_COUNT_MAKER_BY_KEYWORD);
+
+        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
+        response.enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+
+                if (response.isSuccessful()) {
+                    ServerResponse resp = response.body();
+                    if(resp.getResult().equals(Constants.SUCCESS)) {
+
+                        updateArtCountMaker(resp.getArtCount());
+                    } else { }
+                } else { }
+            }
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) { }
+        });
     }
 
     private void loadMakerInfo() {
@@ -61,6 +106,7 @@ public class MakerInfoDataSource {
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
                         updateArtMaker(resp.getArtMaker());
+                        updateMakerKeywords(resp.getListKeywordFilters());
                     } else { }
                 } else { }
             }
@@ -110,6 +156,14 @@ public class MakerInfoDataSource {
         maker.postValue(artMaker);
     }
 
+    private void updateMakerKeywords(ArrayList<FilterObject> listKeywordFilters) {
+        keywords.postValue(listKeywordFilters);
+    }
+
+    private void updateArtCountMaker(int artCount) {
+        artCountMaker.postValue(artCount);
+    }
+
     public MutableLiveData<Maker> getMaker() {
         return maker;
     }
@@ -121,4 +175,13 @@ public class MakerInfoDataSource {
     public LiveData<Boolean> getIsMakerLiked() {
         return isMakerLiked;
     }
+
+    public LiveData<ArrayList<FilterObject>> getMakerKeywords() {
+        return keywords;
+    }
+
+    public LiveData<Integer> getArtCountMaker() {
+        return artCountMaker;
+    }
+
 }

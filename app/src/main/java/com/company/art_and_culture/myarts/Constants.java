@@ -51,6 +51,7 @@ public class Constants {
     public static final String GET_ARTS_LIST_MUSEUM_OPERATION = "getArtsListMuseum";
     public static final String GET_MUSEUM_MAKERS_LIST_OPERATION = "getMuseumMakersList";
     public static final String MUSEUM_LIKE_OPERATION = "museumLike";
+    public static final String GET_ARTS_COUNT_MAKER_BY_KEYWORD = "getArtCountMakerByKeyword";
 
 
 

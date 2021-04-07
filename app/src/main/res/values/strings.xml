@@ -53,7 +53,7 @@
     <string name="filters_">Filters:</string>
     <string name="centuries">Centuries</string>
     <string name="keywords">Keywords</string>
-    <string name="clear">Clear</string>
+    <string name="clear_filter">Clear filter</string>
     <string name="century">-century</string>
     <string name="search_artists">Search artists</string>
     <string name="search_keywords">Search keywords</string>

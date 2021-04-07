@@ -29,6 +29,7 @@ import com.company.art_and_culture.myarts.ImageDownloader;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.FilterObject;
 import com.company.art_and_culture.myarts.pojo.Maker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
@@ -45,6 +46,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
@@ -61,7 +63,9 @@ import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations
 public class MakerFragment extends Fragment implements ImageDownloader.IDownLoadResult, View.OnClickListener, View.OnTouchListener {
 
     private MakerViewModel makerViewModel;
-    private RecyclerView makerRecyclerView;
+    private RecyclerView makerRecyclerView, recycler_view_keywords;
+    private KeywordAdapter.OnFilterClickListener onKeywordClickListener;
+    private KeywordAdapter keywordAdapter;
     private MakerAdapter makerAdapter;
     private MakerEventListener makerEventListener;
     private CoordinatorLayout coordinator;
@@ -75,43 +79,19 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
     private ConstraintLayout download_linear;
     private SharedPreferences preferences;
     private ImageView art_image_header, maker_image;
-    private TextView maker_name, maker_bio, maker_description, read_more, wikipedia, art_count;
+    private TextView maker_name, maker_bio, maker_description, read_more, wikipedia, art_count, art_tags, tags_clear;
     private ImageButton maker_like, maker_share, arts_in_list, arts_in_columns;
     private String makerWikiImageUrl, makerWikiPageUrl;
     private FloatingActionButton floating_button;
     private int displayWidth, displayHeight;
     private int spanCount = 1;
+    private String keyword;
+    private ArrayList<FilterObject> listKeywordFilters = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_art_maker, container, false);
-        makerRecyclerView = root.findViewById(R.id.recycler_view_maker);
-        coordinator = root.findViewById(R.id.coordinator);
-        textView = root.findViewById(R.id.text_maker);
-        makerProgressBar = root.findViewById(R.id.progress_bar_maker);
-        art_image_header = root.findViewById(R.id.art_image_header);
-        maker_image = root.findViewById(R.id.maker_image);
-        maker_name = root.findViewById(R.id.maker_name);
-        maker_bio = root.findViewById(R.id.maker_bio);
-        maker_description = root.findViewById(R.id.maker_description);
-        maker_like = root.findViewById(R.id.maker_like);
-        maker_share = root.findViewById(R.id.maker_share);
-        read_more = root.findViewById(R.id.read_more);
-        wikipedia = root.findViewById(R.id.wikipedia);
-        art_count = root.findViewById(R.id.art_count);
-        floating_button = root.findViewById(R.id.floating_button);
-        arts_in_list = root.findViewById(R.id.arts_in_list);
-        arts_in_columns = root.findViewById(R.id.arts_in_columns);
-        arts_in_list.setOnClickListener(this);
-        arts_in_columns.setOnClickListener(this);
-        floating_button.setOnClickListener(this);
-        maker_like.setOnClickListener(this);
-        maker_share.setOnClickListener(this);
-        read_more.setOnClickListener(this);
-        read_more.setVisibility(View.GONE);
-        wikipedia.setOnClickListener(this);
-        wikipedia.setOnTouchListener(this);
-        wikipedia.setVisibility(View.GONE);
+        initViews(root);
 
         makerViewModel = new ViewModelProvider(this).get(MakerViewModel.class);
 
@@ -129,8 +109,11 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
         } else {
             makerViewModel.setArtMaker(maker);
             makerViewModel.setActivity(activity);
+            FilterObject filterObject = makerViewModel.getFilterObject();
+            if(filterObject != null) keyword = filterObject.getText();
 
             initRecyclerView(makerViewModel, displayWidth, displayHeight, spanCount);
+            initTagsRecyclerView();
             subscribeObserverMakerData();
             subscribeObserverArtsData();
             initDownloadViews(root);
@@ -146,6 +129,57 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
         coordinator.setVisibility(View.GONE);
 
         return root;
+    }
+
+    private void initTagsRecyclerView() {
+        onKeywordClickListener = (filterObject, position) -> {
+
+            if(keyword == null || !keyword.equals(filterObject.getText())) {
+
+                boolean networkState = makerViewModel.makerTagClick(filterObject);
+                if (!networkState) Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_SHORT).show();
+                keyword = filterObject.getText();
+                tags_clear.setVisibility(View.VISIBLE);
+            }
+        };
+        keywordAdapter = new KeywordAdapter(getContext(), onKeywordClickListener);
+        recycler_view_keywords.setAdapter(keywordAdapter);
+    }
+
+    private void initViews(View root) {
+        makerRecyclerView = root.findViewById(R.id.recycler_view_maker);
+        recycler_view_keywords = root.findViewById(R.id.recycler_view_keywords);
+        coordinator = root.findViewById(R.id.coordinator);
+        textView = root.findViewById(R.id.text_maker);
+        tags_clear = root.findViewById(R.id.tags_clear);
+        tags_clear.setVisibility(View.GONE);
+        art_tags = root.findViewById(R.id.art_tags);
+        art_tags.setVisibility(View.GONE);
+        makerProgressBar = root.findViewById(R.id.progress_bar_maker);
+        art_image_header = root.findViewById(R.id.art_image_header);
+        maker_image = root.findViewById(R.id.maker_image);
+        maker_name = root.findViewById(R.id.maker_name);
+        maker_bio = root.findViewById(R.id.maker_bio);
+        maker_description = root.findViewById(R.id.maker_description);
+        maker_like = root.findViewById(R.id.maker_like);
+        maker_share = root.findViewById(R.id.maker_share);
+        read_more = root.findViewById(R.id.read_more);
+        wikipedia = root.findViewById(R.id.wikipedia);
+        art_count = root.findViewById(R.id.art_count);
+        floating_button = root.findViewById(R.id.floating_button);
+        arts_in_list = root.findViewById(R.id.arts_in_list);
+        arts_in_columns = root.findViewById(R.id.arts_in_columns);
+        arts_in_list.setOnClickListener(this);
+        arts_in_columns.setOnClickListener(this);
+        tags_clear.setOnClickListener(this);
+        floating_button.setOnClickListener(this);
+        maker_like.setOnClickListener(this);
+        maker_share.setOnClickListener(this);
+        read_more.setOnClickListener(this);
+        read_more.setVisibility(View.GONE);
+        wikipedia.setOnClickListener(this);
+        wikipedia.setOnTouchListener(this);
+        wikipedia.setVisibility(View.GONE);
     }
 
     private void setMakerInfo(Maker maker) {
@@ -236,6 +270,22 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
             AnimatorSet set = new AnimatorSet();
             set.playSequentially(scaleUp(arts_in_columns), scaleDown(arts_in_columns));
             set.start();
+
+        } else if(v.getId() == tags_clear.getId()) {
+            if (keyword != null) {
+                if(keyword.length() > 0) {
+
+                    makerViewModel.makerTagClick(new FilterObject("", false, ""));
+                    keyword = "";
+                    tags_clear.setVisibility(View.GONE);
+                    for (int i = 0; i < listKeywordFilters.size(); i++) {
+                        if (listKeywordFilters.get(i).isChosen()) listKeywordFilters.get(i).setChosen(false);
+                    }
+                    keywordAdapter.clearItems();
+                    keywordAdapter.setItems(listKeywordFilters);
+
+                }
+            }
         }
     }
 
@@ -301,9 +351,10 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
         makerViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), aBoolean -> {
             if (aBoolean) { showText(); } else { hideText(); }
         });
-        makerViewModel.getMaker().observe(getViewLifecycleOwner(), maker -> {
-
-            setMakerDataInViews(maker);
+        makerViewModel.getMaker().observe(getViewLifecycleOwner(), this::setMakerDataInViews);
+        makerViewModel.getArtCountMaker().observe(getViewLifecycleOwner(), artCountMaker -> {
+            String artCount = getContext().getResources().getString(R.string.artworks_count) +" "+ artCountMaker;
+            art_count.setText(artCount);
         });
         makerViewModel.getIsMakerLiked().observe(getViewLifecycleOwner(), isLiked -> {
 
@@ -314,7 +365,43 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
             set.playSequentially(likeFadeIn(maker_like), likeScaleDown(maker_like));
             set.start();
         });
+        makerViewModel.getMakerKeywords().observe(getViewLifecycleOwner(), this::setListKeywordsInViews);
 
+    }
+
+    private void setListKeywordsInViews(ArrayList<FilterObject> listKeywords) {
+        if (listKeywords == null) {
+            keywordAdapter.clearItems();
+            art_tags.setVisibility(View.GONE);
+        } else {
+            int spanCount = 3;
+            if(listKeywords.size() < 5) spanCount = 1;
+            else if(listKeywords.size() < 10) spanCount = 2;
+            RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.HORIZONTAL);
+            recycler_view_keywords.setLayoutManager(layoutManager);
+
+            int position = -1;
+            listKeywordFilters.clear();
+            for (FilterObject filter : listKeywords) {
+                if (keyword != null && keyword.toUpperCase().equals(filter.getText().toUpperCase())) {
+                    position = listKeywords.indexOf(filter);
+                    listKeywordFilters.add(new FilterObject(filter.getText(), true, filter.getType()));
+                } else
+                    listKeywordFilters.add(new FilterObject(filter.getText(), false, filter.getType()));
+            }
+            keywordAdapter.clearItems();
+            keywordAdapter.setItems(listKeywordFilters);
+
+            if(position >= 0) {
+                recycler_view_keywords.scrollToPosition(position);
+                tags_clear.setVisibility(View.VISIBLE);
+            }
+            if(listKeywords.size() == 0) {
+                art_tags.setVisibility(View.GONE);
+            }else {
+                art_tags.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     private void subscribeObserverArtsData(){
@@ -351,12 +438,13 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
         else maker_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
         maker_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-        String artCount = getContext().getResources().getString(R.string.artworks_count) +" "+ maker.getArtCount();
-        art_count.setText(artCount);
+        if(keyword == null || keyword.length() == 0) {
+            String artCount = getContext().getResources().getString(R.string.artworks_count) +" "+ maker.getArtCount();
+            art_count.setText(artCount);
+        }
 
         makerWikiPageUrl = maker.getMakerWikiPageUrl();
     }
-
 
     private void initRecyclerView(final MakerViewModel makerViewModel, int displayWidth, int displayHeight, int spanCount){
 

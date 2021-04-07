@@ -5,7 +5,10 @@ import android.app.Application;
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.FilterObject;
 import com.company.art_and_culture.myarts.pojo.Maker;
+
+import java.util.ArrayList;
 
 import androidx.lifecycle.LiveData;
 import androidx.paging.LivePagedListBuilder;
@@ -20,6 +23,7 @@ public class MakerRepository {
     private MakerDataSourceFactory makerDataSourceFactory;
     private Maker artMaker;
     private Application application;
+    private FilterObject filterObject;
 
 
     public static MakerRepository getInstance(Application application, Maker artMaker){
@@ -39,12 +43,12 @@ public class MakerRepository {
                 .setPageSize(Constants.PAGE_SIZE)
                 .setInitialLoadSizeHint(Constants.PAGE_SIZE)
                 .build();
-        makerDataSourceFactory = new MakerDataSourceFactory(application, artMaker);
+        makerDataSourceFactory = new MakerDataSourceFactory(application, artMaker, new FilterObject("", false, ""));
         artList = new LivePagedListBuilder<>(makerDataSourceFactory, config).build();
 
         makerDataSource = (MakerDataSource) makerDataSourceFactory.create();//if remove this line artLike will not working after refresh
 
-        makerInfoDataSource = new MakerInfoDataSource(application, artMaker);
+        makerInfoDataSource = new MakerInfoDataSource(application, artMaker, new FilterObject("", false, ""));
     }
 
     public LiveData<PagedList<Art>> getArtList(){
@@ -67,6 +71,29 @@ public class MakerRepository {
         return makerInfoDataSource.getMaker();
     }
 
+    public LiveData<Integer> getArtCountMaker() {
+        return makerInfoDataSource.getArtCountMaker();
+    }
+
+    public LiveData<ArrayList<FilterObject>> getMakerKeywords() {
+        return makerInfoDataSource.getMakerKeywords();
+    }
+
+    public FilterObject getFilterObject() {
+        return filterObject;
+    }
+
+    public boolean makerTagClick(FilterObject filterObject) {
+        this.filterObject = filterObject;
+
+        boolean isConnected = makerDataSource.isNetworkAvailable();
+        if (isConnected){
+            makerDataSourceFactory.makerTagClick(filterObject);
+            makerInfoDataSource.makerTagClick(filterObject);
+        }
+        return isConnected;
+    }
+
     public boolean likeArt(Art art, int position, String userUniqueId) {
 
         boolean isConnected = makerDataSource.isNetworkAvailable();
@@ -86,7 +113,7 @@ public class MakerRepository {
     }
 
     public MakerRepository setArtMaker(Maker artMaker) {
-        makerInfoDataSource.setArtMaker(artMaker);
+        //makerInfoDataSource.setArtMaker(artMaker);
         makerDataSourceFactory.setArtMaker(artMaker);
         instance = new MakerRepository(application, artMaker);
 

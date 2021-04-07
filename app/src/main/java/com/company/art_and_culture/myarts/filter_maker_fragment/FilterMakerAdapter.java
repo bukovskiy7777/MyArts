@@ -45,7 +45,7 @@ public class FilterMakerAdapter extends PagedListAdapter<Maker, FilterMakerAdapt
     @NonNull
     @Override
     public FilterMakerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_filter_maker, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_maker_filter, parent, false);
         return new FilterMakerViewHolder(view);
     }
 

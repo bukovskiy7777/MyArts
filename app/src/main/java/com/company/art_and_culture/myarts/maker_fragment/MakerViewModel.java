@@ -4,7 +4,10 @@ import android.app.Application;
 
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.FilterObject;
 import com.company.art_and_culture.myarts.pojo.Maker;
+
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -22,6 +25,8 @@ public class MakerViewModel extends AndroidViewModel {
     private android.content.res.Resources res;
     private Application application;
     private LiveData<Maker> maker;
+    private LiveData<ArrayList<FilterObject>> keywords;
+    private LiveData<Integer> artCountMaker;
 
     public MakerViewModel(@NonNull Application application) {
         super(application);
@@ -50,9 +55,27 @@ public class MakerViewModel extends AndroidViewModel {
         return maker;
     }
 
+    public LiveData<ArrayList<FilterObject>> getMakerKeywords() {
+        return keywords;
+    }
+
+    public LiveData<Integer> getArtCountMaker() {
+        return artCountMaker;
+    }
+
     public boolean likeArt(Art art, int position, String userUniqueId) {
         return makerRepository.likeArt (art, position, userUniqueId);
     }
+
+    public boolean makerTagClick(FilterObject filterObject) {
+        return makerRepository.makerTagClick (filterObject);
+    }
+
+
+    public FilterObject getFilterObject() {
+        return makerRepository.getFilterObject();
+    }
+
 
     public boolean refresh() {
         return makerRepository.refresh();
@@ -72,6 +95,8 @@ public class MakerViewModel extends AndroidViewModel {
         isListEmpty = makerRepository.getIsListEmpty();
         isMakerLiked = makerRepository.getIsMakerLiked();
         maker = makerRepository.getMaker();
+        keywords = makerRepository.getMakerKeywords();
+        artCountMaker = makerRepository.getArtCountMaker();
     }
 
     public boolean likeMaker(Maker maker, String userUniqueId) {

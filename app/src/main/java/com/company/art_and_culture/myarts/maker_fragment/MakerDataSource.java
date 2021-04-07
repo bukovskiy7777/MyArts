@@ -9,6 +9,7 @@ import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.FilterObject;
 import com.company.art_and_culture.myarts.pojo.Maker;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
@@ -29,10 +30,12 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
     private Application application;
     private Maker artMaker;
     private MainActivity activity;
+    private FilterObject filterObject;
 
-    public MakerDataSource(Application application, Maker artMaker) {
+    public MakerDataSource(Application application, Maker artMaker, FilterObject filterObject) {
         this.application = application;
         this.artMaker = artMaker;
+        this.filterObject = filterObject;
     }
 
     @Override
@@ -48,6 +51,8 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
         ServerRequest request = new ServerRequest();
         request.setMakerFilter(artMaker.getArtMaker());
         request.setPageNumber(1);
+        request.setKeywordFilter(filterObject.getText());
+        request.setKeywordType(filterObject.getType());
         request.setUserUniqueId(userUniqueId);
         request.setOperation(Constants.GET_ARTS_LIST_MAKER_OPERATION);
 
@@ -87,6 +92,8 @@ public class MakerDataSource extends PageKeyedDataSource<Integer, Art> {
         ServerRequest request = new ServerRequest();
         request.setMakerFilter(artMaker.getArtMaker());
         request.setPageNumber(params.key);
+        request.setKeywordFilter(filterObject.getText());
+        request.setKeywordType(filterObject.getType());
         request.setUserUniqueId(userUniqueId);
         request.setOperation(Constants.GET_ARTS_LIST_MAKER_OPERATION);
 

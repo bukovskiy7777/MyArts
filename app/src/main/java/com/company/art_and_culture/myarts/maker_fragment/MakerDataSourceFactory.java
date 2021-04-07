@@ -3,6 +3,7 @@ package com.company.art_and_culture.myarts.maker_fragment;
 import android.app.Application;
 
 import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.FilterObject;
 import com.company.art_and_culture.myarts.pojo.Maker;
 
 import androidx.annotation.NonNull;
@@ -15,20 +16,22 @@ public class MakerDataSourceFactory extends DataSource.Factory<Integer, Art> {
     private MutableLiveData<PageKeyedDataSource<Integer, Art>> makerDataSourceMutableLiveData = new MutableLiveData<>();
     private Application application;
     private Maker artMaker;
+    private FilterObject filterObject;
     private MakerDataSource makerDataSource;
 
 
-    public MakerDataSourceFactory(Application application, Maker artMaker) {
+    public MakerDataSourceFactory(Application application, Maker artMaker, FilterObject filterObject) {
         this.application = application;
         this.artMaker = artMaker;
-        makerDataSource = new MakerDataSource(application, artMaker);
+        this.filterObject = filterObject;
+        makerDataSource = new MakerDataSource(application, artMaker, filterObject);
     }
 
     @NonNull
     @Override
     public DataSource<Integer, Art> create() {
 
-        if (makerDataSource.isInvalid()) makerDataSource = new MakerDataSource(application, artMaker);
+        if (makerDataSource.isInvalid()) makerDataSource = new MakerDataSource(application, artMaker, filterObject);
         makerDataSourceMutableLiveData.postValue(makerDataSource);
 
         return makerDataSource;
@@ -47,4 +50,8 @@ public class MakerDataSourceFactory extends DataSource.Factory<Integer, Art> {
         makerDataSource.refresh();
     }
 
+    public void makerTagClick(FilterObject filterObject) {
+        this.filterObject = filterObject;
+        makerDataSource.refresh();
+    }
 }
