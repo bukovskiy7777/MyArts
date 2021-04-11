@@ -13,16 +13,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.paging.PagedListAdapter;
+import androidx.recyclerview.widget.DiffUtil;
+
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.bottom_menu.home.LifecycleViewHolder;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-
-import androidx.annotation.NonNull;
-import androidx.paging.PagedListAdapter;
-import androidx.recyclerview.widget.DiffUtil;
 
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeFadeIn;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeScaleDown;
@@ -35,7 +35,7 @@ public class MakerAdapter extends PagedListAdapter<Art, LifecycleViewHolder> {
     private OnArtClickListener onArtClickListener;
     private int displayWidth, displayHeight;
     private MakerViewModel makerViewModel;
-    private double k = 0.4;
+    //private double k = 0.4;
     private int spanCount;
     private int lastPosition = -1;
 
@@ -131,6 +131,9 @@ public class MakerAdapter extends PagedListAdapter<Art, LifecycleViewHolder> {
         private final Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                int imgWidth = displayWidth;
+                int imgHeight = (bitmap.getHeight() * imgWidth) / bitmap.getWidth();
+                art_image.getLayoutParams().height = Math.min(imgHeight, art_image.getMaxHeight());
 
                 art.setArtWidth(bitmap.getWidth());
                 art.setArtHeight(bitmap.getHeight());
@@ -158,8 +161,8 @@ public class MakerAdapter extends PagedListAdapter<Art, LifecycleViewHolder> {
             art_download.setOnClickListener(this);
             art_like.setOnClickListener(this);
 
-            art_image.getLayoutParams().height = (int) (displayWidth * k);
-            art_image.getLayoutParams().width = (int) (displayWidth * k);
+            //art_image.getLayoutParams().height = (int) (displayWidth * k);
+            //art_image.getLayoutParams().width = (int) (displayWidth * k);
         }
 
         void bind(final Art art, final int position) {
@@ -180,8 +183,10 @@ public class MakerAdapter extends PagedListAdapter<Art, LifecycleViewHolder> {
             if (art.getArtWidth() > 0) {
                 int imgWidth = displayWidth;
                 int imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
+                art_image.getLayoutParams().height = Math.min(imgHeight, art_image.getMaxHeight());
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image);
             } else {
+                art_image.getLayoutParams().height = displayWidth;
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target);
             }
 

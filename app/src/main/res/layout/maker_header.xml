@@ -2,7 +2,7 @@
 <com.google.android.material.appbar.CollapsingToolbarLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:minHeight="44dp"
+    android:minHeight="48dp"
     android:fitsSystemWindows="false"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -19,9 +19,9 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:minHeight="200dp"
-          android:maxHeight="600dp"
+          android:maxHeight="500dp"
           android:adjustViewBounds="true"
-          android:scaleType="fitCenter"
+          android:scaleType="centerCrop"
           app:layout_constraintTop_toTopOf="parent" />
 
       <de.hdodenhof.circleimageview.CircleImageView
