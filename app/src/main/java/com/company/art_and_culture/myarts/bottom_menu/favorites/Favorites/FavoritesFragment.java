@@ -8,19 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.company.art_and_culture.myarts.MainActivity;
-import com.company.art_and_culture.myarts.R;
-import com.company.art_and_culture.myarts.pojo.Art;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -31,6 +23,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.company.art_and_culture.myarts.MainActivity;
+import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.pojo.Art;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+
 import static com.company.art_and_culture.myarts.bottom_menu.favorites.Favorites.FavoritesAnimations.scaleDown;
 import static com.company.art_and_culture.myarts.bottom_menu.favorites.Favorites.FavoritesAnimations.scaleUp;
 
@@ -38,6 +39,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
 
     private FavoritesViewModel favoritesViewModel;
     private TextView textView;
+    private FrameLayout sort_layout;
     private RecyclerView favoritesRecyclerView;
     private ProgressBar favoritesProgressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -60,15 +62,13 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
         favoritesRecyclerView = root.findViewById(R.id.recycler_view_favorites);
         favoritesProgressBar = root.findViewById(R.id.progress_bar_favorites);
         swipeRefreshLayout = root.findViewById(R.id.favorites_swipeRefreshLayout);
+        sort_layout = root.findViewById(R.id.sort_layout);
         favorites_sort_by = root.findViewById(R.id.favorites_sort_by);
         sort_by_century = root.findViewById(R.id.sort_by_century);
         sort_by_maker = root.findViewById(R.id.sort_by_maker);
         sort_by_date = root.findViewById(R.id.sort_by_date);
 
-        favorites_sort_by.setVisibility(View.GONE);
-        sort_by_century.setVisibility(View.GONE);
-        sort_by_maker.setVisibility(View.GONE);
-        sort_by_date.setVisibility(View.GONE);
+        sort_layout.setVisibility(View.GONE);
 
         sort_by_century.setOnClickListener(this);
         sort_by_maker.setOnClickListener(this);
@@ -161,15 +161,9 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
                     favoritesAdapter.clearItems();
                     favoritesAdapter.setItems(newList);
                     if (arts.size() > 0) {
-                        favorites_sort_by.setVisibility(View.VISIBLE);
-                        sort_by_century.setVisibility(View.VISIBLE);
-                        sort_by_maker.setVisibility(View.VISIBLE);
-                        sort_by_date.setVisibility(View.VISIBLE);
+                        sort_layout.setVisibility(View.VISIBLE);
                     } else {
-                        favorites_sort_by.setVisibility(View.GONE);
-                        sort_by_century.setVisibility(View.GONE);
-                        sort_by_maker.setVisibility(View.GONE);
-                        sort_by_date.setVisibility(View.GONE);
+                        sort_layout.setVisibility(View.GONE);
                     }
                 }
                 swipeRefreshLayout.setRefreshing(false);

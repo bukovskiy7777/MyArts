@@ -92,7 +92,7 @@
         </FrameLayout>
 
         <ProgressBar
-            android:layout_marginBottom="0dp"
+            android:layout_marginBottom="94dp"
             android:indeterminateTint="@color/colorBlue"
             android:id="@+id/progress_bar_folders"
             android:layout_width="wrap_content"
