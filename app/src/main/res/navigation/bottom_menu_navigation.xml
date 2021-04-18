@@ -119,10 +119,38 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.company.art_and_culture.myarts.bottom_menu.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_recommend"
+        android:name="com.company.art_and_culture.myarts.bottom_menu.recommendations.RecommendationsFragment"
+        android:label="@string/title_recommend"
+        tools:layout="@layout/fragment_recommendations" >
+        <action
+            android:id="@+id/action_navigation_recommend_to_searchFragment"
+            app:destination="@id/searchFragment"
+            app:enterAnim="@anim/enter_fade_in"
+            app:popExitAnim="@anim/exit_fade_out" />
+        <action
+            android:id="@+id/action_navigation_recommend_to_makerFragment"
+            app:destination="@id/makerFragment"
+            app:enterAnim="@anim/enter_from_bottom"
+            app:exitAnim="@anim/exit_to_top"
+            app:popEnterAnim="@anim/enter_from_top"
+            app:popExitAnim="@anim/exit_to_bottom" />
+        <action
+            android:id="@+id/action_navigation_recommend_to_artShowFragment"
+            app:destination="@id/artShowFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+        <action
+            android:id="@+id/action_navigation_recommend_to_artFilterFragment"
+            app:destination="@id/artFilterFragment"
+            app:enterAnim="@anim/enter_from_bottom"
+            app:exitAnim="@anim/exit_to_top"
+            app:popEnterAnim="@anim/enter_from_top"
+            app:popExitAnim="@anim/exit_to_bottom" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/makerFragment"

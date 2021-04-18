@@ -122,7 +122,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginRight="0dp"
             android:id="@+id/art_share"
-            android:background="@drawable/ic_share_black"
+            android:background="@drawable/ic_outline_share_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_width="26dp"

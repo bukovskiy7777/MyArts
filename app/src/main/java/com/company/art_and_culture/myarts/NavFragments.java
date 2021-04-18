@@ -3,6 +3,11 @@ package com.company.art_and_culture.myarts;
 import android.os.Bundle;
 import android.os.Handler;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+
 import com.company.art_and_culture.myarts.art_filter_fragment.ArtFilterFragment;
 import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
 import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
@@ -13,6 +18,7 @@ import com.company.art_and_culture.myarts.bottom_menu.favorites.BlankFragment;
 import com.company.art_and_culture.myarts.bottom_menu.favorites.Favorites.FavoritesFragment;
 import com.company.art_and_culture.myarts.bottom_menu.favorites.Folders.FoldersFragment;
 import com.company.art_and_culture.myarts.bottom_menu.home.HomeFragment;
+import com.company.art_and_culture.myarts.bottom_menu.recommendations.RecommendationsFragment;
 import com.company.art_and_culture.myarts.create_folder_fragment.CreateFolderFragment;
 import com.company.art_and_culture.myarts.filter_maker_fragment.FilterMakerFragment;
 import com.company.art_and_culture.myarts.maker_fragment.MakerFragment;
@@ -28,17 +34,12 @@ import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
-
 public class NavFragments implements
         HomeFragment.HomeEventListener, FavoritesFragment.FavoritesEventListener, SearchFragment.SearchEventListener,
         MakerFragment.MakerEventListener, ExploreFragment.ExploreEventListener, ArtFilterFragment.ArtFilterEventListener,
         ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener, FilterMakerFragment.FilterMakerEventListener,
         AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener, BlankFragment.BlankEventListener,
-        FoldersFragment.FoldersEventListener, ShowFolderFragment.ShowFolderEventListener, CreateFolderFragment.CreateFolderEventListener, MuseumFragment.MuseumEventListener {
+        FoldersFragment.FoldersEventListener, ShowFolderFragment.ShowFolderEventListener, CreateFolderFragment.CreateFolderEventListener, MuseumFragment.MuseumEventListener, RecommendationsFragment.RecommendationsEventListener {
 
     private NavController navController;
 
@@ -57,6 +58,8 @@ public class NavFragments implements
     private int filterMakerPosition = 0, dateMakerPosition = 0;
 
     private int homePosition = 0;
+
+    private int recommendPosition = 0;
 
     private int filterPositionForTagsFragment= 0;
 
@@ -77,7 +80,7 @@ public class NavFragments implements
             @Override
             public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
                 if(destination.getId() == R.id.navigation_home || destination.getId() == R.id.navigation_explore ||
-                        destination.getId() == R.id.navigation_favorites || destination.getId() == R.id.navigation_notifications) {
+                        destination.getId() == R.id.navigation_favorites || destination.getId() == R.id.navigation_recommend) {
                     mainActivity.setNavViewVisible();
                 } else {
                     mainActivity.goneNavView();
@@ -335,6 +338,32 @@ public class NavFragments implements
 
 
 
+    @Override
+    public void recommendationsArtClickEvent(Collection<Art> arts, int position) {
+        this.listArtsForArtShowFragment = arts;
+        this.clickPositionForArtShowFragment = position;
+        navController.navigate(R.id.action_navigation_recommend_to_artShowFragment);
+    }
+    @Override
+    public void recommendationsMakerClickEvent(Maker maker) {
+        this.makerForMakerFragment = maker;
+        navController.navigate(R.id.action_navigation_recommend_to_makerFragment);
+    }
+    @Override
+    public void recommendationsSearchClickEvent() {
+        navController.navigate(R.id.action_navigation_recommend_to_searchFragment);
+    }
+    @Override
+    public void recommendationsClassificationClickEvent(String artClassification, String queryType) {
+        this.keywordForArtFilterFragment = artClassification;
+        this.keywordTypeForArtFilterFragment = queryType;
+        navController.navigate(R.id.action_navigation_recommend_to_artFilterFragment);
+    }
+    @Override
+    public void recommendScrollEvent(int scrollPosition) {
+        this.recommendPosition = scrollPosition;
+    }
+
     public Collection<Art> getListArtsForArtShowFragment() {
         return listArtsForArtShowFragment;
     }
@@ -396,4 +425,8 @@ public class NavFragments implements
     }
 
     public String getArtProviderIdForMuseumFragment() { return artProviderIdForMuseumFragment; }
+
+    public int getRecommendPosition() {
+        return recommendPosition;
+    }
 }

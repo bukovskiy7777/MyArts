@@ -21,6 +21,7 @@ public class Art {
     private boolean isLiked;
     private String century;
     private String artistBio;
+    private String makerImgUrl;
 
     private boolean isChosenForAddToFolder = false;
     private ArrayList<String> listFoldersAdded = new ArrayList<>();
@@ -114,4 +115,7 @@ public class Art {
         return listFoldersAdded;
     }
 
+    public String getMakerImgUrl() {
+        return makerImgUrl;
+    }
 }
