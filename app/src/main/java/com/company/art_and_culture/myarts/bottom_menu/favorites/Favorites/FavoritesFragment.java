@@ -48,12 +48,13 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
     private FavoritesEventListener favoritesEventListener;
     private int spanCount = 3;
     private int displayWidth, displayHeight;
-    private ArrayList<Art> listArts = new ArrayList<>();
+    private ArrayList<Art> globalListArts = new ArrayList<>();
     private ImageButton sort_by_century, sort_by_maker, sort_by_date;
     private TextView favorites_sort_by;
     private MainActivity activity;
     public enum Sort {by_date, by_maker, by_century}
     private int sortDirection = 0;
+    private String filter = "";
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -132,40 +133,9 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
             @Override
             public void onChanged(ArrayList<Art> arts) {
 
-                if (arts == null) {
-                    favoritesAdapter.clearItems();
-                    listArts.clear();
-                    activity.postFavoritesArtsCount(listArts.size());
-                } else {
-
-                    ArrayList<Art> newList = new ArrayList<>(arts);
-                    if (favoritesAdapter.getSort_type().equals(Sort.by_century)) {
-                        Collections.sort(newList, new Comparator<Art>() {
-                            @Override
-                            public int compare(Art one, Art other) {
-                                return one.getCentury().compareTo(other.getCentury());
-                            }
-                        });
-                    } else if (favoritesAdapter.getSort_type().equals(Sort.by_maker)) {
-                        Collections.sort(newList, new Comparator<Art>() {
-                            @Override
-                            public int compare(Art one, Art other) {
-                                return one.getArtMaker().compareTo(other.getArtMaker());
-                            }
-                        });
-                    }
-
-                    setAnimationRecyclerView (newList);
-                    listArts = arts;
-                    activity.postFavoritesArtsCount(listArts.size());
-                    favoritesAdapter.clearItems();
-                    favoritesAdapter.setItems(newList);
-                    if (arts.size() > 0) {
-                        sort_layout.setVisibility(View.VISIBLE);
-                    } else {
-                        sort_layout.setVisibility(View.GONE);
-                    }
-                }
+                if(arts != null) globalListArts = arts;
+                activity.postFavoritesArtsCount(globalListArts.size());
+                setListArts(globalListArts);
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -181,6 +151,40 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
                 if (aBoolean) { showText(); } else { hideText(); }
             }
         });
+        if (activity != null) activity.getFavoritesFilter().observe(getViewLifecycleOwner(), s -> {
+            filter = s;
+            setListArts(globalListArts);
+        });
+
+    }
+
+    private void setListArts(ArrayList<Art> arts) {
+
+        ArrayList<Art> partialListArts = new ArrayList<>();
+        if(filter.length() > 0) {
+            for (Art art : arts) {
+                if (art.getArtTitle().toUpperCase().contains(filter.toUpperCase())
+                        || art.getArtMaker().toUpperCase().contains(filter.toUpperCase()))
+                    partialListArts.add(art);
+            }
+        } else {
+            partialListArts = arts;
+        }
+
+        if (partialListArts.size() == 0) {
+            favoritesAdapter.clearItems();
+            sort_layout.setVisibility(View.GONE);
+        } else {
+            if (favoritesAdapter.getSort_type().equals(Sort.by_century))
+                Collections.sort(partialListArts, (one, other) -> one.getCentury().compareTo(other.getCentury()));
+            else if (favoritesAdapter.getSort_type().equals(Sort.by_maker))
+                Collections.sort(partialListArts, (one, other) -> one.getArtMaker().compareTo(other.getArtMaker()));
+
+            setAnimationRecyclerView (partialListArts);
+            favoritesAdapter.clearItems();
+            favoritesAdapter.setItems(partialListArts);
+            sort_layout.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setAnimationRecyclerView(ArrayList<Art> arts) {
@@ -251,7 +255,16 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onClick(View v) {
 
-        ArrayList<Art> newList = new ArrayList<>(listArts);
+        ArrayList<Art> newList = new ArrayList<>();
+        if(filter.length() > 0) {
+            for (Art art : globalListArts) {
+                if (art.getArtTitle().toUpperCase().contains(filter.toUpperCase())
+                        || art.getArtMaker().toUpperCase().contains(filter.toUpperCase()))
+                    newList.add(art);
+            }
+        } else {
+            newList = globalListArts;
+        }
 
         if(v.getId() == sort_by_century.getId()) {
 

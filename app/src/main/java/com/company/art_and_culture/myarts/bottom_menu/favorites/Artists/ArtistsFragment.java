@@ -10,12 +10,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.company.art_and_culture.myarts.MainActivity;
-import com.company.art_and_culture.myarts.R;
-import com.company.art_and_culture.myarts.pojo.Maker;
-
-import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -24,6 +18,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.company.art_and_culture.myarts.MainActivity;
+import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.pojo.Maker;
+
+import java.util.ArrayList;
 
 public class ArtistsFragment extends Fragment {
 
@@ -37,6 +37,8 @@ public class ArtistsFragment extends Fragment {
     private MainActivity activity;
     private ArtistsAdapter artistsAdapter;
     private ArtistsEventListener artistsEventListener;
+    private ArrayList<Maker> globalListMakers = new ArrayList<>();
+    private String filter = "";
 
     @Nullable
     @Override
@@ -69,15 +71,10 @@ public class ArtistsFragment extends Fragment {
         artistsViewModel.getMakerList().observe(getViewLifecycleOwner(), new Observer<ArrayList<Maker>>() {
             @Override
             public void onChanged(ArrayList<Maker> makers) {
-                if (makers == null) {
-                    artistsAdapter.clearItems();
-                    activity.postArtistsCount(0);
-                } else {
-                    setAnimationRecyclerView (makers);
-                    artistsAdapter.clearItems();
-                    artistsAdapter.setItems(makers);
-                    activity.postArtistsCount(makers.size());
-                }
+
+                if(makers != null) globalListMakers = makers;
+                activity.postArtistsCount(globalListMakers.size());
+                setListMakers(globalListMakers);
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -94,7 +91,32 @@ public class ArtistsFragment extends Fragment {
                 if (aBoolean) { showText(); } else { hideText(); }
             }
         });
+        if (activity != null) activity.getArtistsFilter().observe(getViewLifecycleOwner(), s -> {
+            filter = s;
+            setListMakers(globalListMakers);
+        });
 
+    }
+
+    private void setListMakers(ArrayList<Maker> makers) {
+
+        ArrayList<Maker> partialListMakers = new ArrayList<>();
+        if(filter.length() > 0) {
+            for (Maker maker : makers) {
+                if (maker.getArtMaker().toUpperCase().contains(filter.toUpperCase()))
+                    partialListMakers.add(maker);
+            }
+        } else {
+            partialListMakers = makers;
+        }
+
+        if (partialListMakers.size() == 0) {
+            artistsAdapter.clearItems();
+        } else {
+            setAnimationRecyclerView (partialListMakers);
+            artistsAdapter.clearItems();
+            artistsAdapter.setItems(partialListMakers);
+        }
     }
 
     private void setAnimationRecyclerView(ArrayList<Maker> makers) {

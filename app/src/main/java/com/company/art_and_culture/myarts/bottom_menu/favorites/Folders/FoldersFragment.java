@@ -11,13 +11,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.company.art_and_culture.myarts.MainActivity;
-import com.company.art_and_culture.myarts.R;
-import com.company.art_and_culture.myarts.pojo.Folder;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -27,12 +20,17 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.company.art_and_culture.myarts.MainActivity;
+import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.pojo.Folder;
+
+import java.util.ArrayList;
+
 public class FoldersFragment extends Fragment implements View.OnClickListener {
 
     private FoldersViewModel foldersViewModel;
     private TextView create_folder_button;
     private FrameLayout create_folder_layout;
-    private FloatingActionButton floatingActionButton;
     private int spanCount = 1;
     private ProgressBar foldersProgressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -53,12 +51,7 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
         folderRecyclerView = root.findViewById(R.id.recycler_view_folders);
         foldersProgressBar = root.findViewById(R.id.progress_bar_folders);
         swipeRefreshLayout = root.findViewById(R.id.folders_swipeRefreshLayout);
-        floatingActionButton = root.findViewById(R.id.floating_button);
-
         create_folder_layout.setVisibility(View.GONE);
-        floatingActionButton.setVisibility(View.GONE);
-
-        floatingActionButton.setOnClickListener(this);
         create_folder_button.setOnClickListener(this);
 
         android.content.res.Resources res = getResources();
@@ -172,12 +165,10 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
 
     private void showText(){
         create_folder_layout.setVisibility(View.VISIBLE);
-        floatingActionButton.setVisibility(View.GONE);
     }
 
     private void hideText(){
         create_folder_layout.setVisibility(View.GONE);
-        floatingActionButton.setVisibility(View.VISIBLE);
     }
 
     public boolean refresh () {
@@ -186,7 +177,7 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == floatingActionButton.getId() || view.getId() == create_folder_button.getId()) {
+        if (view.getId() == create_folder_button.getId()) {
             folderEventListener.createFolderClick();
         }
     }

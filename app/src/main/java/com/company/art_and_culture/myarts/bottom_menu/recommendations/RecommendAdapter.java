@@ -195,6 +195,8 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.Reco
             if(art.getMakerImgUrl() != null && art.getMakerImgUrl().startsWith(context.getResources().getString(R.string.http))) {
                 makerImgUrl = art.getMakerImgUrl();
                 Picasso.get().load(makerImgUrl).placeholder(R.color.colorSilver).into(maker_image);
+            } else {
+                maker_image.setImageDrawable(context.getResources().getDrawable(R.drawable.maker_placeholder));
             }
 
             MainActivity activity = (MainActivity) context;

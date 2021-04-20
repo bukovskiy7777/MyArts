@@ -9,6 +9,14 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
+
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
@@ -17,13 +25,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.security.SecureRandom;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private MutableLiveData<Integer> favoritesArtsCount = new MutableLiveData<>();
     private MutableLiveData<Integer> artistsCount = new MutableLiveData<>();
     private MutableLiveData<Integer> foldersCount = new MutableLiveData<>();
+    private MutableLiveData<String> favoritesFilter = new MutableLiveData<>();
+    private MutableLiveData<String> artistsFilter = new MutableLiveData<>();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -95,6 +98,17 @@ public class MainActivity extends AppCompatActivity {
         return foldersCount;
     }
 
+    public void postFavoritesFilter (String filter){ favoritesFilter.postValue(filter);}
+
+    public MutableLiveData<String> getFavoritesFilter() {
+        return favoritesFilter;
+    }
+
+    public void postArtistsFilter (String filter){ artistsFilter.postValue(filter);}
+
+    public MutableLiveData<String> getArtistsFilter() {
+        return artistsFilter;
+    }
 
     public LiveData<ServerResponse> getListSuggest() {
         return serverResponse;

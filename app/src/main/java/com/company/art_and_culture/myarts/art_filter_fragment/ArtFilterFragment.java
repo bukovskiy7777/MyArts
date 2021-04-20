@@ -16,6 +16,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
@@ -29,16 +39,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatEditText;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.paging.PagedList;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ArtFilterFragment extends Fragment implements View.OnClickListener {
 
@@ -154,15 +156,33 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            private Timer timer=new Timer();
+            private final long DELAY = 700; // milliseconds
             @Override
             public void afterTextChanged(Editable editable) {
                 if(filter_artist_edit_text.getText().length() > 0) {
-                    ArrayList<String> partialListArtists = new ArrayList<>();
-                    for (String artist: globalListArtists){
-                        if(artist.toUpperCase().contains(filter_artist_edit_text.getText().toString().toUpperCase()))
-                            partialListArtists.add(artist);
-                    }
-                    setListMakerFilters(partialListArtists);
+                    final Handler handler = new Handler();
+                    timer.cancel();
+                    timer = new Timer();
+                    timer.schedule(
+                            new TimerTask() {
+                                @Override
+                                public void run() {
+                                    String filter = filter_artist_edit_text.getText().toString();
+                                    new Thread(() -> {
+                                        ArrayList<String> partialListArtists = new ArrayList<>();
+                                        for (String artist : globalListArtists) {
+                                            if (artist.toUpperCase().contains(filter.toUpperCase()))
+                                                partialListArtists.add(artist);
+                                        }
+                                        handler.post(() -> {
+                                            setListMakerFilters(partialListArtists);
+                                        });
+                                    }).start();
+                                }
+                            }, DELAY);
+
                 } else {
                     setListMakerFilters(globalListArtists);
                 }
