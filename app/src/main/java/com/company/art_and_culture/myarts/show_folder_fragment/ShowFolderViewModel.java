@@ -2,15 +2,15 @@ package com.company.art_and_culture.myarts.show_folder_fragment;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Folder;
 
 import java.util.ArrayList;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 
 public class ShowFolderViewModel extends AndroidViewModel {
 
@@ -47,8 +47,8 @@ public class ShowFolderViewModel extends AndroidViewModel {
         isListEmpty = showFolderRepository.getIsListEmpty();
     }
 
-    public void refresh() {
-        showFolderRepository.refresh();
+    public void detach() {
+        showFolderRepository.detach();
     }
 
     public void deleteFolder(Folder currentFolder) {
@@ -57,5 +57,9 @@ public class ShowFolderViewModel extends AndroidViewModel {
 
     public void setActivity(MainActivity activity) {
         showFolderRepository.setActivity(activity);
+    }
+
+    public boolean refresh() {
+        return showFolderRepository.refresh();
     }
 }

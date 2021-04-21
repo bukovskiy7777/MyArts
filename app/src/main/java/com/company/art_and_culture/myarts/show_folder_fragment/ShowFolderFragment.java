@@ -1,23 +1,28 @@
 package com.company.art_and_culture.myarts.show_folder_fragment;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
@@ -28,15 +33,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class ShowFolderFragment extends Fragment implements View.OnClickListener {
 
@@ -50,6 +46,7 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
     private android.content.res.Resources res;
     private ShowFolderEventListener showFolderEventListener;
     private FloatingActionButton floatingActionButton;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private MainActivity activity;
     private AlertDialog dialog;
     private Folder currentFolder;
@@ -65,6 +62,7 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
         delete_btn = root.findViewById(R.id.delete_btn);
         recycler_view_items = root.findViewById(R.id.recycler_view_items);
         download_progress = root.findViewById(R.id.download_progress);
+        swipeRefreshLayout = root.findViewById(R.id.swipeRefreshLayout);
         floatingActionButton = root.findViewById(R.id.floating_button);
         floatingActionButton.setOnClickListener(this);
         back_button.setOnClickListener(this);
@@ -98,13 +96,28 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
 
         setOnBackPressedListener(root);
 
+        initSwipeRefreshLayout();
+
         return root;
     }
 
     @Override
     public void onDetach() {
-        showFolderViewModel.refresh();
+        showFolderViewModel.detach();
         super.onDetach();
+    }
+
+    private void initSwipeRefreshLayout() {
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            boolean networkState = showFolderViewModel.refresh();
+            if (!networkState) {
+                Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        swipeRefreshLayout.setColorSchemeResources(
+                R.color.colorBlack
+        );
     }
 
     private void setOnBackPressedListener(View root) {
@@ -142,9 +155,11 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
                 if (arts == null) {
                     artsAdapter.clearItems();
                 } else {
+                    setAnimationRecyclerView (recycler_view_items);
                     artsAdapter.clearItems();
                     artsAdapter.setItems(arts);
                 }
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
         showFolderViewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
@@ -167,6 +182,14 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
         recycler_view_items.setLayoutManager(layoutManager);
         recycler_view_items.setAdapter(artsAdapter);
+    }
+
+    private void setAnimationRecyclerView(RecyclerView recyclerView) {
+
+        LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_fade_in);
+        recyclerView.setLayoutAnimation(layoutAnimationController);
+        //recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
     }
 
     @Override

@@ -5,6 +5,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
@@ -15,8 +18,6 @@ import com.company.art_and_culture.myarts.pojo.ServerResponse;
 
 import java.util.ArrayList;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,10 +29,17 @@ class ShowFolderDataSource {
     private MutableLiveData<ArrayList<Art>> artList = new MutableLiveData<>();
     private Application application;
     private MainActivity activity;
+    private Folder folder;
 
     public ShowFolderDataSource(Application application, Folder folder) {
         this.application = application;
+        this.folder = folder;
         updateIsLoadingState(true);
+        updateIsListEmptyState(false);
+        loadFolderArts(folder);
+    }
+
+    public void refresh() {
         updateIsListEmptyState(false);
         loadFolderArts(folder);
     }
@@ -128,6 +136,18 @@ class ShowFolderDataSource {
                 updateIsLoadingState(false);
             }
         });
+    }
+
+    public boolean isNetworkAvailable() {
+        ConnectivityManager manager =
+                (ConnectivityManager) application.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        boolean isAvailable = false;
+        if (networkInfo != null && networkInfo.isConnected()) {
+            // Network is present and connected
+            isAvailable = true;
+        }
+        return isAvailable;
     }
 
     public void setActivity(MainActivity activity) {

@@ -2,13 +2,13 @@ package com.company.art_and_culture.myarts.show_folder_fragment;
 
 import android.app.Application;
 
+import androidx.lifecycle.LiveData;
+
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Folder;
 
 import java.util.ArrayList;
-
-import androidx.lifecycle.LiveData;
 
 public class ShowFolderRepository {
 
@@ -40,8 +40,16 @@ public class ShowFolderRepository {
         return showFolderDataSource.getIsListEmpty();
     }
 
-    public void refresh() {
+    public void detach() {
         instance = null;
+    }
+
+    public boolean refresh() {
+        boolean isConnected = showFolderDataSource.isNetworkAvailable();
+        if (isConnected){
+            showFolderDataSource.refresh();
+        }
+        return isConnected;
     }
 
     public void deleteFolder(Folder currentFolder) {
