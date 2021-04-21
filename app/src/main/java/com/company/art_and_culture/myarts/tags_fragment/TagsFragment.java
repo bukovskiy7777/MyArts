@@ -11,14 +11,6 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.company.art_and_culture.myarts.MainActivity;
-import com.company.art_and_culture.myarts.R;
-import com.company.art_and_culture.myarts.pojo.Attribute;
-import com.company.art_and_culture.myarts.pojo.FilterObject;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -27,6 +19,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.company.art_and_culture.myarts.MainActivity;
+import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.pojo.Attribute;
+import com.company.art_and_culture.myarts.pojo.FilterObject;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 public class TagsFragment extends Fragment implements View.OnClickListener {
 
@@ -241,7 +241,7 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
         recycler_view_filter.setVisibility(View.GONE);
         background_view.setVisibility(View.GONE);
         black_layout.setVisibility(View.GONE);
-        activity.getWindow().setStatusBarColor(res.getColor(R.color.colorPrimaryDark));
+        activity.getWindow().setStatusBarColor(res.getColor(R.color.colorBlack));
         Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.filter_layout_fade_out);
         recycler_view_filter.startAnimation(animation);
         background_view.startAnimation(animation);

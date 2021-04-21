@@ -615,7 +615,7 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
 
     private void goneFilterViews() {
         black_layout.setVisibility(View.GONE);
-        activity.getWindow().setStatusBarColor(res.getColor(R.color.colorPrimaryDark));
+        activity.getWindow().setStatusBarColor(res.getColor(R.color.colorBlack));
         Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.exit_fade_out);
         black_layout.startAnimation(animation);
     }
