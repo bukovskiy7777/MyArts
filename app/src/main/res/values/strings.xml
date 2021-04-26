@@ -60,5 +60,12 @@
     <string name="search_artists">Search artists</string>
     <string name="search_keywords">Search keywords</string>
     <string name="popular_artists">Popular artists</string>
+    <string name="liked">Liked</string>
+    <string name="save_to">Save to</string>
+    <string name="cancel">Cancel</string>
+    <string name="new_folder">New folder</string>
+    <string name="done">Done</string>
+    <string name="_public">Public</string>
+    <string name="_private">Private</string>
 
 </resources>

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.art_and_culture.myarts.MainActivity;
@@ -27,10 +28,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeFadeIn;
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeScaleDown;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleDown;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleUp;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.startLikeAnimations;
 
 public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.RecommendationsViewHolder> {
 
@@ -84,6 +84,7 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.Reco
         void onArtDownloadClick(Art art, int x, int y, int viewWidth, int viewHeight);
         void onArtMakerClick(Art art);
         void onArtClassificationClick(Art art);
+        void onSaveToFolderClick(Art art);
     }
 
     @NonNull
@@ -128,6 +129,10 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.Reco
         private ImageView art_image, maker_image;
         private TextView art_title, art_maker, art_classification;
         private ImageButton art_share, art_download, art_like;
+        private ConstraintLayout liked_layout;
+        private boolean isLikeClicked = false;
+        private ImageView liked_image;
+        private TextView save_to_folder;
         private String artImgUrl, makerImgUrl;
         private final Target target = new Target() {
             @Override
@@ -158,6 +163,10 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.Reco
             art_like = itemView.findViewById(R.id.art_like);
             art_image = itemView.findViewById(R.id.art_image);
             maker_image = itemView.findViewById(R.id.maker_image);
+            liked_image = itemView.findViewById(R.id.liked_image);
+            save_to_folder = itemView.findViewById(R.id.save_to_folder);
+            liked_layout = itemView.findViewById(R.id.liked_layout);
+            liked_layout.setVisibility(View.GONE);
             art_maker.setOnClickListener(this);
             maker_image.setOnClickListener(this);
             art_image.setOnClickListener(this);
@@ -165,6 +174,7 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.Reco
             art_download.setOnClickListener(this);
             art_like.setOnClickListener(this);
             art_classification.setOnClickListener(this);
+            save_to_folder.setOnClickListener(this);
         }
 
         void bind(final Art art, final int position) {
@@ -202,17 +212,18 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.Reco
             MainActivity activity = (MainActivity) context;
             activity.getArt().observe(this, newArt -> {
                 if (newArt.getArtId().equals(art.getArtId()) && newArt.getArtProvider().equals(art.getArtProvider())) {
-                    if(newArt.getIsLiked()){
-                        art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
-                    } else {
-                        art_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
-                    }
-                    art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    AnimatorSet set = new AnimatorSet();
-                    set.playSequentially(likeFadeIn(art_like), likeScaleDown(art_like));
-                    set.start();
+                    startLikeAnimations(newArt, art_like, liked_layout, isLikeClicked);
                 }
             });
+
+            liked_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
+            if (art.getArtWidth() > 0) {
+                int imgWidth = displayWidth/4;
+                int imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
+                Picasso.get().load(artImgUrl).resize(imgWidth, imgHeight).onlyScaleDown().into(liked_image);
+            } else {
+                Picasso.get().load(artImgUrl).into(liked_image);
+            }
 
             art_title.setText(art.getArtLongTitle());
             art_maker.setText(art.getArtMaker());
@@ -243,6 +254,10 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.Reco
 
             } else if (v.getId() == art_like.getId()) {
                 onArtClickListener.onArtLikeClick(art, position);
+                isLikeClicked = true;
+
+            } else if (v.getId() == save_to_folder.getId()) {
+                onArtClickListener.onSaveToFolderClick(art);
 
             } else if (v.getId() == art_classification.getId()) {
                 onArtClickListener.onArtClassificationClick(art);

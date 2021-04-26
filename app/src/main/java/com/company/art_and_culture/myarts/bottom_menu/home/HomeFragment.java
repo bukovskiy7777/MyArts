@@ -20,6 +20,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.ImageDownloader;
 import com.company.art_and_culture.myarts.MainActivity;
@@ -31,15 +41,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.paging.PagedList;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
@@ -156,10 +157,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
             }
         });
         swipeRefreshLayout.setColorSchemeResources(
-                android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light
+                R.color.colorBlue
         );
 
     }
@@ -268,6 +266,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
             @Override
             public void onLogoClick(Art art) {
                 homeEventListener.homeMuseumClickEvent(art.getArtProviderId());
+            }
+
+            @Override
+            public void onSaveToFolderClick(Art art) {
+                activity.showSaveToFolderView(art);
             }
         };
 

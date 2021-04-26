@@ -506,6 +506,11 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
                 }
             }
 
+            @Override
+            public void onSaveToFolderClick(Art art) {
+                activity.showSaveToFolderView(art);
+            }
+
         };
 
         makerAdapter = new MakerAdapter(makerViewModel, getContext(), onArtClickListener, displayWidth, displayHeight, spanCount);

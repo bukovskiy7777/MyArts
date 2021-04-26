@@ -18,6 +18,17 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
+
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.ImageDownloader;
 import com.company.art_and_culture.myarts.MainActivity;
@@ -29,16 +40,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.PagerSnapHelper;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SnapHelper;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
@@ -199,6 +200,11 @@ public class ArtShowFragment extends Fragment implements ImageDownloader.IDownLo
                 Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), artImgUrl, art.getArtWidth(), art.getArtHeight(), art.getArtId(), art.getArtProviderId());
                 artShowEventListener.makerClickEvent(maker);
                 //showPopupMenu(art, view);
+            }
+
+            @Override
+            public void onSaveToFolderClick(Art art) {
+                activity.showSaveToFolderView(art);
             }
         };
 

@@ -211,6 +211,11 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
             public void onArtClassificationClick(Art art) {
                 recommendationsEventListener.recommendationsClassificationClickEvent(art.getArtClassification(), Constants.ART_CLASSIFICATION);
             }
+
+            @Override
+            public void onSaveToFolderClick(Art art) {
+                activity.showSaveToFolderView(art);
+            }
         };
         recommendAdapter = new RecommendAdapter(recommendViewModel, getContext(), onArtClickListener, displayWidth, displayHeight);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -249,10 +254,7 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
             }
         });
         swipeRefreshLayout.setColorSchemeResources(
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light,
-                android.R.color.holo_blue_bright
+                R.color.colorBlue
         );
     }
 

@@ -1,39 +1,60 @@
 package com.company.art_and_culture.myarts;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
-import com.company.art_and_culture.myarts.pojo.ServerRequest;
+import com.company.art_and_culture.myarts.pojo.Folder;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.squareup.picasso.Picasso;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private SharedPreferences preferences;
     private BottomNavigationView navView;
     private NavFragments navFragments;
+    private ConstraintLayout save_to_folder_view;
+    private FrameLayout background_save_to_folder;
+    private TextView save_to, cancel;
+    private ImageView add_folder, back_to_folders;
+    private RecyclerView folderRecyclerView;
+    private SaveToFolderAdapter foldersAdapter;
+    private Art artToSaveInFolder;
+    private ImageView folder_image;
+    private EditText folder_title_edit_text;
+    private SwitchCompat switch_isPublic;
+    private MainActivityDataSource dataSource;
     private MutableLiveData<ServerResponse> serverResponse = new MutableLiveData<>();
     private MutableLiveData<Art> art = new MutableLiveData<>();
     private MutableLiveData<Boolean> updateFolders = new MutableLiveData<>();
@@ -49,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         navView = findViewById(R.id.nav_view);
+
+        initFoldersViews();
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -58,10 +81,202 @@ public class MainActivity extends AppCompatActivity {
 
         navFragments = new NavFragments(this, navController);
 
+        dataSource = new MainActivityDataSource (this);
+
         preferences = getSharedPreferences(Constants.TAG, 0);
-        getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,""));
+        dataSource.getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,""));
 
         getUserUniqueId();
+
+        android.content.res.Resources res = getResources();
+        int displayWidth = res.getDisplayMetrics().widthPixels;
+        int displayHeight = res.getDisplayMetrics().heightPixels;
+        initFolderRecyclerView(displayWidth, displayHeight);
+        dataSource.getFoldersList(preferences.getString(Constants.USER_UNIQUE_ID,""));
+
+        getUpdateFolders().observe(this, aBoolean -> {
+            if(aBoolean) {
+                dataSource.getFoldersList(preferences.getString(Constants.USER_UNIQUE_ID,""));
+                updateFolders(false);
+            }
+        });
+    }
+
+    private void initFoldersViews() {
+        save_to_folder_view = findViewById(R.id.save_to_folder_view);
+        save_to_folder_view.setVisibility(View.GONE);
+        background_save_to_folder = findViewById(R.id.background_save_to_folder);
+        background_save_to_folder.setVisibility(View.GONE);
+        save_to = findViewById(R.id.save_to);
+        cancel = findViewById(R.id.cancel);
+        cancel.setOnClickListener(this);
+        add_folder = findViewById(R.id.add_folder);
+        add_folder.setOnClickListener(this);
+        back_to_folders = findViewById(R.id.back_to_folders);
+        back_to_folders.setOnClickListener(this);
+        switch_isPublic = findViewById(R.id.switch_isPublic);
+        switch_isPublic.setOnCheckedChangeListener((compoundButton, b) -> {
+            if(b) switch_isPublic.setText(getResources().getText(R.string._public));
+            else switch_isPublic.setText(getResources().getText(R.string._private));
+        });
+        folderRecyclerView = findViewById(R.id.recycler_view_folders);
+        folder_image = findViewById(R.id.folder_image);
+        folder_title_edit_text = findViewById(R.id.folder_title_edit_text);
+        folder_title_edit_text.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(folder_title_edit_text.getText().toString().length() > 0) {
+                    cancel.setText(getResources().getString(R.string.done));
+                    cancel.setTextColor(getResources().getColor(R.color.colorBlue));
+                } else {
+                    cancel.setText(getResources().getString(R.string.cancel));
+                    cancel.setTextColor(getResources().getColor(R.color.colorBlack));
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == add_folder.getId()) {
+            showCreateNewFolder();
+
+        } else if (v.getId() == cancel.getId()) {
+            if(cancel.getText() == getResources().getString(R.string.cancel)) {
+                hideSaveToFolderView();
+                hideCreateNewFolder();
+                hideSoftKeyboard(this);
+            } else if(cancel.getText() == getResources().getString(R.string.done)) {
+                ArrayList<Art> artList = new ArrayList<>();
+                artList.add(artToSaveInFolder);
+                Folder folder = new Folder(folder_title_edit_text.getText().toString(), randomString(23),
+                        preferences.getString(Constants.USER_UNIQUE_ID,""), switch_isPublic.isChecked(), artList);
+                dataSource.createFolder(folder);
+            }
+
+        } else if (v.getId() == back_to_folders.getId()) {
+            hideCreateNewFolder();
+        }
+    }
+
+    public void showSaveToFolderView(Art art) {
+        AnimatorSet set = new AnimatorSet();
+        set.setDuration(600).playTogether(
+                ObjectAnimator.ofFloat(save_to_folder_view, View.ALPHA, 0f, 1f),
+                ObjectAnimator.ofFloat(background_save_to_folder, View.ALPHA, 0f, 1f));
+        set.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                save_to_folder_view.setVisibility(View.VISIBLE);
+                background_save_to_folder.setVisibility(View.VISIBLE);
+            }
+            @Override
+            public void onAnimationEnd(Animator animation) { }
+            @Override
+            public void onAnimationCancel(Animator animation) { }
+            @Override
+            public void onAnimationRepeat(Animator animation) { }
+        });
+        set.start();
+
+        artToSaveInFolder = art;
+
+        String artImgUrl;
+        if (art.getArtImgUrlSmall() != null && art.getArtImgUrlSmall().startsWith(getResources().getString(R.string.http)))
+            artImgUrl = art.getArtImgUrlSmall();
+        else artImgUrl= art.getArtImgUrl();
+        if (art.getArtWidth() > 0) {
+            int imgWidth = getResources().getDisplayMetrics().widthPixels;
+            int imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
+            Picasso.get().load(artImgUrl).resize(imgWidth, imgHeight).onlyScaleDown().into(folder_image);
+        } else Picasso.get().load(artImgUrl).into(folder_image);
+    }
+
+    void hideSaveToFolderView() {
+        AnimatorSet set = new AnimatorSet();
+        set.setDuration(400).playTogether(
+                ObjectAnimator.ofFloat(save_to_folder_view, View.ALPHA, 1f, 0f),
+                ObjectAnimator.ofFloat(background_save_to_folder, View.ALPHA, 1f, 0f));
+        set.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) { }
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                save_to_folder_view.setVisibility(View.GONE);
+                background_save_to_folder.setVisibility(View.GONE);
+            }
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+            @Override
+            public void onAnimationRepeat(Animator animation) { }
+        });
+        set.start();
+    }
+
+    void hideCreateNewFolder() {
+        folder_image.setVisibility(View.GONE);
+        folder_title_edit_text.setVisibility(View.GONE);
+        folder_title_edit_text.clearFocus();
+        folder_title_edit_text.setText("");
+        folderRecyclerView.setVisibility(View.VISIBLE);
+        save_to.setText(getResources().getText(R.string.save_to));
+        add_folder.setVisibility(View.VISIBLE);
+        back_to_folders.setVisibility(View.GONE);
+        switch_isPublic.setVisibility(View.GONE);
+        switch_isPublic.setChecked(true);
+        hideSoftKeyboard(this);
+        cancel.setText(getResources().getString(R.string.cancel));
+        cancel.setTextColor(getResources().getColor(R.color.colorBlack));
+    }
+
+    private void showCreateNewFolder() {
+        folder_image.setVisibility(View.VISIBLE);
+        folder_title_edit_text.setVisibility(View.VISIBLE);
+        folder_title_edit_text.requestFocus();
+        folderRecyclerView.setVisibility(View.GONE);
+        save_to.setText(getResources().getText(R.string.new_folder));
+        add_folder.setVisibility(View.GONE);
+        back_to_folders.setVisibility(View.VISIBLE);
+        switch_isPublic.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(save_to_folder_view.isShown()) {
+            hideSaveToFolderView();
+            hideCreateNewFolder();
+        } else
+            super.onBackPressed();
+    }
+
+    public void setListFolders(ArrayList<Folder> listFolders) {
+        if (listFolders == null) {
+            foldersAdapter.clearItems();
+            showCreateNewFolder();
+        } else {
+            foldersAdapter.clearItems();
+            foldersAdapter.setItems(listFolders);
+            hideCreateNewFolder();
+        }
+    }
+
+    private void initFolderRecyclerView(int displayWidth, int displayHeight) {
+
+        SaveToFolderAdapter.OnFolderClickListener onFolderClickListener = (folder, position) -> {
+            dataSource.saveArtToFolder(artToSaveInFolder, folder, preferences.getString(Constants.USER_UNIQUE_ID,""));
+            hideSaveToFolderView();
+        };
+        foldersAdapter = new SaveToFolderAdapter(this, onFolderClickListener, displayWidth, displayHeight);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+        folderRecyclerView.setLayoutManager(layoutManager);
+        folderRecyclerView.setAdapter(foldersAdapter);
     }
 
     public void postNewArt(Art newArt){
@@ -110,8 +325,14 @@ public class MainActivity extends AppCompatActivity {
         return artistsFilter;
     }
 
+    public void postServerResponse (ServerResponse response){ serverResponse.postValue(response);}
+
     public LiveData<ServerResponse> getListSuggest() {
         return serverResponse;
+    }
+
+    public MainActivityDataSource getDataSource() {
+        return dataSource;
     }
 
     private void getUserUniqueId() {
@@ -132,71 +353,6 @@ public class MainActivity extends AppCompatActivity {
         for( int i = 0; i < len; i++ )
             sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );
         return sb.toString();
-    }
-
-    public void getInitialSuggests(String userUniqueId) {
-
-        ServerRequest request = new ServerRequest();
-        request.setOperation(Constants.GET_INITIAL_SUGGEST_OPERATION);
-        request.setUserUniqueId(userUniqueId);
-
-        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
-        response.enqueue(new Callback<ServerResponse>() {
-            @Override
-            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                if (response.body() != null) {
-                    if(response.body().getResult().equals(Constants.SUCCESS)) {
-                        serverResponse.postValue(response.body());
-                    }
-                }
-            }
-            @Override
-            public void onFailure(Call<ServerResponse> call, Throwable t) { }
-        });
-
-    }
-
-
-    public void getSuggests(String suggestQuery, String userUniqueId) {
-
-        ServerRequest request = new ServerRequest();
-        request.setOperation(Constants.GET_SUGGEST_OPERATION);
-        request.setSuggestQuery(suggestQuery);
-        request.setUserUniqueId(userUniqueId);
-
-        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
-        response.enqueue(new Callback<ServerResponse>() {
-            @Override
-            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                serverResponse.postValue(response.body());
-            }
-            @Override
-            public void onFailure(Call<ServerResponse> call, Throwable t) {
-                serverResponse.postValue(null);
-            }
-        });
-
-    }
-
-    public void deleteSuggest(String suggestStr, String userUniqueId) {
-
-        ServerRequest request = new ServerRequest();
-        request.setOperation(Constants.DELETE_SUGGEST_QUERY_OPERATION);
-        request.setSuggestQuery(suggestStr);
-        request.setUserUniqueId(userUniqueId);
-
-        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
-        response.enqueue(new Callback<ServerResponse>() {
-            @Override
-            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                if (response.body() != null) {
-                    serverResponse.postValue(response.body());
-                }
-            }
-            @Override
-            public void onFailure(Call<ServerResponse> call, Throwable t) { }
-        });
-
     }
 
     public static void hideSoftKeyboard(Activity activity) {

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 
@@ -24,10 +25,9 @@ import com.company.art_and_culture.myarts.pojo.Art;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeFadeIn;
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeScaleDown;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleDown;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleUp;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.startLikeAnimations;
 
 public class MakerAdapter extends PagedListAdapter<Art, LifecycleViewHolder> {
 
@@ -68,6 +68,7 @@ public class MakerAdapter extends PagedListAdapter<Art, LifecycleViewHolder> {
         void onArtLikeClick(Art art, int position);
         void onArtShareClick(Art art);
         void onArtDownloadClick(Art art, int x, int y, int viewWidth, int viewHeight);
+        void onSaveToFolderClick(Art art);
     }
 
     @Override
@@ -127,6 +128,10 @@ public class MakerAdapter extends PagedListAdapter<Art, LifecycleViewHolder> {
         private ImageView art_image;
         private TextView art_title, art_maker;
         private ImageButton art_share, art_download, art_like;
+        private ConstraintLayout liked_layout;
+        private boolean isLikeClicked = false;
+        private ImageView liked_image;
+        private TextView save_to_folder;
         private String artImgUrl;
         private final Target target = new Target() {
             @Override
@@ -155,11 +160,16 @@ public class MakerAdapter extends PagedListAdapter<Art, LifecycleViewHolder> {
             art_download = itemView.findViewById(R.id.art_download);
             art_like = itemView.findViewById(R.id.art_like);
             art_image = itemView.findViewById(R.id.art_image);
+            liked_image = itemView.findViewById(R.id.liked_image);
+            save_to_folder = itemView.findViewById(R.id.save_to_folder);
+            liked_layout = itemView.findViewById(R.id.liked_layout);
+            liked_layout.setVisibility(View.GONE);
             art_maker.setOnClickListener(this);
             art_image.setOnClickListener(this);
             art_share.setOnClickListener(this);
             art_download.setOnClickListener(this);
             art_like.setOnClickListener(this);
+            save_to_folder.setOnClickListener(this);
 
             //art_image.getLayoutParams().height = (int) (displayWidth * k);
             //art_image.getLayoutParams().width = (int) (displayWidth * k);
@@ -193,17 +203,18 @@ public class MakerAdapter extends PagedListAdapter<Art, LifecycleViewHolder> {
             MainActivity activity = (MainActivity) context;
             activity.getArt().observe(this, newArt -> {
                 if (newArt.getArtId().equals(art.getArtId()) && newArt.getArtProvider().equals(art.getArtProvider())) {
-                    if(newArt.getIsLiked()){
-                        art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
-                    } else {
-                        art_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
-                    }
-                    art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    AnimatorSet set = new AnimatorSet();
-                    set.playSequentially(likeFadeIn(art_like), likeScaleDown(art_like));
-                    set.start();
+                    startLikeAnimations(newArt, art_like, liked_layout, isLikeClicked);
                 }
             });
+
+            liked_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
+            if (art.getArtWidth() > 0) {
+                int imgWidth = displayWidth/4;
+                int imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
+                Picasso.get().load(artImgUrl).resize(imgWidth, imgHeight).onlyScaleDown().into(liked_image);
+            } else {
+                Picasso.get().load(artImgUrl).into(liked_image);
+            }
 
             art_title.setText(art.getArtLongTitle());
             art_maker.setText(art.getArtMaker());
@@ -231,6 +242,10 @@ public class MakerAdapter extends PagedListAdapter<Art, LifecycleViewHolder> {
 
             } else if (v.getId() == art_like.getId()) {
                 onArtClickListener.onArtLikeClick(art, position);
+                isLikeClicked = true;
+
+            } else if (v.getId() == save_to_folder.getId()) {
+                onArtClickListener.onSaveToFolderClick(art);
             }
         }
 

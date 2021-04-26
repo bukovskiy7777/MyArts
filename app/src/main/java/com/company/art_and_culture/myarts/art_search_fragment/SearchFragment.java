@@ -31,6 +31,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.ImageDownloader;
 import com.company.art_and_culture.myarts.MainActivity;
@@ -46,15 +56,6 @@ import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.paging.PagedList;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
@@ -156,7 +157,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
             @Override
             public void afterTextChanged(final Editable s) {
                 if (s.toString().length() == 0) {
-                    activity.getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,""));
+                    activity.getDataSource().getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,""));
                     search_clear.setVisibility(View.GONE);
                 } else {
                     final Handler handler = new Handler();
@@ -166,13 +167,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
                             new TimerTask() {
                                 @Override
                                 public void run() {
-                                    handler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (search_edit_text.getText().length() == s.length()) {
-                                                suggestions_progress.setVisibility(View.VISIBLE);
-                                                activity.getSuggests(s.toString(), preferences.getString(Constants.USER_UNIQUE_ID,""));
-                                            }
+                                    handler.post(() -> {
+                                        if (search_edit_text.getText().length() == s.length()) {
+                                            suggestions_progress.setVisibility(View.VISIBLE);
+                                            activity.getDataSource().getSuggests(s.toString(), preferences.getString(Constants.USER_UNIQUE_ID,""));
                                         }
                                     });                                }
                             }, DELAY);
@@ -260,7 +258,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.delete_query:
-                        activity.deleteSuggest(suggest.getSuggestStr(), preferences.getString(Constants.USER_UNIQUE_ID,""));
+                        activity.getDataSource().deleteSuggest(suggest.getSuggestStr(), preferences.getString(Constants.USER_UNIQUE_ID,""));
                         return true;
                     default:
                         return false;
@@ -323,10 +321,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
             }
         });
         swipeRefreshLayout.setColorSchemeResources(
-                android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light
+                R.color.colorBlue
         );
 
     }
@@ -465,6 +460,11 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
             @Override
             public void onLogoClick(Art art) {
                 searchEventListener.searchMuseumClickEvent(art.getArtProviderId());
+            }
+
+            @Override
+            public void onSaveToFolderClick(Art art) {
+                activity.showSaveToFolderView(art);
             }
         };
 

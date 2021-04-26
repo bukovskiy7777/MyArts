@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 
@@ -24,10 +24,9 @@ import com.company.art_and_culture.myarts.pojo.Art;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeFadeIn;
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeScaleDown;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleDown;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleUp;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.startLikeAnimations;
 
 public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolder> {
 
@@ -66,6 +65,7 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
         void onArtShareClick(Art art);
         void onArtDownloadClick(Art art, int x, int y, int viewWidth, int viewHeight);
         void onLogoClick(Art art);
+        void onSaveToFolderClick(Art art);
     }
 
     @NonNull
@@ -94,6 +94,10 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
         private ImageView art_image, logo_image;
         private TextView art_maker, art_title, art_classification, logo_text;
         private ImageButton art_share, art_download, art_like;
+        private ConstraintLayout liked_layout;
+        private boolean isLikeClicked = false;
+        private ImageView liked_image;
+        private TextView save_to_folder;
         private String artImgUrl;
         private final Target target = new Target() {
             @Override
@@ -128,6 +132,10 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
             art_like = itemView.findViewById(R.id.art_like);
             logo_image = itemView.findViewById(R.id.logo_image);
             logo_text = itemView.findViewById(R.id.logo_text);
+            liked_image = itemView.findViewById(R.id.liked_image);
+            save_to_folder = itemView.findViewById(R.id.save_to_folder);
+            liked_layout = itemView.findViewById(R.id.liked_layout);
+            liked_layout.setVisibility(View.GONE);
 
             art_image.setOnClickListener(this);
             art_maker.setOnClickListener(this);
@@ -137,9 +145,11 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
             art_like.setOnClickListener(this);
             logo_image.setOnClickListener(this);
             logo_text.setOnClickListener(this);
+            save_to_folder.setOnClickListener(this);
 
             art_maker.setOnTouchListener(this);
             art_classification.setOnTouchListener(this);
+            save_to_folder.setOnTouchListener(this);
 
         }
 
@@ -184,26 +194,20 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
             }
 
             MainActivity activity = (MainActivity) context;
-            activity.getArt().observe(this, new Observer<Art>() {
-                @Override
-                public void onChanged(Art newArt) {
-                    if (newArt.getArtId().equals(art.getArtId()) && newArt.getArtProvider().equals(art.getArtProvider())) {
-                        if(newArt.getIsLiked()){
-                            art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
-                            art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                            AnimatorSet set = new AnimatorSet();
-                            set.playSequentially(likeFadeIn(art_like), likeScaleDown(art_like));
-                            set.start();
-                        } else {
-                            art_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
-                            art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                            AnimatorSet set = new AnimatorSet();
-                            set.playSequentially(likeFadeIn(art_like), likeScaleDown(art_like));
-                            set.start();
-                        }
-                    }
+            activity.getArt().observe(this, newArt -> {
+                if (newArt.getArtId().equals(art.getArtId()) && newArt.getArtProvider().equals(art.getArtProvider())) {
+                    startLikeAnimations(newArt, art_like, liked_layout, isLikeClicked);
                 }
             });
+
+            liked_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
+            if (art.getArtWidth() > 0) {
+                int imgWidth = displayWidth/4;
+                int imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
+                Picasso.get().load(artImgUrl).resize(imgWidth, imgHeight).onlyScaleDown().into(liked_image);
+            } else {
+                Picasso.get().load(artImgUrl).into(liked_image);
+            }
 
         }
 
@@ -234,26 +238,21 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
 
             } else if (v.getId() == art_like.getId()) {
                 onArtClickListener.onArtLikeClick(art, position);
+                isLikeClicked = true;
 
             } else if (v.getId() == logo_image.getId() || v.getId() == logo_text.getId()) {
                 onArtClickListener.onLogoClick(art);
+
+            } else if (v.getId() == save_to_folder.getId()) {
+                onArtClickListener.onSaveToFolderClick(art);
+
             }
         }
 
         @SuppressLint("ClickableViewAccessibility")
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            if (v.getId() == art_maker.getId()) {
-                switch(event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        ((TextView)v).setTextColor(context.getResources().getColor(R.color.colorBlack));
-                        break;
-                    case MotionEvent.ACTION_CANCEL:
-                    case MotionEvent.ACTION_UP:
-                        ((TextView)v).setTextColor(context.getResources().getColor(R.color.colorBlueLight));
-                        break;
-                }
-            } else if (v.getId() == art_classification.getId()) {
+            if (v.getId() == art_maker.getId() || v.getId() == art_classification.getId() || v.getId() == save_to_folder.getId()) {
                 switch(event.getAction()){
                     case MotionEvent.ACTION_DOWN:
                         ((TextView)v).setTextColor(context.getResources().getColor(R.color.colorBlack));

@@ -9,26 +9,24 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
-import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.bottom_menu.home.LifecycleViewHolder;
+import com.company.art_and_culture.myarts.pojo.Art;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
-
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeFadeIn;
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeScaleDown;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleDown;
 import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleUp;
+import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.startLikeAnimations;
 
 public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowViewHolder> {
 
@@ -65,6 +63,7 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
         void onArtDownloadClick(Art art, int x, int y, int artWidth, int artHeight);
         void onLogoClick(Art art);
         void onMakerClick(Art art, View view);
+        void onSaveToFolderClick(Art art);
     }
 
     public void setItems(Collection<Art> arts){
@@ -112,6 +111,10 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
         private ImageView art_image, logo_image;
         private TextView art_maker, art_title, art_description, art_classification;
         private ImageButton art_share, art_download, art_like, button_go_to_museum;
+        private ConstraintLayout liked_layout;
+        private boolean isLikeClicked = false;
+        private ImageView liked_image;
+        private TextView save_to_folder;
         private String artImgUrl;
         private ConstraintLayout art_header, art_footer;
         private int artWidth, artHeight;
@@ -133,6 +136,10 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
             art_share = itemView.findViewById(R.id.art_share);
             art_download = itemView.findViewById(R.id.art_download);
             art_like = itemView.findViewById(R.id.art_like);
+            liked_image = itemView.findViewById(R.id.liked_image);
+            save_to_folder = itemView.findViewById(R.id.save_to_folder);
+            liked_layout = itemView.findViewById(R.id.liked_layout);
+            liked_layout.setVisibility(View.GONE);
 
             art_maker.setOnClickListener(this);
             art_image.setOnClickListener(this);
@@ -141,6 +148,7 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
             art_like.setOnClickListener(this);
             logo_image.setOnClickListener(this);
             button_go_to_museum.setOnClickListener(this);
+            save_to_folder.setOnClickListener(this);
         }
 
         void bind(final Art art, final int position) {
@@ -184,26 +192,20 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
             }
 
             MainActivity activity = (MainActivity) context;
-            activity.getArt().observe(this, new Observer<Art>() {
-                @Override
-                public void onChanged(Art newArt) {
-                    if (newArt.getArtId().equals(art.getArtId()) && newArt.getArtProvider().equals(art.getArtProvider())) {
-                        if(newArt.getIsLiked()){
-                            art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
-                            art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                            AnimatorSet set = new AnimatorSet();
-                            set.playSequentially(likeFadeIn(art_like), likeScaleDown(art_like));
-                            set.start();
-                        } else {
-                            art_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
-                            art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                            AnimatorSet set = new AnimatorSet();
-                            set.playSequentially(likeFadeIn(art_like), likeScaleDown(art_like));
-                            set.start();
-                        }
-                    }
+            activity.getArt().observe(this, newArt -> {
+                if (newArt.getArtId().equals(art.getArtId()) && newArt.getArtProvider().equals(art.getArtProvider())) {
+                    startLikeAnimations(newArt, art_like, liked_layout, isLikeClicked);
                 }
             });
+
+            liked_image.setImageDrawable(context.getResources().getDrawable(R.drawable.art_placeholder));
+            if (art.getArtWidth() > 0) {
+                int imgWidth = displayWidth/4;
+                int imgHeight = (art.getArtHeight() * imgWidth) / art.getArtWidth();
+                Picasso.get().load(artImgUrl).resize(imgWidth, imgHeight).onlyScaleDown().into(liked_image);
+            } else {
+                Picasso.get().load(artImgUrl).into(liked_image);
+            }
         }
 
         @Override
@@ -224,9 +226,13 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
 
             } else if (v.getId() == art_like.getId()) {
                 onArtClickListener.onArtLikeClick(art, position);
+                isLikeClicked = true;
 
             } else if (v.getId() == logo_image.getId() || v.getId() == button_go_to_museum.getId()) {
                 onArtClickListener.onLogoClick(art);
+
+            } else if (v.getId() == save_to_folder.getId()) {
+                onArtClickListener.onSaveToFolderClick(art);
 
             } else if (v.getId() == art_image.getId()) {
                 if (art_header.isShown()) {

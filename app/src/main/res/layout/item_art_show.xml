@@ -162,4 +162,59 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        app:layout_constraintBottom_toTopOf="@id/art_footer"
+        android:id="@+id/liked_layout"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:background="#f2f2f2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            app:riv_corner_radius="4dp"
+            android:src="@color/colorSilver"
+            android:scaleType="centerCrop"
+            android:id="@+id/liked_image"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="44dp"
+            android:layout_height="44dp"/>
+
+        <TextView
+            android:text="@string/liked"
+            android:textColor="@color/colorBlack"
+            android:fontFamily="@string/font_sans_serif"
+            android:textSize="16sp"
+            android:minLines="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:id="@+id/liked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            app:layout_constraintLeft_toRightOf="@+id/liked_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:text="Save to folder"
+            android:textColor="@color/colorBlueLight"
+            android:fontFamily="@string/font_sans_serif"
+            android:textSize="16sp"
+            android:minLines="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:id="@+id/save_to_folder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

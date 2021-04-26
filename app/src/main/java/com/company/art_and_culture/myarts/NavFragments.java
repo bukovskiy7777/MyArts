@@ -39,7 +39,8 @@ public class NavFragments implements
         MakerFragment.MakerEventListener, ExploreFragment.ExploreEventListener, ArtFilterFragment.ArtFilterEventListener,
         ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener, FilterMakerFragment.FilterMakerEventListener,
         AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener, BlankFragment.BlankEventListener,
-        FoldersFragment.FoldersEventListener, ShowFolderFragment.ShowFolderEventListener, CreateFolderFragment.CreateFolderEventListener, MuseumFragment.MuseumEventListener, RecommendationsFragment.RecommendationsEventListener {
+        FoldersFragment.FoldersEventListener, ShowFolderFragment.ShowFolderEventListener, CreateFolderFragment.CreateFolderEventListener,
+        MuseumFragment.MuseumEventListener, RecommendationsFragment.RecommendationsEventListener{
 
     private NavController navController;
 

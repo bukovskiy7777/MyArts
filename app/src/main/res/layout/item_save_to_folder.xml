@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingRight="6dp"
+    android:paddingLeft="6dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:riv_corner_radius="6dp"
+        android:scaleType="centerCrop"
+        android:id="@+id/folder_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+
+    <TextView
+        android:text="Portraits"
+        android:textColor="@color/colorBlack"
+        android:fontFamily="@string/font_sans_serif"
+        android:textSize="14sp"
+        android:minLines="1"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:id="@+id/folder_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/folder_image"/>
+
+    <TextView
+        android:text="25 items"
+        android:textColor="@color/colorBlack"
+        android:fontFamily="@string/font_sans_serif_light"
+        android:textSize="12sp"
+        android:minLines="1"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:id="@+id/folder_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/folder_title" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
