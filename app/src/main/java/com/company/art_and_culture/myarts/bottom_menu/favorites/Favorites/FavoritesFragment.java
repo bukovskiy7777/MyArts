@@ -228,10 +228,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
             }
         });
         swipeRefreshLayout.setColorSchemeResources(
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light,
-                android.R.color.holo_blue_bright
+                R.color.colorBlue
         );
 
     }
@@ -263,7 +260,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
                     newList.add(art);
             }
         } else {
-            newList = globalListArts;
+            newList = new ArrayList<>(globalListArts);
         }
 
         if(v.getId() == sort_by_century.getId()) {
