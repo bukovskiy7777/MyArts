@@ -14,9 +14,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.company.art_and_culture.myarts.LifecycleViewHolder;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
-import com.company.art_and_culture.myarts.bottom_menu.home.LifecycleViewHolder;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.squareup.picasso.Picasso;
 
@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleDown;
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleUp;
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.startLikeAnimations;
+import static com.company.art_and_culture.myarts.CommonAnimations.shareScaleDown;
+import static com.company.art_and_culture.myarts.CommonAnimations.shareScaleUp;
+import static com.company.art_and_culture.myarts.CommonAnimations.startLikeAnimations;
 
 public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowViewHolder> {
 

@@ -43,10 +43,10 @@ import java.util.Collection;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.company.art_and_culture.myarts.CommonAnimations.downloadFadeIn;
+import static com.company.art_and_culture.myarts.CommonAnimations.downloadFadeOut;
+import static com.company.art_and_culture.myarts.CommonAnimations.downloadTranslation;
 import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadFadeIn;
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadFadeOut;
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.downloadTranslation;
 
 public class RecommendationsFragment extends Fragment implements View.OnClickListener, ImageDownloader.IDownLoadResult {
 

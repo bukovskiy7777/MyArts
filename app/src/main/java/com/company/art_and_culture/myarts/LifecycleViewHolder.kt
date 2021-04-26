@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.bottom_menu.home
+package com.company.art_and_culture.myarts
 
 import android.view.View
 import androidx.lifecycle.Lifecycle

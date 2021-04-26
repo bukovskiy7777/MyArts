@@ -20,6 +20,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
@@ -33,18 +41,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeFadeIn;
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.likeScaleDown;
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleDown;
-import static com.company.art_and_culture.myarts.bottom_menu.home.HomeAnimations.shareScaleUp;
+import static com.company.art_and_culture.myarts.CommonAnimations.likeFadeIn;
+import static com.company.art_and_culture.myarts.CommonAnimations.likeScaleDown;
+import static com.company.art_and_culture.myarts.CommonAnimations.shareScaleDown;
+import static com.company.art_and_culture.myarts.CommonAnimations.shareScaleUp;
 
 public class MuseumFragment extends Fragment implements View.OnClickListener, View.OnTouchListener {
 

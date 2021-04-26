@@ -8,15 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.company.art_and_culture.myarts.R;
-import com.company.art_and_culture.myarts.bottom_menu.home.LifecycleViewHolder;
-import com.company.art_and_culture.myarts.pojo.Art;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
 import androidx.annotation.NonNull;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
+
+import com.company.art_and_culture.myarts.LifecycleViewHolder;
+import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.pojo.Art;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 public class ArtMuseumAdapter extends PagedListAdapter<Art, ArtMuseumAdapter.ArtMuseumViewHolder> {
 

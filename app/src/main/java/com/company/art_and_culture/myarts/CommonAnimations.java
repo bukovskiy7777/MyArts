@@ -1,4 +1,4 @@
-package com.company.art_and_culture.myarts.bottom_menu.home;
+package com.company.art_and_culture.myarts;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -11,10 +11,9 @@ import android.widget.ProgressBar;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
 
-public class HomeAnimations {
+public class CommonAnimations {
 
     public static AnimatorSet downloadFadeIn(ConstraintLayout download_linear, View add_view, View download_view) {
         AnimatorSet set = new AnimatorSet();
