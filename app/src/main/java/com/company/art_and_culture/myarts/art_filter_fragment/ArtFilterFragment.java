@@ -1,5 +1,8 @@
 package com.company.art_and_culture.myarts.art_filter_fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -348,10 +351,7 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
             }
         });
         art_filter_swipeRefreshLayout.setColorSchemeResources(
-                android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light
+                R.color.colorBlue
         );
 
     }
@@ -542,20 +542,22 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
             if(black_layout.isShown()) {
                 goneFilterViews();
             } else {
-                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.enter_fade_in);
-                animation.setAnimationListener(new Animation.AnimationListener() {
+                AnimatorSet set = new AnimatorSet();
+                set.setDuration(500).playTogether(
+                        ObjectAnimator.ofFloat(black_layout, View.ALPHA, 0f, 1f));
+                set.addListener(new Animator.AnimatorListener() {
                     @Override
-                    public void onAnimationStart(Animation animation) { }
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
+                    public void onAnimationStart(Animator animation) {
                         black_layout.setVisibility(View.VISIBLE);
                     }
                     @Override
-                    public void onAnimationRepeat(Animation animation) { }
+                    public void onAnimationEnd(Animator animation) { }
+                    @Override
+                    public void onAnimationCancel(Animator animation) { }
+                    @Override
+                    public void onAnimationRepeat(Animator animation) { }
                 });
-                black_layout.startAnimation(animation);
-                activity.getWindow().setStatusBarColor(res.getColor(R.color.colorText));
-                black_layout.setVisibility(View.VISIBLE);
+                set.start();
             }
         } else if (view.getId() == black_layout.getId()) {
             goneFilterViews();
@@ -615,7 +617,6 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
 
     private void goneFilterViews() {
         black_layout.setVisibility(View.GONE);
-        activity.getWindow().setStatusBarColor(res.getColor(R.color.colorBlack));
         Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.exit_fade_out);
         black_layout.startAnimation(animation);
     }
