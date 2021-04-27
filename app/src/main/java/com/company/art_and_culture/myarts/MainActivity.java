@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (v.getId() == cancel.getId()) {
             if(cancel.getText() == getResources().getString(R.string.cancel)) {
                 hideSaveToFolderView();
-                hideCreateNewFolder();
+                if(foldersAdapter.getItemCount() == 0) hideCreateNewFolder();
                 hideSoftKeyboard(this);
             } else if(cancel.getText() == getResources().getString(R.string.done)) {
                 ArrayList<Art> artList = new ArrayList<>();
@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onAnimationStart(Animator animation) {
                 save_to_folder_view.setVisibility(View.VISIBLE);
                 background_save_to_folder.setVisibility(View.VISIBLE);
+                showCreateNewFolder();
             }
             @Override
             public void onAnimationEnd(Animator animation) { }
@@ -239,11 +240,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void showCreateNewFolder() {
         folder_image.setVisibility(View.VISIBLE);
         folder_title_edit_text.setVisibility(View.VISIBLE);
-        folder_title_edit_text.requestFocus();
+        if(save_to_folder_view.isShown()) { folder_title_edit_text.requestFocus(); }
         folderRecyclerView.setVisibility(View.GONE);
         save_to.setText(getResources().getText(R.string.new_folder));
         add_folder.setVisibility(View.GONE);
-        back_to_folders.setVisibility(View.VISIBLE);
+        if(foldersAdapter.getItemCount() > 0) { back_to_folders.setVisibility(View.VISIBLE); }
+        else { back_to_folders.setVisibility(View.GONE); }
         switch_isPublic.setVisibility(View.VISIBLE);
     }
 
@@ -251,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onBackPressed() {
         if(save_to_folder_view.isShown()) {
             hideSaveToFolderView();
-            hideCreateNewFolder();
+            if(foldersAdapter.getItemCount() == 0) hideCreateNewFolder();
         } else
             super.onBackPressed();
     }

@@ -33,11 +33,17 @@ public class MainActivityDataSource {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
                         activity.setListFolders(resp.getListFolders());
-                    } else { }
-                } else { }
+                    } else {
+                        activity.setListFolders(null);
+                    }
+                } else {
+                    activity.setListFolders(null);
+                }
             }
             @Override
-            public void onFailure(Call<ServerResponse> call, Throwable t) { }
+            public void onFailure(Call<ServerResponse> call, Throwable t) {
+                activity.setListFolders(null);
+            }
         });
     }
 
