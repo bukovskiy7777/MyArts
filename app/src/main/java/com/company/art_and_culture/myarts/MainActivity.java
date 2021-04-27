@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (v.getId() == cancel.getId()) {
             if(cancel.getText() == getResources().getString(R.string.cancel)) {
                 hideSaveToFolderView();
-                if(foldersAdapter.getItemCount() == 0) hideCreateNewFolder();
+                if(foldersAdapter.getItemCount() > 0) hideCreateNewFolder();
                 hideSoftKeyboard(this);
             } else if(cancel.getText() == getResources().getString(R.string.done)) {
                 ArrayList<Art> artList = new ArrayList<>();
@@ -175,7 +175,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onAnimationStart(Animator animation) {
                 save_to_folder_view.setVisibility(View.VISIBLE);
                 background_save_to_folder.setVisibility(View.VISIBLE);
-                showCreateNewFolder();
+                if(foldersAdapter.getItemCount() > 0) hideCreateNewFolder();
+                else showCreateNewFolder();
             }
             @Override
             public void onAnimationEnd(Animator animation) { }
@@ -253,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onBackPressed() {
         if(save_to_folder_view.isShown()) {
             hideSaveToFolderView();
-            if(foldersAdapter.getItemCount() == 0) hideCreateNewFolder();
+            if(foldersAdapter.getItemCount() > 0) hideCreateNewFolder();
         } else
             super.onBackPressed();
     }
