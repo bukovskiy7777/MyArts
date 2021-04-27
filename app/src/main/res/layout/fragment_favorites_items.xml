@@ -84,22 +84,59 @@
 
         </FrameLayout>
 
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/text_favorites"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/blank_favorites"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginBottom="94dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:fontFamily="sans-serif"
-            android:text="@string/no_likes"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/sort_layout"
-            android:gravity="center_horizontal" />
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/image_favorites"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:src="@drawable/ic_favorite_red_100dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"/>
+
+            <TextView
+                android:visibility="visible"
+                android:id="@+id/title_favorites"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="80dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="80dp"
+                android:textAlignment="center"
+                android:textSize="24sp"
+                android:textColor="@color/colorBlack"
+                android:fontFamily="sans-serif"
+                android:text="@string/no_likes"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/image_favorites"
+                android:gravity="center_horizontal" />
+
+            <TextView
+                android:visibility="visible"
+                android:id="@+id/text_favorites"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="80dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="80dp"
+                android:textAlignment="center"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:text="@string/all_likes_will_be_shown"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title_favorites"
+                android:gravity="center_horizontal" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ProgressBar
             android:layout_marginBottom="94dp"

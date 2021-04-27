@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -38,7 +39,7 @@ import static com.company.art_and_culture.myarts.bottom_menu.favorites.Favorites
 public class FavoritesFragment extends Fragment implements View.OnClickListener {
 
     private FavoritesViewModel favoritesViewModel;
-    private TextView textView;
+    private ConstraintLayout blank_favorites;
     private FrameLayout sort_layout;
     private RecyclerView favoritesRecyclerView;
     private ProgressBar favoritesProgressBar;
@@ -59,7 +60,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_favorites_items, container, false);
-        textView = root.findViewById(R.id.text_favorites);
+        blank_favorites = root.findViewById(R.id.blank_favorites);
         favoritesRecyclerView = root.findViewById(R.id.recycler_view_favorites);
         favoritesProgressBar = root.findViewById(R.id.progress_bar_favorites);
         swipeRefreshLayout = root.findViewById(R.id.favorites_swipeRefreshLayout);
@@ -97,6 +98,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
 
         initSwipeRefreshLayout();
         subscribeObservers();
+        hideText();
 
         if (sort_type.equals(Sort.by_date)) {
             sort_by_date.setImageResource(R.drawable.ic_apps_blue_100dp);
@@ -133,7 +135,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
             @Override
             public void onChanged(ArrayList<Art> arts) {
 
-                if(arts != null) globalListArts = arts;
+                if(arts != null) globalListArts = arts; else globalListArts.clear();
                 activity.postFavoritesArtsCount(globalListArts.size());
                 setListArts(globalListArts);
                 swipeRefreshLayout.setRefreshing(false);
@@ -242,11 +244,11 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
     }
 
     private void showText(){
-        textView.setVisibility(View.VISIBLE);
+        blank_favorites.setVisibility(View.VISIBLE);
     }
 
     private void hideText(){
-        textView.setVisibility(View.GONE);
+        blank_favorites.setVisibility(View.GONE);
     }
 
     @Override

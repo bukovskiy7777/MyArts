@@ -267,6 +267,10 @@ public class NavFragments implements
         navController.navigate(R.id.action_navigation_favorites_to_makerFragment);
     }
     @Override
+    public void showArtistsClick() {
+        navController.navigate(R.id.action_navigation_favorites_to_filterMakerFragment);
+    }
+    @Override
     public void favoritesScrollEvent(int position, FavoritesFragment.Sort sort_type) {
         this.favoritesPosition = position;
         this.sort_type = sort_type;

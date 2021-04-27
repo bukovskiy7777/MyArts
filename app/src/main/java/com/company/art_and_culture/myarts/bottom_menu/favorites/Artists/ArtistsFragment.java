@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -25,10 +26,11 @@ import com.company.art_and_culture.myarts.pojo.Maker;
 
 import java.util.ArrayList;
 
-public class ArtistsFragment extends Fragment {
+public class ArtistsFragment extends Fragment implements View.OnClickListener {
 
     private ArtistsViewModel artistsViewModel;
-    private TextView textView;
+    private ConstraintLayout blank_artists;
+    private TextView link_artists;
     private RecyclerView artistsRecyclerView;
     private ProgressBar artistsProgressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -45,7 +47,9 @@ public class ArtistsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_favorites_artists, container, false);
 
-        textView = root.findViewById(R.id.text_artists);
+        blank_artists = root.findViewById(R.id.blank_artists);
+        link_artists = root.findViewById(R.id.link_artists);
+        link_artists.setOnClickListener(this);
         artistsRecyclerView = root.findViewById(R.id.recycler_view_artists);
         artistsProgressBar = root.findViewById(R.id.progress_bar_artists);
         swipeRefreshLayout = root.findViewById(R.id.artists_swipeRefreshLayout);
@@ -62,6 +66,7 @@ public class ArtistsFragment extends Fragment {
         initRecyclerView(displayWidth, displayHeight);
         initSwipeRefreshLayout();
         subscribeObservers();
+        hideText();
 
         return root;
     }
@@ -72,7 +77,7 @@ public class ArtistsFragment extends Fragment {
             @Override
             public void onChanged(ArrayList<Maker> makers) {
 
-                if(makers != null) globalListMakers = makers;
+                if(makers != null) globalListMakers = makers; else globalListMakers.clear();
                 activity.postArtistsCount(globalListMakers.size());
                 setListMakers(globalListMakers);
                 swipeRefreshLayout.setRefreshing(false);
@@ -174,10 +179,7 @@ public class ArtistsFragment extends Fragment {
             }
         });
         swipeRefreshLayout.setColorSchemeResources(
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light,
-                android.R.color.holo_blue_bright
+                R.color.colorBlue
         );
 
     }
@@ -186,8 +188,16 @@ public class ArtistsFragment extends Fragment {
         return artistsViewModel.refresh();
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == link_artists.getId()) {
+            artistsEventListener.showArtistsClick();
+        }
+    }
+
     public interface ArtistsEventListener {
         void artistsClickEvent(Maker maker);
+        void showArtistsClick();
     }
 
     private void showProgressBar(){
@@ -199,11 +209,11 @@ public class ArtistsFragment extends Fragment {
     }
 
     private void showText(){
-        textView.setVisibility(View.VISIBLE);
+        blank_artists.setVisibility(View.VISIBLE);
     }
 
     private void hideText(){
-        textView.setVisibility(View.GONE);
+        blank_artists.setVisibility(View.GONE);
     }
 
     public void scrollRecyclerViewToStart () {

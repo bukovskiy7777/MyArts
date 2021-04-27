@@ -6,7 +6,11 @@
     <string name="title_recommend">Recommend</string>
 
     <string name="nothing_to_show">Nothing to show</string>
-    <string name="no_likes">No likes at the moment. Like your favorite ArtWorks</string>
+    <string name="no_likes">Nothing liked yet</string>
+    <string name="all_likes_will_be_shown">All ArtWorks that you have liked will be shown here</string>
+    <string name="no_artists">No liked artists yet</string>
+    <string name="all_artists_will_be_shown">All artists that you have liked will be shown here</string>
+    <string name="show_artists">Show artists</string>
     <string name="network_is_unavailable">Network is unavailable</string>
     <string name="download_error">Download error...</string>
     <string name="file_already_downloaded">File already downloaded</string>
