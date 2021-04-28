@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -309,7 +310,11 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
     @Override
     public void onClick(View view) {
         if (view.getId() == museum_web_address.getId()) {
-            museumEventListener.onWebLinkClickEvent(museum_web_address.getText().toString());
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            builder.setStartAnimations(getContext(), R.anim.enter_from_right, R.anim.exit_to_left);
+            builder.setExitAnimations(getContext(), R.anim.enter_from_left, R.anim.exit_to_right);
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(getContext(), Uri.parse(museum.getProviderSiteUrl()));
 
         } else if(view.getId() == museum_address.getId()) {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?q="+museum_address.getText().toString()));
@@ -336,10 +341,18 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
             }
 
         } else if(view.getId() == wikipedia.getId()) {
-            museumEventListener.onWebLinkClickEvent(museum.getProviderWikiUrl());
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            builder.setStartAnimations(getContext(), R.anim.enter_from_right, R.anim.exit_to_left);
+            builder.setExitAnimations(getContext(), R.anim.enter_from_left, R.anim.exit_to_right);
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(getContext(), Uri.parse(museum.getProviderWikiUrl()));
 
         } else if(view.getId() == button_show_tickets.getId()) {
-            museumEventListener.onWebLinkClickEvent(museum.getProviderTicketsUrl());
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            builder.setStartAnimations(getContext(), R.anim.enter_from_right, R.anim.exit_to_left);
+            builder.setExitAnimations(getContext(), R.anim.enter_from_left, R.anim.exit_to_right);
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(getContext(), Uri.parse(museum.getProviderTicketsUrl()));
 
         } else if(view.getId() == floating_button.getId()) {
             museumViewModel.refresh();
@@ -386,7 +399,6 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
 
     public interface MuseumEventListener {
         void onArtClickEvent(Collection<Art> arts, int position);
-        void onWebLinkClickEvent(String url);
         void onArtistsClickEvent(Maker maker);
     }
 

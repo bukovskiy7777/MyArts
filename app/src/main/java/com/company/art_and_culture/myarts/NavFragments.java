@@ -64,8 +64,6 @@ public class NavFragments implements
 
     private int filterPositionForTagsFragment= 0;
 
-    private String urlForWebFragment;
-
     private Folder folderForShowFolderFragment, folderForEditFolderFragment;
 
     private String artProviderIdForMuseumFragment;
@@ -105,11 +103,6 @@ public class NavFragments implements
         navController.navigate(R.id.action_museumFragment_to_artShowFragment);
     }
     @Override
-    public void onWebLinkClickEvent(String url) {
-        this.urlForWebFragment = url;
-        navController.navigate(R.id.action_museumFragment_to_webViewFragment);
-    }
-    @Override
     public void onArtistsClickEvent(Maker maker) {
         this.makerForMakerFragment = maker;
         navController.navigate(R.id.action_museumFragment_to_makerFragment);
@@ -121,11 +114,6 @@ public class NavFragments implements
         this.listArtsForArtShowFragment = arts;
         this.clickPositionForArtShowFragment = position;
         navController.navigate(R.id.action_makerFragment_to_artShowFragment);
-    }
-    @Override
-    public void makerWikiClick(String makerWikiPageUrl) {
-        this.urlForWebFragment = makerWikiPageUrl;
-        navController.navigate(R.id.action_makerFragment_to_webViewFragment);
     }
 
 
@@ -167,11 +155,6 @@ public class NavFragments implements
     public void makerClickEvent(Maker maker) {
         this.makerForMakerFragment = maker;
         navController.navigate(R.id.action_artShowFragment_to_makerFragment);
-    }
-    @Override
-    public void logoClickEvent(String artLink) {
-        this.urlForWebFragment = artLink;
-        navController.navigate(R.id.action_artShowFragment_to_webViewFragment);
     }
 
 
@@ -415,10 +398,6 @@ public class NavFragments implements
 
     public int getFilterPositionForTagsFragment() {
         return filterPositionForTagsFragment;
-    }
-
-    public String getUrlForWebFragment() {
-        return urlForWebFragment;
     }
 
     public Folder getFolderForShowFolderFragment() {

@@ -181,7 +181,6 @@ public class ArtShowFragment extends Fragment implements ImageDownloader.IDownLo
 
             @Override
             public void onLogoClick(Art art) {
-                //artShowEventListener.logoClickEvent(art.getArtLink());
                 CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
                 builder.setStartAnimations(getContext(), R.anim.enter_from_right, R.anim.exit_to_left);
                 builder.setExitAnimations(getContext(), R.anim.enter_from_left, R.anim.exit_to_right);
@@ -311,7 +310,6 @@ public class ArtShowFragment extends Fragment implements ImageDownloader.IDownLo
 
     public interface ArtShowEventListener {
         void makerClickEvent(Maker maker);
-        void logoClickEvent(String artLink);
     }
 
 }

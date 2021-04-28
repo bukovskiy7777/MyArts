@@ -164,13 +164,6 @@
         android:name="com.company.art_and_culture.myarts.maker_fragment.MakerFragment"
         android:label="MakerFragment" >
         <action
-            android:id="@+id/action_makerFragment_to_webViewFragment"
-            app:destination="@id/webViewFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right" />
-        <action
             android:id="@+id/action_makerFragment_to_artShowFragment"
             app:destination="@id/artShowFragment"
             app:enterAnim="@anim/enter_from_right"
@@ -186,13 +179,6 @@
         android:label="fragment_art_show"
         tools:layout="@layout/fragment_art_show" >
         <action
-            android:id="@+id/action_artShowFragment_to_webViewFragment"
-            app:destination="@id/webViewFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right" />
-        <action
             android:id="@+id/action_artShowFragment_to_makerFragment"
             app:destination="@id/makerFragment"
             app:enterAnim="@anim/enter_from_bottom"
@@ -202,10 +188,6 @@
             app:popUpTo="@id/makerFragment"
             app:popUpToInclusive="true" />
     </fragment>
-    <fragment
-        android:id="@+id/webViewFragment"
-        android:name="com.company.art_and_culture.myarts.web_view_fragment.WebViewFragment"
-        android:label="WebViewFragment" />
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.company.art_and_culture.myarts.art_search_fragment.SearchFragment"
@@ -319,13 +301,6 @@
         <action
             android:id="@+id/action_museumFragment_to_artShowFragment"
             app:destination="@id/artShowFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right" />
-        <action
-            android:id="@+id/action_museumFragment_to_webViewFragment"
-            app:destination="@id/webViewFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"

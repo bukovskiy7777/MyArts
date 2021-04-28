@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
@@ -243,7 +245,11 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
             startActivity(shareIntent);
 
         } else if(v.getId() == wikipedia.getId()) {
-            makerEventListener.makerWikiClick(makerWikiPageUrl);
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            builder.setStartAnimations(getContext(), R.anim.enter_from_right, R.anim.exit_to_left);
+            builder.setExitAnimations(getContext(), R.anim.enter_from_left, R.anim.exit_to_right);
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(getContext(), Uri.parse(makerWikiPageUrl));
 
         } else if(v.getId() == floating_button.getId()) {
             makerViewModel.refresh();
@@ -557,7 +563,6 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
 
     public interface MakerEventListener {
         void makerArtClickEvent(Collection<Art> arts, int position);
-        void makerWikiClick(String makerWikiPageUrl);
     }
 
     private int getTargetScrollPosition () {
