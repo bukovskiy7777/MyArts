@@ -60,7 +60,7 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
     public interface OnArtClickListener {
         void onArtLikeClick(Art art, int position);
         void onArtShareClick(Art art);
-        void onArtDownloadClick(Art art, int x, int y, int artWidth, int artHeight);
+        void onArtDownloadClick(Art art, int x, int y);
         void onLogoClick(Art art);
         void onMakerClick(Art art, View view);
         void onSaveToFolderClick(Art art);
@@ -222,7 +222,7 @@ public class ArtShowAdapter extends RecyclerView.Adapter<ArtShowAdapter.ArtShowV
                 art_download.getLocationOnScreen(location);
                 int x = location[0];
                 int y = location[1];
-                onArtClickListener.onArtDownloadClick(art, x, y, artWidth, artHeight);
+                onArtClickListener.onArtDownloadClick(art, x, y);
 
             } else if (v.getId() == art_like.getId()) {
                 onArtClickListener.onArtLikeClick(art, position);

@@ -67,7 +67,7 @@ public class MakerAdapter extends PagedListAdapter<Art, LifecycleViewHolder> {
         void onArtImageClick(Art art, int position);
         void onArtLikeClick(Art art, int position);
         void onArtShareClick(Art art);
-        void onArtDownloadClick(Art art, int x, int y, int viewWidth, int viewHeight);
+        void onArtDownloadClick(Art art, int x, int y);
         void onSaveToFolderClick(Art art);
     }
 
@@ -179,9 +179,11 @@ public class MakerAdapter extends PagedListAdapter<Art, LifecycleViewHolder> {
             this.art = art;
             this.position = position;
 
-            if(MakerDataInMemory.getInstance().getSingleItem(position).getIsLiked()) art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
-            else art_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
-            art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            if(MakerDataInMemory.getInstance().getSingleItem(position) != null) {
+                if(MakerDataInMemory.getInstance().getSingleItem(position).getIsLiked()) art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
+                else art_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
+                art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            }
 
             if (art.getArtImgUrlSmall() != null && art.getArtImgUrlSmall().startsWith(context.getResources().getString(R.string.http))) {
                 artImgUrl = art.getArtImgUrlSmall();
@@ -238,7 +240,7 @@ public class MakerAdapter extends PagedListAdapter<Art, LifecycleViewHolder> {
                 art_download.getLocationOnScreen(location);
                 int x = location[0];
                 int y = location[1];
-                onArtClickListener.onArtDownloadClick(art, x, y, art.getArtWidth(), art.getArtHeight());
+                onArtClickListener.onArtDownloadClick(art, x, y);
 
             } else if (v.getId() == art_like.getId()) {
                 onArtClickListener.onArtLikeClick(art, position);

@@ -43,6 +43,20 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right" />
+        <action
+            android:id="@+id/action_navigation_home_to_signInFragment"
+            app:destination="@id/signInFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+        <action
+            android:id="@+id/action_navigation_home_to_userFragment"
+            app:destination="@id/userFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
     </fragment>
 
     <fragment
@@ -313,4 +327,12 @@
             app:popEnterAnim="@anim/enter_from_top"
             app:popExitAnim="@anim/exit_to_bottom" />
     </fragment>
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.company.art_and_culture.myarts.sign_in_fragment.SignInFragment"
+        android:label="SignInFragment" />
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="com.company.art_and_culture.myarts.user_fragment.UserFragment"
+        android:label="UserFragment" />
 </navigation>

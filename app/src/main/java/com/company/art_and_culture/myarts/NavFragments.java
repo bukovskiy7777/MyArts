@@ -200,28 +200,23 @@ public class NavFragments implements
         Timer timer=new Timer();
         final long DELAY = 500; // milliseconds
         final Handler handler = new Handler();
-        timer.cancel();
-        timer = new Timer();
         timer.schedule( new TimerTask() {
             @Override
             public void run() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(type.equals(Constants.ART_MAKER)) {
-                            navController.navigate(R.id.action_navigation_explore_to_filterMakerFragment);
-                        } else if (type.equals(Constants.ART_CULTURE)) {
-                            typeForAttributeFragment = type;
-                            navController.navigate(R.id.action_navigation_explore_to_attributeFragment);
-                        } else if (type.equals(Constants.ART_MEDIUM)) {
-                            typeForAttributeFragment = type;
-                            navController.navigate(R.id.action_navigation_explore_to_attributeFragment);
-                        } else if (type.equals(Constants.ART_CLASSIFICATION)) {
-                            typeForAttributeFragment = type;
-                            navController.navigate(R.id.action_navigation_explore_to_attributeFragment);
-                        }  else if (type.equals(Constants.ART_TAG)) {
-                            navController.navigate(R.id.action_navigation_explore_to_tagsFragment);
-                        }
+                handler.post(() -> {
+                    if(type.equals(Constants.ART_MAKER)) {
+                        navController.navigate(R.id.action_navigation_explore_to_filterMakerFragment);
+                    } else if (type.equals(Constants.ART_CULTURE)) {
+                        typeForAttributeFragment = type;
+                        navController.navigate(R.id.action_navigation_explore_to_attributeFragment);
+                    } else if (type.equals(Constants.ART_MEDIUM)) {
+                        typeForAttributeFragment = type;
+                        navController.navigate(R.id.action_navigation_explore_to_attributeFragment);
+                    } else if (type.equals(Constants.ART_CLASSIFICATION)) {
+                        typeForAttributeFragment = type;
+                        navController.navigate(R.id.action_navigation_explore_to_attributeFragment);
+                    }  else if (type.equals(Constants.ART_TAG)) {
+                        navController.navigate(R.id.action_navigation_explore_to_tagsFragment);
                     }
                 });
             }
@@ -322,8 +317,13 @@ public class NavFragments implements
         artProviderIdForMuseumFragment = artProviderId;
         navController.navigate(R.id.action_navigation_home_to_museumFragment);
     }
-
-
+    @Override
+    public void homeProfileClickEvent(boolean isLoggedIn) {
+        if(isLoggedIn)
+            navController.navigate(R.id.action_navigation_home_to_userFragment);
+        else
+            navController.navigate(R.id.action_navigation_home_to_signInFragment);
+    }
 
 
     @Override

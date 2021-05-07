@@ -8,11 +8,24 @@ public class Constants {
 
     public static final String BASE_URL = "https://bukovskiy.kl.com.ua/MyArts/";
 
+    public static final String GOOGLE_PLAY_BASE_URL = "https://play.google.com/store/apps/details?id=";
+
+    public static final String SEND_TO_EMAIL = "bukovskiy7777@gmail.com";
+
     public static final String SUCCESS = "success";
 
     public static final int PAGE_SIZE = 30;
     //public static final int PAGE_SIZE_SMALL = 9;
 
+    public static final String ACCOUNT_PROVIDER_GOOGLE = "Google";
+    public static final String IS_LOGGED_IN = "isLoggedIn";
+    public static final String USER_DISPLAY_NAME = "userDisplayName";
+    public static final String USER_GIVEN_NAME = "userGivenName";
+    public static final String USER_FAMILY_NAME = "userFamilyName";
+    public static final String USER_EMAIL = "userEmail";
+    public static final String USER_PROVIDER_ID = "userProviderId";
+    public static final String USER_ACCOUNT_PROVIDER = "userAccountProvider";
+    public static final String USER_IMAGE_URL = "userImageUrl";
 
     public static final int PERMISSION_REQUEST_CODE = 1;
 
@@ -54,6 +67,9 @@ public class Constants {
     public static final String GET_ARTS_COUNT_MAKER_BY_KEYWORD = "getArtCountMakerByKeyword";
     public static final String GET_RECOMMENDATIONS_OPERATION = "getRecommendations";
     public static final String SAVE_ART_TO_FOLDER_OPERATION = "saveArtToFolder";
+    public static final String SIGN_IN_OPERATION = "signInUser";
+    public static final String GET_POLICY_PAGES_OPERATION = "getPolicyPages";
+    public static final String DELETE_ACCOUNT_OPERATION = "deleteUserAccount";
 
 
 

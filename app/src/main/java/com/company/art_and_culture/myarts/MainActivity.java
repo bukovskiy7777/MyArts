@@ -39,7 +39,7 @@ import com.squareup.picasso.Picasso;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private SharedPreferences preferences;
     private BottomNavigationView navView;
@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MutableLiveData<Integer> foldersCount = new MutableLiveData<>();
     private MutableLiveData<String> favoritesFilter = new MutableLiveData<>();
     private MutableLiveData<String> artistsFilter = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isUpdateAllAppData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isUpdateUserData = new MutableLiveData<>();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -100,6 +102,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 updateFolders(false);
             }
         });
+        getIsUpdateAllAppData().observe(this, aBoolean -> {
+            if(aBoolean) {
+                dataSource.getFoldersList(preferences.getString(Constants.USER_UNIQUE_ID,""));
+                dataSource.getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,""));
+                updateAllAppData(false);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        preferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        preferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(key.equals(Constants.IS_LOGGED_IN)) {
+            getUserUniqueId();
+            updateAllAppData(true);
+        }
+        if(key.equals(Constants.USER_IMAGE_URL)) {
+            updateUserData(true);
+        }
     }
 
     private void initFoldersViews() {
@@ -288,6 +320,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public LiveData<Art> getArt() {
         return art;
+    }
+
+    public void updateAllAppData(boolean b) {
+        isUpdateAllAppData.postValue(b);
+    }
+
+    public MutableLiveData<Boolean> getIsUpdateAllAppData() {
+        return isUpdateAllAppData;
+    }
+
+    public void updateUserData(boolean b) {
+        isUpdateUserData.postValue(b);
+    }
+
+    public MutableLiveData<Boolean> getIsUpdateUserData() {
+        return isUpdateUserData;
     }
 
     public void updateFolders(boolean b) {

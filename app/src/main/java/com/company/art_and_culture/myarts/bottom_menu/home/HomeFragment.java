@@ -1,6 +1,5 @@
 package com.company.art_and_culture.myarts.bottom_menu.home;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -23,9 +22,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -36,6 +33,7 @@ import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -65,7 +63,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
     private MainActivity activity;
     private int bottomInitialMargin = 0, leftInitialMargin = 0;
     private android.content.res.Resources res;
-    private ImageView search_btn;
+    private ImageView search_btn, profile_img;
+    private ImageDownloader imageDownloader;
+    private Art downloadArt;
+    private int downloadX, downloadY;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -76,6 +77,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
         swipeRefreshLayout = root.findViewById(R.id.home_swipeRefreshLayout);
         search_btn = root.findViewById(R.id.search_btn);
         search_btn.setOnClickListener(this);
+        profile_img = root.findViewById(R.id.profile_img);
+        profile_img.setOnClickListener(this);
 
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
@@ -93,6 +96,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
         homeViewModel.setActivity(activity);
 
+        if(preferences.getBoolean(Constants.IS_LOGGED_IN,false)) Picasso.get().load(preferences.getString(Constants.USER_IMAGE_URL,res.getString(R.string.http))).into(profile_img);
+
         initSwipeRefreshLayout();
         subscribeObservers();
         initDownloadViews(root);
@@ -105,6 +110,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
     public void onClick(View v) {
         if (v.getId() == search_btn.getId()) {
             homeEventListener.homeSearchClickEvent();
+        } else if (v.getId() == profile_img.getId()) {
+            homeEventListener.homeProfileClickEvent(preferences.getBoolean(Constants.IS_LOGGED_IN,false));
         }
     }
 
@@ -131,7 +138,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
             @Override
             public boolean onKey( View v, int keyCode, KeyEvent event ) {
 
-                if( keyCode == KeyEvent.KEYCODE_BACK ) { //&& activity.getNavFragments().getArtShowFragment() == null // && !activity.isSearchLayoutOpen()
+                if( keyCode == KeyEvent.KEYCODE_BACK ) {
 
                     if (homeAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
                     if (scrollPosition > 4) {
@@ -146,43 +153,42 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
     }
 
     private void initSwipeRefreshLayout() {
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                boolean networkState = homeViewModel.refresh();
-                if (!networkState) {
-                    Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
-                    swipeRefreshLayout.setRefreshing(false);
-                }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            boolean networkState = homeViewModel.refresh();
+            if (!networkState) {
+                Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
-        swipeRefreshLayout.setColorSchemeResources(
-                R.color.colorBlue
-        );
-
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorBlue);
     }
 
     private void subscribeObservers() {
 
-        homeViewModel.getArtList().observe(getViewLifecycleOwner(), new Observer<PagedList<Art>>() {
-            @Override
-            public void onChanged(PagedList<Art> arts) {
-                homeAdapter.submitList(arts);
-                swipeRefreshLayout.setRefreshing(false);
+        homeViewModel.getArtList().observe(getViewLifecycleOwner(), arts -> {
+            homeAdapter.submitList(arts);
+            swipeRefreshLayout.setRefreshing(false);
+        });
+        homeViewModel.getIsLoading().observe(getViewLifecycleOwner(), aBoolean -> {
+            if (aBoolean) { showProgressBar(); } else { hideProgressBar(); }
+        });
+        homeViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), aBoolean -> {
+            if (aBoolean) { showText(); } else { hideText(); }
+        });
+        activity.getIsUpdateAllAppData().observe(getViewLifecycleOwner(), aBoolean -> {
+            if(aBoolean) {
+                //homeViewModel.refresh();
             }
         });
-        homeViewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) { showProgressBar(); } else { hideProgressBar(); }
+        activity.getIsUpdateUserData().observe(getViewLifecycleOwner(), aBoolean -> {
+            if(aBoolean) {
+                if(preferences.getString(Constants.USER_IMAGE_URL,"").startsWith(res.getString(R.string.http))) {
+                    Picasso.get().load(preferences.getString(Constants.USER_IMAGE_URL,res.getString(R.string.http))).into(profile_img);
+                } else profile_img.setImageResource(R.drawable.ic_outline_account_circle_24);
+                activity.updateUserData(false);
             }
         });
-        homeViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) { showText(); } else { hideText(); }
-            }
-        });
+
     }
 
     private void initRecyclerView(final HomeViewModel homeViewModel, int displayWidth, int displayHeight){
@@ -236,31 +242,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
             }
 
             @Override
-            public void onArtDownloadClick(final Art art, final int x, final int y, final int viewWidth, final int viewHeight) {
+            public void onArtDownloadClick(final Art art, final int x, final int y) {
 
-                ImageDownloader imageDownloader = ImageDownloader.getInstance(HomeFragment.this);
+                downloadArt = art; downloadX = x; downloadY = y;
+
+                imageDownloader = ImageDownloader.getInstance(HomeFragment.this);
                 ArrayList<String> arrPerm = imageDownloader.checkPermission(getContext());
-                if(arrPerm.isEmpty()) {
-
-                    String folderName = res.getString(R.string.folder_my_arts_pictures);
-                    boolean isExists = imageDownloader.isFileExists(art, folderName);
-                    if (isExists)
-                        Toast.makeText(getContext(), R.string.file_already_downloaded, Toast.LENGTH_SHORT).show();
-                    else {
-                        AnimatorSet set = startDownloadAnimation(x, y);
-                        set.addListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                imageDownloader.downloadImage(art, viewWidth, viewHeight, folderName);
-                            }
-                        });
-                        set.start();
-                    }
-
-                } else {
-                    imageDownloader.requestPermissions (arrPerm, activity);
-                }
+                if(arrPerm.isEmpty()) { startDownloading(); }
+                else { requestPermissions(arrPerm.toArray(new String[0]), PERMISSION_REQUEST_CODE); }
             }
 
             @Override
@@ -278,6 +267,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         homeRecyclerView.setLayoutManager(linearLayoutManager);
         homeRecyclerView.setAdapter(homeAdapter);
+    }
+
+    private void startDownloading() {
+        String folderName = res.getString(R.string.folder_my_arts_pictures);
+        boolean isExists = imageDownloader.isFileExists(downloadArt, folderName);
+        if (isExists)
+            Toast.makeText(getContext(), R.string.file_already_downloaded, Toast.LENGTH_SHORT).show();
+        else {
+            AnimatorSet set = startDownloadAnimation(downloadX, downloadY);
+            set.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    imageDownloader.downloadImage(downloadArt, folderName);
+                }
+            });
+            set.start();
+        }
     }
 
     @Override
@@ -378,6 +385,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
         void homeClassificationClickEvent(String artClassification, String queryType);
         void homeSearchClickEvent();
         void homeMuseumClickEvent(String artProviderId);
+        void homeProfileClickEvent(boolean isLoggedIn);
     }
 
     @Override
@@ -423,35 +431,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-
-        switch (requestCode) {
-            case PERMISSION_REQUEST_CODE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0) {
-                    for(int i = 0; i < grantResults.length; i++) {
-                        String permission = permissions[i];
-                        if(Manifest.permission.READ_EXTERNAL_STORAGE.equals(permission)) {
-                            if(grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                                // you now have permission
-                                Toast.makeText(getContext(), R.string.thanks_for_the_permissions_download_file_please, Toast.LENGTH_LONG).show();
-                            }
-                        }
-                        if(Manifest.permission.WRITE_EXTERNAL_STORAGE.equals(permission)) {
-                            if(grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                                // you now have permission
-                                Toast.makeText(getContext(), R.string.thanks_for_the_permissions_download_file_please, Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    }
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(getContext(), R.string.application_does_not_have_permission_to_download_the_file, Toast.LENGTH_LONG).show();
-                }
-                break;
+        if (requestCode == PERMISSION_REQUEST_CODE) {// If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // you now have permission
+                startDownloading();
+            } else {
+                // permission denied, boo! Disable the functionality that depends on this permission.
+                Toast.makeText(getContext(), R.string.application_does_not_have_permission_to_download_the_file, Toast.LENGTH_LONG).show();
             }
         }
-
     }
 
 

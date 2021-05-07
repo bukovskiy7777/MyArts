@@ -8,6 +8,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.os.Handler;
 
+import androidx.core.app.ActivityCompat;
+
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -16,10 +18,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import androidx.core.app.ActivityCompat;
-
-import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CODE;
 
 public class ImageDownloader {
 
@@ -49,16 +47,23 @@ public class ImageDownloader {
         void onDownloadFailure();
     }
 
-    public void downloadImage (final Art art, final int viewWidth, final int viewHeight, String folderName) {
+    public void downloadImage (final Art art, String folderName) {
 
         initTarget(getFile(art, folderName));
-        int artWidth, artHeight;
-        if (((float)viewWidth/(float)viewHeight) > 1) {
-            artWidth = 1600; artHeight = (int) (artWidth/((float)viewWidth/(float)viewHeight));
+
+        int artWidth = art.getArtWidth(); int artHeight = art.getArtHeight();
+        if (artWidth > 0 && artHeight > 0) {
+            int width, height;
+            if (((float)artWidth/(float)artHeight) > 1) {
+                width = 1600; height = (int) (width/((float)artWidth/(float)artHeight));
+            } else {
+                height = 1600; width = (int) (height/((float)artHeight/(float)artWidth));
+            }
+            Picasso.get().load(art.getArtImgUrl()).resize(width,height).onlyScaleDown().into(target);
         } else {
-            artHeight = 1600; artWidth = (int) (artHeight/((float)viewHeight/(float)viewWidth));
+            Picasso.get().load(art.getArtImgUrl()).into(target);
         }
-        Picasso.get().load(art.getArtImgUrl()).resize(artWidth,artHeight).onlyScaleDown().into(target);
+
     }
 
     public boolean isFileExists(Art art, String folderName) {
@@ -118,12 +123,6 @@ public class ImageDownloader {
             arrPerm.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
         return arrPerm;
-    }
-
-    public void requestPermissions (ArrayList<String> arrPerm, MainActivity activity) {
-        String[] permissions = new String[arrPerm.size()];
-        permissions = arrPerm.toArray(permissions);
-        ActivityCompat.requestPermissions(activity, permissions, PERMISSION_REQUEST_CODE);
     }
 
 }

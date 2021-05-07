@@ -2,7 +2,6 @@ package com.company.art_and_culture.myarts.show_folder_fragment;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -48,7 +47,6 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
     private FloatingActionButton floatingActionButton;
     private SwipeRefreshLayout swipeRefreshLayout;
     private MainActivity activity;
-    private AlertDialog dialog;
     private Folder currentFolder;
 
     @Nullable
@@ -209,30 +207,10 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.dialog_back_create_folder, null);
         builder.setView(view);
         builder.setTitle(res.getString(R.string.want_to_delete));
-        builder.setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int which) {
-                dialog = null;
-                showFolderViewModel.deleteFolder(currentFolder); // delete folder
-            }
-        });
-        builder.setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int which) {
-                dialog = null;
-                dialogInterface.dismiss();
-            }
-        });
-        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                dialog = null;
-            }
-        });
-        if(dialog == null) {
-            dialog = builder.create();
-            dialog.show();
-        }
+        builder.setPositiveButton(res.getString(R.string.yes), (dialogInterface, which) -> showFolderViewModel.deleteFolder(currentFolder));
+        builder.setNegativeButton(res.getString(R.string.no), (dialogInterface, which) -> dialogInterface.cancel());
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public interface ShowFolderEventListener {

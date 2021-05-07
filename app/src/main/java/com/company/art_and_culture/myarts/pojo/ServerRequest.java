@@ -25,6 +25,8 @@ public class ServerRequest {
 
     private ArtProvider artProvider;
 
+    private User user;
+
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -85,5 +87,9 @@ public class ServerRequest {
 
     public void setArtProvider(ArtProvider artProvider) {
         this.artProvider = artProvider;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

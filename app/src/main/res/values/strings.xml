@@ -15,7 +15,6 @@
     <string name="download_error">Download error...</string>
     <string name="file_already_downloaded">File already downloaded</string>
     <string name="folder_my_arts_pictures">My Arts Pictures</string>
-    <string name="thanks_for_the_permissions_download_file_please">Thanks for the permissions. Download file please</string>
     <string name="application_does_not_have_permission_to_download_the_file">Sorry. The application does not have permission to download the file</string>
     <string name="search_artworks">Search ArtWorks in english</string>
     <string name="more_then">More then</string>
@@ -71,5 +70,22 @@
     <string name="done">Done</string>
     <string name="_public">Public</string>
     <string name="_private">Private</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="by_creating_an_account_i_accept_artwork_s">By creating an account, I accept ArtWork\'s</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="sign_in_to_save_your_favorites_artworks_and_artists_to_user_account">Sign in to save your favorites ArtWorks and Artists to user account</string>
+    <string name="account">Account</string>
+    <string name="edit_account">Edit Account</string>
+    <string name="write_to_us">Write to us</string>
+    <string name="share_app">Share app</string>
+    <string name="rate_this_app">Rate this app</string>
+    <string name="log_out">Log out</string>
+    <string name="delete_account">Delete account</string>
+    <string name="user_id">User ID:</string>
+    <string name="artworks_email_from_user">ArtWorks - email from user</string>
+    <string name="are_you_sure_you_want_to_log_out">Are you sure you want to Log out?</string>
+    <string name="saved_artworks_and_authors_will_not_be_deleted">Saved ArtWorks and Authors will not be deleted. But they won\'t be tied to your email. When you uninstall the application, the data cannot be recovered</string>
+    <string name="want_to_delete_account">Are you sure you want to delete account?</string>
 
 </resources>

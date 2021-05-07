@@ -21,6 +21,9 @@ public class ServerResponse {
     private ArrayList<FilterObject> listKeywordFilters;
     private int artCount;
     private ArtProvider artProvider;
+    private User user;
+    private String privacyPolicyUrl;
+    private String termsAndConditionsUrl;
 
     public ArrayList<Art> getListArts() {
         return listArts;
@@ -94,4 +97,15 @@ public class ServerResponse {
         return artProvider;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public String getPrivacyPolicyUrl() {
+        return privacyPolicyUrl;
+    }
+
+    public String getTermsAndConditionsUrl() {
+        return termsAndConditionsUrl;
+    }
 }

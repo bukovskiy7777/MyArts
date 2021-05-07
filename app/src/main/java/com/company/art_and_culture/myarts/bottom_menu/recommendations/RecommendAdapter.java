@@ -81,7 +81,7 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.Reco
         void onArtImageClick(Art art, int position);
         void onArtLikeClick(Art art, int position);
         void onArtShareClick(Art art);
-        void onArtDownloadClick(Art art, int x, int y, int viewWidth, int viewHeight);
+        void onArtDownloadClick(Art art, int x, int y);
         void onArtMakerClick(Art art);
         void onArtClassificationClick(Art art);
         void onSaveToFolderClick(Art art);
@@ -250,7 +250,7 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.Reco
                 art_download.getLocationOnScreen(location);
                 int x = location[0];
                 int y = location[1];
-                onArtClickListener.onArtDownloadClick(art, x, y, art.getArtWidth(), art.getArtHeight());
+                onArtClickListener.onArtDownloadClick(art, x, y);
 
             } else if (v.getId() == art_like.getId()) {
                 onArtClickListener.onArtLikeClick(art, position);

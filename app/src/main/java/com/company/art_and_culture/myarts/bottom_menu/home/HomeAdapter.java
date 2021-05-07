@@ -64,7 +64,7 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
         void onArtClassificationClick(Art art);
         void onArtLikeClick(Art art, int position);
         void onArtShareClick(Art art);
-        void onArtDownloadClick(Art art, int x, int y, int viewWidth, int viewHeight);
+        void onArtDownloadClick(Art art, int x, int y);
         void onLogoClick(Art art);
         void onSaveToFolderClick(Art art);
     }
@@ -165,11 +165,9 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
 
             Picasso.get().load(art.getArtLogoUrl()).into(logo_image);
 
-            if(HomeDataInMemory.getInstance().getSingleItem(position).getIsLiked()){
-                art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
-                art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            } else {
-                art_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
+            if(HomeDataInMemory.getInstance().getSingleItem(position) != null) {
+                if(HomeDataInMemory.getInstance().getSingleItem(position).getIsLiked()){ art_like.setImageResource(R.drawable.ic_favorite_red_100dp);
+                } else art_like.setImageResource(R.drawable.ic_favorite_border_black_100dp);
                 art_like.setScaleType(ImageView.ScaleType.FIT_CENTER);
             }
 
@@ -235,7 +233,7 @@ public class HomeAdapter extends PagedListAdapter<Art, HomeAdapter.HomeViewHolde
                 art_download.getLocationOnScreen(location);
                 int x = location[0];
                 int y = location[1];
-                onArtClickListener.onArtDownloadClick(art, x, y, art_image.getWidth(), art_image.getHeight());
+                onArtClickListener.onArtDownloadClick(art, x, y);
 
             } else if (v.getId() == art_like.getId()) {
                 onArtClickListener.onArtLikeClick(art, position);

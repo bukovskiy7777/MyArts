@@ -14,7 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -85,47 +84,30 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
 
     private void subscribeObservers(final MainActivity activity) {
 
-        foldersViewModel.getFoldersList().observe(getViewLifecycleOwner(), new Observer<ArrayList<Folder>>() {
-            @Override
-            public void onChanged(ArrayList<Folder> objects) {
-
-                if (objects == null) {
-                    foldersAdapter.clearItems();
-                    activity.postFoldersCount(0);
-                } else {
-                    setAnimationRecyclerView (objects, foldersAdapter, folderRecyclerView);
-                    foldersAdapter.clearItems();
-                    foldersAdapter.setItems(objects);
-                    activity.postFoldersCount(objects.size());
-                }
-                swipeRefreshLayout.setRefreshing(false);
+        foldersViewModel.getFoldersList().observe(getViewLifecycleOwner(), objects -> {
+            if (objects == null) {
+                foldersAdapter.clearItems();
+                activity.postFoldersCount(0);
+            } else {
+                setAnimationRecyclerView (objects, foldersAdapter, folderRecyclerView);
+                foldersAdapter.clearItems();
+                foldersAdapter.setItems(objects);
+                activity.postFoldersCount(objects.size());
+            }
+            swipeRefreshLayout.setRefreshing(false);
+        });
+        foldersViewModel.getIsLoading().observe(getViewLifecycleOwner(), aBoolean -> {
+            if (aBoolean) { showProgressBar(); } else { hideProgressBar(); }
+        });
+        foldersViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), aBoolean -> {
+            if (aBoolean) { showText(); } else { hideText(); }
+        });
+        activity.getUpdateFolders().observe(getViewLifecycleOwner(), aBoolean -> {
+            if(aBoolean) {
+                refresh();
+                //activity.updateFolders(false);
             }
         });
-        foldersViewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) { showProgressBar(); } else { hideProgressBar(); }
-            }
-        });
-        foldersViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) { showText(); } else { hideText(); }
-            }
-        });
-
-        activity.getUpdateFolders().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if(aBoolean) {
-                    refresh();
-                    activity.updateFolders(false);
-                }
-
-
-            }
-        });
-
     }
 
     private void setAnimationRecyclerView(ArrayList<Folder> objects, FoldersAdapter foldersAdapter, RecyclerView recyclerView) {

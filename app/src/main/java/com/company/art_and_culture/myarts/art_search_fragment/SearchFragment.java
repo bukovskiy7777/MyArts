@@ -1,6 +1,5 @@
 package com.company.art_and_culture.myarts.art_search_fragment;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -85,6 +84,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
     private RecyclerView suggestions_recycler_view;
     private SuggestAdapter suggestAdapter;
     private ProgressBar suggestions_progress;
+    private ImageDownloader imageDownloader;
+    private Art downloadArt;
+    private int downloadX, downloadY;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -430,31 +432,14 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
             }
 
             @Override
-            public void onArtDownloadClick(final Art art, final int x, final int y, final int viewWidth, final int viewHeight) {
+            public void onArtDownloadClick(final Art art, final int x, final int y) {
 
-                ImageDownloader imageDownloader = ImageDownloader.getInstance(SearchFragment.this);
+                downloadArt = art; downloadX = x; downloadY = y;
+
+                imageDownloader = ImageDownloader.getInstance(SearchFragment.this);
                 ArrayList<String> arrPerm = imageDownloader.checkPermission(getContext());
-                if(arrPerm.isEmpty()) {
-
-                    String folderName = res.getString(R.string.folder_my_arts_pictures);
-                    boolean isExists = imageDownloader.isFileExists(art, folderName);
-                    if (isExists)
-                        Toast.makeText(getContext(), R.string.file_already_downloaded, Toast.LENGTH_SHORT).show();
-                    else {
-                        AnimatorSet set = startDownloadAnimation(x, y);
-                        set.addListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                imageDownloader.downloadImage(art, viewWidth, viewHeight, folderName);
-                            }
-                        });
-                        set.start();
-                    }
-
-                } else {
-                    imageDownloader.requestPermissions (arrPerm, activity);
-                }
+                if(arrPerm.isEmpty()) { startDownloading(); }
+                else { requestPermissions(arrPerm.toArray(new String[0]), PERMISSION_REQUEST_CODE); }
             }
 
             @Override
@@ -472,6 +457,24 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         searchRecyclerView.setLayoutManager(linearLayoutManager);
         searchRecyclerView.setAdapter(searchAdapter);
+    }
+
+    private void startDownloading() {
+        String folderName = res.getString(R.string.folder_my_arts_pictures);
+        boolean isExists = imageDownloader.isFileExists(downloadArt, folderName);
+        if (isExists)
+            Toast.makeText(getContext(), R.string.file_already_downloaded, Toast.LENGTH_SHORT).show();
+        else {
+            AnimatorSet set = startDownloadAnimation(downloadX, downloadY);
+            set.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    imageDownloader.downloadImage(downloadArt, folderName);
+                }
+            });
+            set.start();
+        }
     }
 
     @Override
@@ -614,35 +617,15 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-
-        switch (requestCode) {
-            case PERMISSION_REQUEST_CODE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0) {
-                    for(int i = 0; i < grantResults.length; i++) {
-                        String permission = permissions[i];
-                        if(Manifest.permission.READ_EXTERNAL_STORAGE.equals(permission)) {
-                            if(grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                                // you now have permission
-                                Toast.makeText(getContext(), R.string.thanks_for_the_permissions_download_file_please, Toast.LENGTH_LONG).show();
-                            }
-                        }
-                        if(Manifest.permission.WRITE_EXTERNAL_STORAGE.equals(permission)) {
-                            if(grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                                // you now have permission
-                                Toast.makeText(getContext(), R.string.thanks_for_the_permissions_download_file_please, Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    }
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(getContext(), R.string.application_does_not_have_permission_to_download_the_file, Toast.LENGTH_LONG).show();
-                }
-                break;
+        if (requestCode == PERMISSION_REQUEST_CODE) {// If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // you now have permission
+                startDownloading();
+            } else {
+                // permission denied, boo! Disable the functionality that depends on this permission.
+                Toast.makeText(getContext(), R.string.application_does_not_have_permission_to_download_the_file, Toast.LENGTH_LONG).show();
             }
         }
-
     }
 
     @Override
