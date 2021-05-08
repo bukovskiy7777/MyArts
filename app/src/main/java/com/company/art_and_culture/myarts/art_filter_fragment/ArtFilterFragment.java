@@ -103,6 +103,12 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         return root;
     }
 
+    @Override
+    public void onDestroy() {
+        ArtFilterDataInMemory.getInstance().refresh();
+        super.onDestroy();
+    }
+
     private void bindViews(View root) {
         textView = root.findViewById(R.id.text_art_filter);
         recycler_view_art_filter = root.findViewById(R.id.recycler_view_art_filter);
