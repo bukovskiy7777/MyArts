@@ -2,17 +2,16 @@ package com.company.art_and_culture.myarts.museum_fragment;
 
 import android.app.Application;
 
+import androidx.lifecycle.LiveData;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
+
 import com.company.art_and_culture.myarts.Constants;
-import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ArtProvider;
 import com.company.art_and_culture.myarts.pojo.Maker;
 
 import java.util.ArrayList;
-
-import androidx.lifecycle.LiveData;
-import androidx.paging.LivePagedListBuilder;
-import androidx.paging.PagedList;
 
 public class MuseumRepository {
 
@@ -82,10 +81,6 @@ public class MuseumRepository {
             artDataSourceFactory.setArtProviderId(artProviderId);
             museumInfoDataSource.setArtProviderId(artProviderId);
         }
-    }
-
-    public void setActivity(MainActivity activity) {
-        artDataSource.setActivity(activity);
     }
 
     public boolean likeMuseum(ArtProvider museum, String userUniqueId) {

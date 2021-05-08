@@ -2,17 +2,16 @@ package com.company.art_and_culture.myarts.museum_fragment;
 
 import android.app.Application;
 
-import com.company.art_and_culture.myarts.MainActivity;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.paging.PagedList;
+
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ArtProvider;
 import com.company.art_and_culture.myarts.pojo.Maker;
 
 import java.util.ArrayList;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.paging.PagedList;
 
 
 public class MuseumViewModel extends AndroidViewModel {
@@ -78,10 +77,6 @@ public class MuseumViewModel extends AndroidViewModel {
             isLiked = museumRepository.getArtProviderLike();
         } else
             museumRepository.setArtProviderId(artProviderId);
-    }
-
-    public void setActivity(MainActivity activity) {
-        museumRepository.setActivity(activity);
     }
 
     public boolean likeMuseum(ArtProvider museum, String userUniqueId) {

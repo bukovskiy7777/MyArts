@@ -93,7 +93,7 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
             activity.getNavFragments().popBackStack();
         } else {
             museumViewModel.setArtProviderId(artProviderId);
-            museumViewModel.setActivity(activity);
+            ArtDataInMemory.getInstance().setArtObserver(activity);
             subscribeObservers();
 
             initRecyclerView(museumViewModel, displayWidth, displayHeight);
