@@ -1,6 +1,8 @@
 package com.company.art_and_culture.myarts.bottom_menu.favorites.Artists;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,7 +109,10 @@ public class ArtistsFragment extends Fragment implements View.OnClickListener {
             setListMakers(globalListMakers);
         });
         activity.getIsUpdateAllAppData().observe(getViewLifecycleOwner(), aBoolean -> {
-            if(aBoolean) artistsViewModel.refresh();
+            if(aBoolean) {
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(() -> artistsViewModel.refresh(), 400);
+            }
         });
 
     }
