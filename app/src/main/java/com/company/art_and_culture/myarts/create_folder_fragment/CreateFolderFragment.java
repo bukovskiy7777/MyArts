@@ -24,6 +24,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
@@ -33,20 +44,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
 public class CreateFolderFragment extends Fragment implements View.OnClickListener {
 
     private RecyclerView recycler_view_items;
+    private ConstraintLayout blank_favorites;
     private CreateFolderViewModel createFolderViewModel;
     private FrameLayout title_layout;
     private TextView title, items_count, switch_description;
@@ -71,6 +72,7 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
         View root = inflater.inflate(R.layout.fragment_create_folder, container, false);
 
         title_layout = root.findViewById(R.id.title_layout);
+        blank_favorites = root.findViewById(R.id.blank_favorites);
         title = root.findViewById(R.id.title);
         items_count = root.findViewById(R.id.items_count);
         switch_description = root.findViewById(R.id.switch_description);
@@ -138,12 +140,19 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
         createFolderViewModel.setActivity(activity);
 
         initItemsRecyclerView(displayWidth, displayHeight, spanCount);
-
         subscribeObservers();
-
         setOnBackPressedListener(root);
+        hideText();
 
         return root;
+    }
+
+    private void showText(){
+        blank_favorites.setVisibility(View.VISIBLE);
+    }
+
+    private void hideText(){
+        blank_favorites.setVisibility(View.GONE);
     }
 
     @Override
@@ -189,9 +198,11 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
             public void onChanged(ArrayList<Art> arts) {
                 if (arts == null) {
                     artsAdapter.clearItems();
+                    showText();
                 } else {
                     artsAdapter.clearItems();
                     artsAdapter.setItems(arts);
+                    hideText();
 
                     countChosen = 0;
                     for(int i = 0; i < artsAdapter.getItems().size(); i++) {

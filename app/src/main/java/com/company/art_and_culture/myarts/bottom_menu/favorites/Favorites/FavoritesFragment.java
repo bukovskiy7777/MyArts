@@ -131,7 +131,13 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
             @Override
             public void onChanged(ArrayList<Art> arts) {
 
-                if(arts != null) globalListArts = arts; else globalListArts.clear();
+                if(arts != null) {
+                    globalListArts = arts;
+                    hideText();
+                } else {
+                    globalListArts.clear();
+                    showText();
+                }
                 activity.postFavoritesArtsCount(globalListArts.size());
                 setListArts(globalListArts);
                 swipeRefreshLayout.setRefreshing(false);
@@ -146,7 +152,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
         favoritesViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                if (aBoolean) { showText(); } else { hideText(); }
+                //if (aBoolean) { showText(); } else { hideText(); }
             }
         });
         if (activity != null) activity.getFavoritesFilter().observe(getViewLifecycleOwner(), s -> {

@@ -77,7 +77,13 @@ public class ArtistsFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onChanged(ArrayList<Maker> makers) {
 
-                if(makers != null) globalListMakers = makers; else globalListMakers.clear();
+                if(makers != null) {
+                    globalListMakers = makers;
+                    hideText();
+                } else {
+                    globalListMakers.clear();
+                    showText();
+                }
                 activity.postArtistsCount(globalListMakers.size());
                 setListMakers(globalListMakers);
                 swipeRefreshLayout.setRefreshing(false);
@@ -93,7 +99,7 @@ public class ArtistsFragment extends Fragment implements View.OnClickListener {
         artistsViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                if (aBoolean) { showText(); } else { hideText(); }
+                //if (aBoolean) { showText(); } else { hideText(); }
             }
         });
         if (activity != null) activity.getArtistsFilter().observe(getViewLifecycleOwner(), s -> {
