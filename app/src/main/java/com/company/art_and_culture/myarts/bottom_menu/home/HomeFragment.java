@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -185,7 +187,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
                 if(preferences.getString(Constants.USER_IMAGE_URL,"").startsWith(res.getString(R.string.http))) {
                     Picasso.get().load(preferences.getString(Constants.USER_IMAGE_URL,res.getString(R.string.http))).into(profile_img);
                 } else profile_img.setImageResource(R.drawable.ic_outline_account_circle_24);
-                activity.updateUserData(false);
+
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(() -> activity.updateUserData(false), 1000);
             }
         });
 

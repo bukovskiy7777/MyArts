@@ -5,50 +5,62 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:background="?android:attr/selectableItemBackground"
+    <com.makeramen.roundedimageview.RoundedImageView
+        app:riv_corner_radius="18dp"
+        android:background="@drawable/folder_title_back"
+        android:foreground="?android:attr/selectableItemBackground"
         android:scaleType="centerCrop"
         android:layout_margin="16dp"
         android:id="@+id/explore_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <TextView
-        android:text="Rembrandt"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="0dp"
-        android:textColor="@color/colorBlack"
-        android:fontFamily="@string/font_sans_serif_black"
-        android:textSize="24sp"
-        android:minLines="1"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:id="@+id/explore_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@+id/explore_image"
-        app:layout_constraintRight_toRightOf="@+id/explore_image"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        app:layout_constraintTop_toTopOf="@+id/explore_image"
         app:layout_constraintBottom_toBottomOf="@+id/explore_image"
-        app:layout_constraintTop_toTopOf="@+id/explore_image"/>
-
-    <TextView
-        android:text="25 items"
-        android:textColor="@color/colorBlack"
-        android:fontFamily="@string/font_sans_serif_light"
-        android:textSize="14sp"
-        android:minLines="1"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:id="@+id/explore_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="10dp"
         app:layout_constraintLeft_toLeftOf="@+id/explore_image"
         app:layout_constraintRight_toRightOf="@+id/explore_image"
-        app:layout_constraintTop_toBottomOf="@+id/explore_text" />
+        android:background="@drawable/folder_title_back"
+        android:padding="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
+        <TextView
+            android:text="Rembrandt"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="0dp"
+            android:textColor="@color/colorBlack"
+            android:fontFamily="@string/font_sans_serif_black"
+            android:textSize="24sp"
+            android:minLines="1"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:id="@+id/explore_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:text="25 items"
+            android:textColor="@color/colorBlack"
+            android:fontFamily="@string/font_sans_serif_light"
+            android:textSize="14sp"
+            android:minLines="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:id="@+id/explore_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/explore_text" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

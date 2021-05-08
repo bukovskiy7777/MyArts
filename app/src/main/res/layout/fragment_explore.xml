@@ -81,8 +81,18 @@
                             android:layout_marginRight="10dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/profile_img"
                             android:src="@drawable/ic_search_black_100dp"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"/>
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/profile_img"
+                            android:layout_marginRight="10dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:background="@drawable/ic_outline_account_circle_24"
                             android:layout_width="30dp"
                             android:layout_height="30dp"/>
 

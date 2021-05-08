@@ -100,6 +100,9 @@ public class ArtistsFragment extends Fragment implements View.OnClickListener {
             filter = s;
             setListMakers(globalListMakers);
         });
+        activity.getIsUpdateAllAppData().observe(getViewLifecycleOwner(), aBoolean -> {
+            if(aBoolean) artistsViewModel.refresh();
+        });
 
     }
 
@@ -171,7 +174,7 @@ public class ArtistsFragment extends Fragment implements View.OnClickListener {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                boolean networkState = refresh();
+                boolean networkState = artistsViewModel.refresh();
                 if (!networkState) {
                     Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
                     swipeRefreshLayout.setRefreshing(false);
@@ -182,10 +185,6 @@ public class ArtistsFragment extends Fragment implements View.OnClickListener {
                 R.color.colorBlue
         );
 
-    }
-
-    public boolean refresh () {
-        return artistsViewModel.refresh();
     }
 
     @Override

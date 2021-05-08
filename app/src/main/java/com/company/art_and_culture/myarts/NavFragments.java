@@ -226,17 +226,26 @@ public class NavFragments implements
     public void exploreSearchClickEvent() {
         navController.navigate(R.id.action_navigation_explore_to_searchFragment);
     }
-
-
+    @Override
+    public void exploreProfileClickEvent(boolean isLoggedIn) {
+        if(isLoggedIn)
+            navController.navigate(R.id.action_navigation_explore_to_userFragment);
+        else
+            navController.navigate(R.id.action_navigation_explore_to_signInFragment);
+    }
 
 
     @Override
     public void blankSearchClickEvent() {
         navController.navigate(R.id.action_navigation_favorites_to_searchFragment);
     }
-
-
-
+    @Override
+    public void blankProfileClickEvent(boolean isLoggedIn) {
+        if(isLoggedIn)
+            navController.navigate(R.id.action_navigation_favorites_to_userFragment);
+        else
+            navController.navigate(R.id.action_navigation_favorites_to_signInFragment);
+    }
 
 
     @Override
@@ -350,6 +359,13 @@ public class NavFragments implements
     @Override
     public void recommendScrollEvent(int scrollPosition) {
         this.recommendPosition = scrollPosition;
+    }
+    @Override
+    public void recommendProfileClickEvent(boolean isLoggedIn) {
+        if(isLoggedIn)
+            navController.navigate(R.id.action_navigation_recommend_to_userFragment);
+        else
+            navController.navigate(R.id.action_navigation_recommend_to_signInFragment);
     }
 
     public Collection<Art> getListArtsForArtShowFragment() {

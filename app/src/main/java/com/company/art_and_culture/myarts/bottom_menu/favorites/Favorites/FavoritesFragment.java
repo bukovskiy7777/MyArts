@@ -111,10 +111,6 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
         return root;
     }
 
-    public boolean refresh () {
-        return favoritesViewModel.refresh();
-    }
-
     private void initRecyclerView(int displayWidth, int displayHeight, Sort sort_type, int spanCount) {
 
         FavoritesAdapter.OnArtClickListener onArtClickListener = new FavoritesAdapter.OnArtClickListener() {
@@ -156,6 +152,9 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
         if (activity != null) activity.getFavoritesFilter().observe(getViewLifecycleOwner(), s -> {
             filter = s;
             setListArts(globalListArts);
+        });
+        activity.getIsUpdateAllAppData().observe(getViewLifecycleOwner(), aBoolean -> {
+            if(aBoolean) favoritesViewModel.refresh();
         });
 
     }
@@ -222,7 +221,7 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                boolean networkState = refresh();
+                boolean networkState = favoritesViewModel.refresh();
                 if (!networkState) {
                     Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
                     swipeRefreshLayout.setRefreshing(false);

@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -35,6 +37,7 @@ import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -57,7 +60,7 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
     private SwipeRefreshLayout swipeRefreshLayout;
     private android.content.res.Resources res;
     private RecommendationsEventListener recommendationsEventListener;
-    private ImageView search_btn;
+    private ImageView search_btn, profile_img;
     private MainActivity activity;
     private SharedPreferences preferences;
     private View download_view, done_view;
@@ -80,6 +83,8 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
         swipeRefreshLayout = root.findViewById(R.id.swipeRefreshLayout);
         search_btn = root.findViewById(R.id.search_btn);
         search_btn.setOnClickListener(this);
+        profile_img = root.findViewById(R.id.profile_img);
+        profile_img.setOnClickListener(this);
 
         res = getResources();
         int displayWidth = res.getDisplayMetrics().widthPixels;
@@ -90,6 +95,8 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
         activity = (MainActivity) getActivity();
         if (activity != null) recommendationsEventListener = activity.getNavFragments();
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
+
+        if(preferences.getBoolean(Constants.IS_LOGGED_IN,false)) Picasso.get().load(preferences.getString(Constants.USER_IMAGE_URL,res.getString(R.string.http))).into(profile_img);
 
         if (activity != null) scrollPosition = activity.getNavFragments().getRecommendPosition();
         if (scrollPosition >= 0) recyclerView.scrollToPosition(scrollPosition);
@@ -246,12 +253,27 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
         recommendViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), aBoolean -> {
             if (aBoolean) { showText(); } else { hideText(); }
         });
+        activity.getIsUpdateUserData().observe(getViewLifecycleOwner(), aBoolean -> {
+            if(aBoolean) {
+                if(preferences.getString(Constants.USER_IMAGE_URL,"").startsWith(res.getString(R.string.http))) {
+                    Picasso.get().load(preferences.getString(Constants.USER_IMAGE_URL,res.getString(R.string.http))).into(profile_img);
+                } else profile_img.setImageResource(R.drawable.ic_outline_account_circle_24);
+
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(() -> activity.updateUserData(false), 1000);
+            }
+        });
+        activity.getIsUpdateAllAppData().observe(getViewLifecycleOwner(), aBoolean -> {
+            if(aBoolean) {
+                //recommendViewModel.refresh();
+            }
+        });
 
     }
 
     private void initSwipeRefreshLayout() {
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            boolean networkState = refresh();
+            boolean networkState = recommendViewModel.refresh();
             if (!networkState) {
                 Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
                 swipeRefreshLayout.setRefreshing(false);
@@ -278,10 +300,6 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
         textView.setVisibility(View.GONE);
     }
 
-    public boolean refresh () {
-        return recommendViewModel.refresh();
-    }
-
     private void setAnimationRecyclerView(ArrayList<Art> objects, RecommendAdapter adapter, RecyclerView recyclerView) {
 
         LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_fade_in);
@@ -301,6 +319,9 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
     public void onClick(View v) {
         if (v.getId() == search_btn.getId()) {
             recommendationsEventListener.recommendationsSearchClickEvent();
+
+        } else if (v.getId() == profile_img.getId()) {
+            recommendationsEventListener.recommendProfileClickEvent(preferences.getBoolean(Constants.IS_LOGGED_IN,false));
         }
     }
 
@@ -327,6 +348,7 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
         void recommendationsSearchClickEvent();
         void recommendationsClassificationClickEvent(String artClassification, String queryType);
         void recommendScrollEvent(int scrollPosition);
+        void recommendProfileClickEvent(boolean isLoggedIn);
     }
 
     private void runDownLoadSuccessAnimation () {

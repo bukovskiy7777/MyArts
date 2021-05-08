@@ -2,7 +2,10 @@ package com.company.art_and_culture.myarts.bottom_menu.favorites;
 
 
 import android.animation.ValueAnimator;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -19,11 +22,13 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Field;
 
@@ -33,10 +38,11 @@ public class BlankFragment extends Fragment implements View.OnClickListener {
     private ViewPager2 viewPager;
     private BlankAdapter blankAdapter;
     private TabLayout tabLayout;
-    private ImageView search_btn;
+    private ImageView search_btn, profile_img;
     private BlankEventListener blankEventListener;
     private FloatingActionButton fab_favorites, fab_artists, fab_folders;
     private AppCompatEditText search_favorites, search_artists;
+    private SharedPreferences preferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,6 +52,8 @@ public class BlankFragment extends Fragment implements View.OnClickListener {
         viewPager = root.findViewById(R.id.favorite_view_pager);
         search_btn = root.findViewById(R.id.search_btn);
         search_btn.setOnClickListener(this);
+        profile_img = root.findViewById(R.id.profile_img);
+        profile_img.setOnClickListener(this);
         fab_favorites = root.findViewById(R.id.fab_favorites);
         fab_favorites.setOnClickListener(this);
         fab_artists = root.findViewById(R.id.fab_artists);
@@ -58,6 +66,9 @@ public class BlankFragment extends Fragment implements View.OnClickListener {
         activity = (MainActivity) getActivity();
 
         if (activity != null) blankEventListener = activity.getNavFragments();
+        if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
+
+        if(preferences.getBoolean(Constants.IS_LOGGED_IN,false)) Picasso.get().load(preferences.getString(Constants.USER_IMAGE_URL,getResources().getString(R.string.http))).into(profile_img);
 
         blankAdapter = new BlankAdapter(activity);
         viewPager.setAdapter(blankAdapter);
@@ -194,6 +205,16 @@ public class BlankFragment extends Fragment implements View.OnClickListener {
                 animateTab(2, integer, 500);
             }
         });
+        activity.getIsUpdateUserData().observe(getViewLifecycleOwner(), aBoolean -> {
+            if(aBoolean) {
+                if(preferences.getString(Constants.USER_IMAGE_URL,"").startsWith(getResources().getString(R.string.http))) {
+                    Picasso.get().load(preferences.getString(Constants.USER_IMAGE_URL,getResources().getString(R.string.http))).into(profile_img);
+                } else profile_img.setImageResource(R.drawable.ic_outline_account_circle_24);
+
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(() -> activity.updateUserData(false), 1000);
+            }
+        });
     }
 
     private void animateTab(final int tabNumber, int value, int duration) {
@@ -260,7 +281,10 @@ public class BlankFragment extends Fragment implements View.OnClickListener {
         if (v.getId() == search_btn.getId()) {
             blankEventListener.blankSearchClickEvent();
 
-        } else if (v.getId() == fab_folders.getId()) {
+        } else if (v.getId() == profile_img.getId()) {
+            blankEventListener.blankProfileClickEvent(preferences.getBoolean(Constants.IS_LOGGED_IN,false));
+
+        }else if (v.getId() == fab_folders.getId()) {
             blankEventListener.createFolderClick();
 
         } else if (v.getId() == fab_favorites.getId()) {
@@ -275,6 +299,7 @@ public class BlankFragment extends Fragment implements View.OnClickListener {
 
     public interface BlankEventListener {
         void blankSearchClickEvent();
+        void blankProfileClickEvent(boolean isLoggedIn);
         void createFolderClick();
     }
 }

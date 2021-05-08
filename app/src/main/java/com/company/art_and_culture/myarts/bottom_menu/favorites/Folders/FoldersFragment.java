@@ -36,7 +36,7 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
     private RecyclerView folderRecyclerView;
     private FoldersAdapter foldersAdapter;
     private FoldersEventListener folderEventListener;
-
+    private MainActivity activity;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -59,11 +59,11 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
 
         initRecyclerView(displayWidth, displayHeight);
 
-        MainActivity activity = (MainActivity) getActivity();
+        activity = (MainActivity) getActivity();
         if (activity != null) folderEventListener = activity.getNavFragments();
 
         initSwipeRefreshLayout();
-        subscribeObservers(activity);
+        subscribeObservers();
 
         return root;
     }
@@ -82,7 +82,7 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
         folderRecyclerView.setAdapter(foldersAdapter);
     }
 
-    private void subscribeObservers(final MainActivity activity) {
+    private void subscribeObservers() {
 
         foldersViewModel.getFoldersList().observe(getViewLifecycleOwner(), objects -> {
             if (objects == null) {
@@ -104,9 +104,12 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
         });
         activity.getUpdateFolders().observe(getViewLifecycleOwner(), aBoolean -> {
             if(aBoolean) {
-                refresh();
+                foldersViewModel.refresh();
                 //activity.updateFolders(false);
             }
+        });
+        activity.getIsUpdateAllAppData().observe(getViewLifecycleOwner(), aBoolean -> {
+            if(aBoolean) foldersViewModel.refresh();
         });
     }
 
@@ -122,7 +125,7 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                boolean networkState = refresh();
+                boolean networkState = foldersViewModel.refresh();
                 if (!networkState) {
                     Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
                     swipeRefreshLayout.setRefreshing(false);
@@ -130,10 +133,7 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
             }
         });
         swipeRefreshLayout.setColorSchemeResources(
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light,
-                android.R.color.holo_blue_bright
+                R.color.colorBlue
         );
     }
 
@@ -151,10 +151,6 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
 
     private void hideText(){
         create_folder_layout.setVisibility(View.GONE);
-    }
-
-    public boolean refresh () {
-        return foldersViewModel.refresh();
     }
 
     @Override

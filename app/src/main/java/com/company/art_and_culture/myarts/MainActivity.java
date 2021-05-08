@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -99,14 +101,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getUpdateFolders().observe(this, aBoolean -> {
             if(aBoolean) {
                 dataSource.getFoldersList(preferences.getString(Constants.USER_UNIQUE_ID,""));
-                updateFolders(false);
+
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(() -> updateFolders(false), 1000);
             }
         });
         getIsUpdateAllAppData().observe(this, aBoolean -> {
             if(aBoolean) {
                 dataSource.getFoldersList(preferences.getString(Constants.USER_UNIQUE_ID,""));
                 dataSource.getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,""));
-                updateAllAppData(false);
+
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(() -> updateAllAppData(false), 1000);
             }
         });
     }

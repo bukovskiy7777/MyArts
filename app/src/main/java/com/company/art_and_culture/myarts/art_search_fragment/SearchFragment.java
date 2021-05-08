@@ -163,8 +163,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
                     search_clear.setVisibility(View.GONE);
                 } else {
                     final Handler handler = new Handler();
-                    timer.cancel();
-                    timer = new Timer();
                     timer.schedule(
                             new TimerTask() {
                                 @Override
@@ -174,7 +172,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
                                             suggestions_progress.setVisibility(View.VISIBLE);
                                             activity.getDataSource().getSuggests(s.toString(), preferences.getString(Constants.USER_UNIQUE_ID,""));
                                         }
-                                    });                                }
+                                    });
+                                }
                             }, DELAY);
 
                     search_clear.setVisibility(View.VISIBLE);

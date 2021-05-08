@@ -1,7 +1,10 @@
 package com.company.art_and_culture.myarts.bottom_menu.explore;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,9 +24,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.ExploreObject;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -38,7 +43,9 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
     private SwipeRefreshLayout swipeRefreshLayout;
     private android.content.res.Resources res;
     private ExploreEventListener exploreEventListener;
-    private ImageView search_btn;
+    private SharedPreferences preferences;
+    private MainActivity activity;
+    private ImageView search_btn, profile_img;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -54,6 +61,8 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
         swipeRefreshLayout = root.findViewById(R.id.explore_swipeRefreshLayout);
         search_btn = root.findViewById(R.id.search_btn);
         search_btn.setOnClickListener(this);
+        profile_img = root.findViewById(R.id.profile_img);
+        profile_img.setOnClickListener(this);
 
         res = getResources();
         int displayWidth = res.getDisplayMetrics().widthPixels;
@@ -61,8 +70,11 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
 
         initRecyclerView(displayWidth, displayHeight);
 
-        MainActivity activity = (MainActivity) getActivity();
+        activity = (MainActivity) getActivity();
         if (activity != null) exploreEventListener = activity.getNavFragments();
+        if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
+
+        if(preferences.getBoolean(Constants.IS_LOGGED_IN,false)) Picasso.get().load(preferences.getString(Constants.USER_IMAGE_URL,res.getString(R.string.http))).into(profile_img);
 
         initSwipeRefreshLayout();
         subscribeObservers();
@@ -113,27 +125,30 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
                 if (aBoolean) { showText(); } else { hideText(); }
             }
         });
+        activity.getIsUpdateUserData().observe(getViewLifecycleOwner(), aBoolean -> {
+            if(aBoolean) {
+                if(preferences.getString(Constants.USER_IMAGE_URL,"").startsWith(res.getString(R.string.http))) {
+                    Picasso.get().load(preferences.getString(Constants.USER_IMAGE_URL,res.getString(R.string.http))).into(profile_img);
+                } else profile_img.setImageResource(R.drawable.ic_outline_account_circle_24);
+
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(() -> activity.updateUserData(false), 1000);
+            }
+        });
 
     }
 
     private void initSwipeRefreshLayout() {
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                boolean networkState = refresh();
-                if (!networkState) {
-                    Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
-                    swipeRefreshLayout.setRefreshing(false);
-                }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            boolean networkState = refresh();
+            if (!networkState) {
+                Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
         swipeRefreshLayout.setColorSchemeResources(
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light,
-                android.R.color.holo_blue_bright
+                R.color.colorBlue
         );
-
     }
 
     private void showProgressBar(){
@@ -168,6 +183,9 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
     public void onClick(View v) {
         if (v.getId() == search_btn.getId()) {
             exploreEventListener.exploreSearchClickEvent();
+
+        } else if (v.getId() == profile_img.getId()) {
+            exploreEventListener.exploreProfileClickEvent(preferences.getBoolean(Constants.IS_LOGGED_IN,false));
         }
     }
 
@@ -180,6 +198,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
     public interface ExploreEventListener {
         void exploreClick(String type);
         void exploreSearchClickEvent();
+        void exploreProfileClickEvent(boolean isLoggedIn);
     }
 
 }
