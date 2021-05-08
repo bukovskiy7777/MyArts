@@ -22,9 +22,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.paging.PagedList;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -56,7 +54,7 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
     private SwipeRefreshLayout art_filter_swipeRefreshLayout;
     private android.content.res.Resources res;
     private MainActivity activity;
-    private String keyword, keywordType, makerFilter = "", centuryFilter = "";
+    private String keyword = "", keywordType = "", makerFilter = "", centuryFilter = "";
     private int spanCount = 2;
     private FloatingActionButton floatingActionButton;
     private FrameLayout black_layout;
@@ -82,8 +80,8 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
         activity = (MainActivity) getActivity();
-        if (activity != null && keyword == null) keyword = activity.getNavFragments().getKeywordForArtFilterFragment();
-        if (activity != null && keywordType == null) keywordType = activity.getNavFragments().getKeywordTypeForArtFilterFragment();
+        if (activity != null) keyword = activity.getNavFragments().getKeywordForArtFilterFragment();
+        if (activity != null) keywordType = activity.getNavFragments().getKeywordTypeForArtFilterFragment();
         if (activity != null) artFilterEventListener = activity.getNavFragments();
 
         if(keyword == null) {
@@ -91,7 +89,7 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         } else {
 
             artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
-            artFilterViewModel.setActivity(activity);
+            ArtFilterDataInMemory.getInstance().setArtObserver(activity);
             subscribeObservers();
 
             initEditTexts();
@@ -145,14 +143,11 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
     }
 
     private void initEditTexts() {
-        filter_artist_edit_text.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    filter_artist_edit_text.clearFocus();
-                }
-                return false;
+        filter_artist_edit_text.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                filter_artist_edit_text.clearFocus();
             }
+            return false;
         });
         filter_artist_edit_text.addTextChangedListener(new TextWatcher() {
             @Override
@@ -166,8 +161,6 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
             public void afterTextChanged(Editable editable) {
                 if(filter_artist_edit_text.getText().length() > 0) {
                     final Handler handler = new Handler();
-                    timer.cancel();
-                    timer = new Timer();
                     timer.schedule(
                             new TimerTask() {
                                 @Override
@@ -192,14 +185,11 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
             }
         });
 
-        filter_keyword_edit_text.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    filter_keyword_edit_text.clearFocus();
-                }
-                return false;
+        filter_keyword_edit_text.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                filter_keyword_edit_text.clearFocus();
             }
+            return false;
         });
         filter_keyword_edit_text.addTextChangedListener(new TextWatcher() {
             @Override
@@ -248,13 +238,6 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         return sb.toString();
     }
 
-    @Override
-    public void onDestroy() {
-        keyword = ""; makerFilter = ""; centuryFilter = ""; keywordType = "";
-        artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
-        super.onDestroy();
-    }
-
     private void initFiltersRecyclerView(View root) {
         FlexboxLayoutManager layoutManagerArtists = new FlexboxLayoutManager(getContext());
         layoutManagerArtists.setFlexDirection(FlexDirection.ROW); layoutManagerArtists.setJustifyContent(JustifyContent.CENTER);
@@ -271,44 +254,35 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         recycler_view_keywords = root.findViewById(R.id.recycler_view_keywords);
         recycler_view_keywords.setLayoutManager(layoutManagerKeywords);
 
-        onMakerClickListener = new FilterAdapter.OnFilterClickListener() {
-            @Override
-            public void onFilterClick(FilterObject filterObject, int position) {
-                if(!makerFilter.equals(filterObject.getText())) {
-                    makerFilter = filterObject.getText();
-                    clear_artist_tv.setVisibility(View.VISIBLE);
-                    setFilterProgressesVisibility(View.VISIBLE);
-                    setAppBarText();
-                }
-                artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+        onMakerClickListener = (filterObject, position) -> {
+            if(!makerFilter.equals(filterObject.getText())) {
+                makerFilter = filterObject.getText();
+                clear_artist_tv.setVisibility(View.VISIBLE);
+                setFilterProgressesVisibility(View.VISIBLE);
+                setAppBarText();
             }
+            artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
         };
 
-        onCenturyClickListener = new FilterAdapter.OnFilterClickListener() {
-            @Override
-            public void onFilterClick(FilterObject filterObject, int position) {
-                if(!centuryFilter.equals(filterObject.getText())) {
-                    centuryFilter = filterObject.getText();
-                    clear_century_tv.setVisibility(View.VISIBLE);
-                    setFilterProgressesVisibility(View.VISIBLE);
-                    setAppBarText();
-                }
-                artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+        onCenturyClickListener = (filterObject, position) -> {
+            if(!centuryFilter.equals(filterObject.getText())) {
+                centuryFilter = filterObject.getText();
+                clear_century_tv.setVisibility(View.VISIBLE);
+                setFilterProgressesVisibility(View.VISIBLE);
+                setAppBarText();
             }
+            artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
         };
 
-        onKeywordClickListener = new FilterAdapter.OnFilterClickListener() {
-            @Override
-            public void onFilterClick(FilterObject filterObject, int position) {
-                if(!keyword.toUpperCase().equals(filterObject.getText().toUpperCase())) {
-                    keyword = filterObject.getText();
-                    keywordType = filterObject.getType();
-                    clear_keywords_tv.setVisibility(View.VISIBLE);
-                    setFilterProgressesVisibility(View.VISIBLE);
-                    setAppBarText();
-                }
-                artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
+        onKeywordClickListener = (filterObject, position) -> {
+            if(!keyword.toUpperCase().equals(filterObject.getText().toUpperCase())) {
+                keyword = filterObject.getText();
+                keywordType = filterObject.getType();
+                clear_keywords_tv.setVisibility(View.VISIBLE);
+                setFilterProgressesVisibility(View.VISIBLE);
+                setAppBarText();
             }
+            artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
         };
     }
 
@@ -316,38 +290,32 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         //You need to add the following line for this solution to work; thanks skayred
         root.setFocusableInTouchMode(true);
         root.requestFocus();
-        root.setOnKeyListener( new View.OnKeyListener() {
-            @Override
-            public boolean onKey( View v, int keyCode, KeyEvent event ) {
+        root.setOnKeyListener((v, keyCode, event) -> {
 
-                if( keyCode == KeyEvent.KEYCODE_BACK ) {
-                    if(black_layout.isShown()) {
-                        goneFilterViews();
+            if( keyCode == KeyEvent.KEYCODE_BACK ) {
+                if(black_layout.isShown()) {
+                    goneFilterViews();
+                    return true;
+                } else {
+                    int scrollPosition = 0;
+                    if (artFilterAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
+                    if (scrollPosition > 4) {
+                        recycler_view_art_filter.smoothScrollToPosition(0);
                         return true;
-                    } else {
-                        int scrollPosition = 0;
-                        if (artFilterAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
-                        if (scrollPosition > 4) {
-                            recycler_view_art_filter.smoothScrollToPosition(0);
-                            return true;
-                        }
                     }
-                    return false;
                 }
                 return false;
             }
-        } );
+            return false;
+        });
     }
 
     private void initSwipeRefreshLayout() {
-        art_filter_swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                boolean networkState = artFilterViewModel.refresh();
-                if (!networkState) {
-                    Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
-                    art_filter_swipeRefreshLayout.setRefreshing(false);
-                }
+        art_filter_swipeRefreshLayout.setOnRefreshListener(() -> {
+            boolean networkState = artFilterViewModel.refresh();
+            if (!networkState) {
+                Toast.makeText(getContext(), R.string.network_is_unavailable, Toast.LENGTH_LONG).show();
+                art_filter_swipeRefreshLayout.setRefreshing(false);
             }
         });
         art_filter_swipeRefreshLayout.setColorSchemeResources(
@@ -358,66 +326,43 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
 
     private void subscribeObservers() {
 
-        artFilterViewModel.getArtList().observe(getViewLifecycleOwner(), new Observer<PagedList<Art>>() {
-            @Override
-            public void onChanged(PagedList<Art> arts) {
-                artFilterAdapter.submitList(arts);
-                hideText();
-                art_filter_swipeRefreshLayout.setRefreshing(false);
+        artFilterViewModel.getArtList().observe(getViewLifecycleOwner(), arts -> {
+            artFilterAdapter.submitList(arts);
+            hideText();
+            art_filter_swipeRefreshLayout.setRefreshing(false);
+        });
+        artFilterViewModel.getIsLoading().observe(getViewLifecycleOwner(), aBoolean -> {
+            if (aBoolean) { showProgressBar(); } else { hideProgressBar(); }
+        });
+        artFilterViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), aBoolean -> {
+            if (aBoolean) { showText(); } else { hideText(); }
+        });
+        artFilterViewModel.getListMakerFilters().observe(getViewLifecycleOwner(), listStrings -> {
+            if (listStrings == null){
+                filterMakerAdapter.clearItems();
+                globalListArtists.clear();
+            } else {
+                setListMakerFilters(listStrings);
+                globalListArtists = listStrings;
             }
         });
-        artFilterViewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) { showProgressBar(); } else { hideProgressBar(); }
-            }
+        artFilterViewModel.getListCenturyFilters().observe(getViewLifecycleOwner(), listStrings -> {
+            if (listStrings == null)
+                filterCenturyAdapter.clearItems();
+             else
+                setListCenturyFilters(listStrings);
         });
-        artFilterViewModel.getIsListEmpty().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) { showText(); } else { hideText(); }
-            }
-        });
-        artFilterViewModel.getListMakerFilters().observe(getViewLifecycleOwner(), new Observer<ArrayList<String>>() {
-            @Override
-            public void onChanged(ArrayList<String> listStrings) {
-                if (listStrings == null){
-                    filterMakerAdapter.clearItems();
-                    globalListArtists.clear();
-                } else {
-                    setListMakerFilters(listStrings);
-                    globalListArtists = listStrings;
-                }
-            }
-        });
-        artFilterViewModel.getListCenturyFilters().observe(getViewLifecycleOwner(), new Observer<ArrayList<String>>() {
-            @Override
-            public void onChanged(ArrayList<String> listStrings) {
-                if (listStrings == null)
-                    filterCenturyAdapter.clearItems();
-                 else
-                    setListCenturyFilters(listStrings);
-            }
-        });
-        artFilterViewModel.getListKeywordFilters().observe(getViewLifecycleOwner(), new Observer<ArrayList<FilterObject>>() {
-            @Override
-            public void onChanged(ArrayList<FilterObject> listKeywords) {
-                if (listKeywords == null){
-                    filterKeywordAdapter.clearItems();
-                    globalListKeywords.clear();
-                } else {
-                    setListKeywordFilters(listKeywords);
-                    globalListKeywords = listKeywords;
-                }
+        artFilterViewModel.getListKeywordFilters().observe(getViewLifecycleOwner(), listKeywords -> {
+            if (listKeywords == null){
+                filterKeywordAdapter.clearItems();
+                globalListKeywords.clear();
+            } else {
+                setListKeywordFilters(listKeywords);
+                globalListKeywords = listKeywords;
             }
         });
 
-        artFilterViewModel.getArtCount().observe(getViewLifecycleOwner(), new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer artCount) {
-                appbar_art_count.setText(artCount.toString());
-            }
-        });
+        artFilterViewModel.getArtCount().observe(getViewLifecycleOwner(), artCount -> appbar_art_count.setText(artCount.toString()));
     }
 
     private void setListKeywordFilters(final ArrayList<FilterObject> listKeywords) {
@@ -426,30 +371,24 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         if(listKeywords.size()>500) partialList = new ArrayList<>(listKeywords.subList(0, 500)); else partialList = listKeywords;
 
         final Handler handler = new Handler();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final ArrayList<FilterObject> listKeywordFilters = new ArrayList<>();
-                int position = -1;
-                for (FilterObject filter : partialList) {
-                    if (keyword.toUpperCase().equals(filter.getText().toUpperCase())) {
-                        position = partialList.indexOf(filter);
-                        listKeywordFilters.add(new FilterObject(filter.getText(), true, filter.getType()));
-                    } else
-                        listKeywordFilters.add(new FilterObject(filter.getText(), false, filter.getType()));
-                }
-                final int finalPosition = position;
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        filterKeywordAdapter = new FilterAdapter(getContext(), onKeywordClickListener);
-                        recycler_view_keywords.setAdapter(filterKeywordAdapter);
-                        filterKeywordAdapter.setItems(listKeywordFilters);
-                        if(finalPosition >= 0) recycler_view_keywords.scrollToPosition(finalPosition);
-                        setFilterProgressesVisibility(View.GONE);
-                    }
-                });
+        new Thread(() -> {
+            final ArrayList<FilterObject> listKeywordFilters = new ArrayList<>();
+            int position = -1;
+            for (FilterObject filter : partialList) {
+                if (keyword.toUpperCase().equals(filter.getText().toUpperCase())) {
+                    position = partialList.indexOf(filter);
+                    listKeywordFilters.add(new FilterObject(filter.getText(), true, filter.getType()));
+                } else
+                    listKeywordFilters.add(new FilterObject(filter.getText(), false, filter.getType()));
             }
+            final int finalPosition = position;
+            handler.post(() -> {
+                filterKeywordAdapter = new FilterAdapter(getContext(), onKeywordClickListener);
+                recycler_view_keywords.setAdapter(filterKeywordAdapter);
+                filterKeywordAdapter.setItems(listKeywordFilters);
+                if(finalPosition >= 0) recycler_view_keywords.scrollToPosition(finalPosition);
+                setFilterProgressesVisibility(View.GONE);
+            });
         }).start();
         if(keyword.length() ==0) clear_keywords_tv.setVisibility(View.GONE); else clear_keywords_tv.setVisibility(View.VISIBLE);
     }
@@ -460,30 +399,24 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         if(listStrings.size()>500) partialList = new ArrayList<>(listStrings.subList(0, 500)); else partialList = listStrings;
 
         final Handler handler = new Handler();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final ArrayList<FilterObject> listMakerFilters = new ArrayList<>();
-                int position = -1;
-                for (String maker : partialList) {
-                    if (maker.equals(makerFilter)) {
-                        position = partialList.indexOf(maker);
-                        listMakerFilters.add(new FilterObject(maker, true, Constants.ART_MAKER));
-                    } else
-                        listMakerFilters.add(new FilterObject(maker, false, Constants.ART_MAKER));
-                }
-                final int finalPosition = position;
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        filterMakerAdapter = new FilterAdapter(getContext(), onMakerClickListener);
-                        recycler_view_artists.setAdapter(filterMakerAdapter);
-                        filterMakerAdapter.setItems(listMakerFilters);
-                        if(finalPosition >= 0) recycler_view_artists.scrollToPosition(finalPosition);
-                        setFilterProgressesVisibility(View.GONE);
-                    }
-                });
+        new Thread(() -> {
+            final ArrayList<FilterObject> listMakerFilters = new ArrayList<>();
+            int position = -1;
+            for (String maker : partialList) {
+                if (maker.equals(makerFilter)) {
+                    position = partialList.indexOf(maker);
+                    listMakerFilters.add(new FilterObject(maker, true, Constants.ART_MAKER));
+                } else
+                    listMakerFilters.add(new FilterObject(maker, false, Constants.ART_MAKER));
             }
+            final int finalPosition = position;
+            handler.post(() -> {
+                filterMakerAdapter = new FilterAdapter(getContext(), onMakerClickListener);
+                recycler_view_artists.setAdapter(filterMakerAdapter);
+                filterMakerAdapter.setItems(listMakerFilters);
+                if(finalPosition >= 0) recycler_view_artists.scrollToPosition(finalPosition);
+                setFilterProgressesVisibility(View.GONE);
+            });
         }).start();
         if(makerFilter.length() ==0) clear_artist_tv.setVisibility(View.GONE); else clear_artist_tv.setVisibility(View.VISIBLE);
     }
@@ -504,15 +437,7 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
 
     private void initRecyclerView(final ArtFilterViewModel artFilterViewModel, int displayWidth, int displayHeight){
 
-        ArtFilterAdapter.OnArtClickListener onArtClickListener = new ArtFilterAdapter.OnArtClickListener() {
-
-            @Override
-            public void onArtImageClick(Art art, int position) {
-                ArrayList<Art> artInMemory = ArtFilterDataInMemory.getInstance().getAllData();
-                artFilterEventListener.artFilterArtClickEvent(artInMemory, position);
-            }
-
-        };
+        ArtFilterAdapter.OnArtClickListener onArtClickListener = (art, position) -> artFilterEventListener.artFilterArtClickEvent(ArtFilterDataInMemory.getInstance().getAllData(), position);
 
         artFilterAdapter = new ArtFilterAdapter(artFilterViewModel, getContext(), onArtClickListener, displayWidth, displayHeight, spanCount);
         RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
@@ -543,13 +468,10 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
                 goneFilterViews();
             } else {
                 AnimatorSet set = new AnimatorSet();
-                set.setDuration(500).playTogether(
-                        ObjectAnimator.ofFloat(black_layout, View.ALPHA, 0f, 1f));
+                set.setDuration(500).playTogether(ObjectAnimator.ofFloat(black_layout, View.ALPHA, 0f, 1f));
                 set.addListener(new Animator.AnimatorListener() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
-                        black_layout.setVisibility(View.VISIBLE);
-                    }
+                    public void onAnimationStart(Animator animation) { black_layout.setVisibility(View.VISIBLE); }
                     @Override
                     public void onAnimationEnd(Animator animation) { }
                     @Override
@@ -559,17 +481,17 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
                 });
                 set.start();
             }
+
         } else if (view.getId() == black_layout.getId()) {
             goneFilterViews();
+
         } else if (view.getId() == clear_artist_tv.getId()) {
             makerFilter = "";
             setFilterProgressesVisibility(View.VISIBLE);
             setAppBarText();
 
             ArrayList<String> listString = new ArrayList<>();
-            for(FilterObject filter : filterMakerAdapter.getItems()) {
-                listString.add(filter.getText());
-            }
+            for(FilterObject filter : filterMakerAdapter.getItems()) { listString.add(filter.getText()); }
             setListMakerFilters(listString);
             artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
 
@@ -579,9 +501,7 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
             setAppBarText();
 
             ArrayList<String> listString = new ArrayList<>();
-            for(FilterObject filter : filterCenturyAdapter.getItems()) {
-                listString.add(filter.getText());
-            }
+            for(FilterObject filter : filterCenturyAdapter.getItems()) { listString.add(filter.getText()); }
             setListCenturyFilters(listString);
             artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
 

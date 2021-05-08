@@ -6,8 +6,6 @@ import com.company.art_and_culture.myarts.pojo.Art;
 
 import java.util.ArrayList;
 
-import androidx.lifecycle.Observer;
-
 public class ArtFilterDataInMemory {
 
     private static ArtFilterDataInMemory instance;
@@ -75,11 +73,6 @@ public class ArtFilterDataInMemory {
                 listArts.add(i, art);
             }
         }
-
-    }
-
-    public Art getSingleItem(int position) {
-        return listArts.get(position);
     }
 
     public ArrayList<Art> getAllData() {
@@ -87,11 +80,6 @@ public class ArtFilterDataInMemory {
     }
 
     public void setArtObserver(MainActivity activity) {
-        activity.getArt().observe(activity, new Observer<Art>() {
-            @Override
-            public void onChanged(Art art) {
-                updateSingleItem(art);
-            }
-        });
+        activity.getArt().observe(activity, art -> updateSingleItem(art));
     }
 }

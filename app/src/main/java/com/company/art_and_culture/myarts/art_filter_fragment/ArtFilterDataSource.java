@@ -5,17 +5,17 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.paging.PageKeyedDataSource;
+
 import com.company.art_and_culture.myarts.Constants;
-import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.paging.PageKeyedDataSource;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,7 +53,7 @@ public class ArtFilterDataSource extends PageKeyedDataSource<Integer, Art> {
         request.setMakerFilter(makerFilter);
         request.setCenturyFilter(centuryFilter);
         request.setKeywordType(keywordType);
-        request.setOldList(ArtFilterDataInMemory.getInstance().getAllData());
+        //request.setOldList(ArtFilterDataInMemory.getInstance().getAllData());
         request.setOperation(Constants.GET_ARTS_LIST_FILTER_OPERATION);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
@@ -97,9 +97,8 @@ public class ArtFilterDataSource extends PageKeyedDataSource<Integer, Art> {
         request.setMakerFilter(makerFilter);
         request.setCenturyFilter(centuryFilter);
         request.setKeywordType(keywordType);
-        request.setOldList(ArtFilterDataInMemory.getInstance().getAllData());
+        //request.setOldList(ArtFilterDataInMemory.getInstance().getAllData());
         request.setOperation(Constants.GET_ARTS_LIST_FILTER_OPERATION);
-
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
         response.enqueue(new Callback<ServerResponse>() {
@@ -175,10 +174,6 @@ public class ArtFilterDataSource extends PageKeyedDataSource<Integer, Art> {
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) { }
         });
-    }
-
-    public void setActivity(MainActivity activity) {
-        ArtFilterDataInMemory.getInstance().setArtObserver(activity);
     }
 
 }

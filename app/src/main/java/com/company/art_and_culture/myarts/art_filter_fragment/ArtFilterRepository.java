@@ -2,16 +2,15 @@ package com.company.art_and_culture.myarts.art_filter_fragment;
 
 import android.app.Application;
 
+import androidx.lifecycle.LiveData;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
+
 import com.company.art_and_culture.myarts.Constants;
-import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.FilterObject;
 
 import java.util.ArrayList;
-
-import androidx.lifecycle.LiveData;
-import androidx.paging.LivePagedListBuilder;
-import androidx.paging.PagedList;
 
 public class ArtFilterRepository {
 
@@ -92,10 +91,6 @@ public class ArtFilterRepository {
             artFilterDataSourceFactory.setFilters(keyword, makerFilter, centuryFilter, keywordType);
             filtersDataSource.setFilters(keyword, makerFilter, centuryFilter, keywordType);
         }
-    }
-
-    public void setActivity(MainActivity activity) {
-        artFilterDataSource.setActivity(activity);
     }
 
 }

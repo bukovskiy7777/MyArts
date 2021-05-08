@@ -2,16 +2,15 @@ package com.company.art_and_culture.myarts.art_filter_fragment;
 
 import android.app.Application;
 
-import com.company.art_and_culture.myarts.MainActivity;
-import com.company.art_and_culture.myarts.pojo.Art;
-import com.company.art_and_culture.myarts.pojo.FilterObject;
-
-import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.paging.PagedList;
+
+import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.pojo.FilterObject;
+
+import java.util.ArrayList;
 
 
 public class ArtFilterViewModel extends AndroidViewModel {
@@ -84,10 +83,6 @@ public class ArtFilterViewModel extends AndroidViewModel {
         } else
             artFilterRepository.setFilters(keyword, makerFilter, centuryFilter, keywordType);
 
-
     }
 
-    public void setActivity(MainActivity activity) {
-        artFilterRepository.setActivity(activity);
-    }
 }

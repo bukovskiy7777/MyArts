@@ -2,6 +2,9 @@ package com.company.art_and_culture.myarts.art_filter_fragment;
 
 import android.app.Application;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.FilterObject;
@@ -10,8 +13,6 @@ import com.company.art_and_culture.myarts.pojo.ServerResponse;
 
 import java.util.ArrayList;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,7 +32,7 @@ public class FiltersDataSource {
         this.centuryFilter = centuryFilter;
         this.keywordType = keywordType;
         this.application = application;
-        loadFiltersList();
+        //loadFiltersList();
         loadArtCount();
     }
 
@@ -72,7 +73,7 @@ public class FiltersDataSource {
         this.makerFilter = makerFilter;
         this.centuryFilter = centuryFilter;
         this.keywordType = keywordType;
-        loadFiltersList();
+        //loadFiltersList();
         loadArtCount();
     }
 
@@ -133,13 +134,16 @@ public class FiltersDataSource {
                     ServerResponse resp = response.body();
                     if(resp.getResult().equals(Constants.SUCCESS)) {
 
+                        loadFiltersList();
                         updateArtCount(resp.getArtCount());
                     } else { }
                 } else { }
             }
 
             @Override
-            public void onFailure(Call<ServerResponse> call, Throwable t) { }
+            public void onFailure(Call<ServerResponse> call, Throwable t) {
+                loadFiltersList();
+            }
         });
     }
 
