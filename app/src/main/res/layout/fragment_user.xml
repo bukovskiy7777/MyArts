@@ -69,6 +69,15 @@
                 app:layout_constraintTop_toBottomOf="@id/delim_toolbar"/>
 
             <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ic_back_user_photo"
+                android:src="@drawable/edit_user_placeholder"
+                app:layout_constraintBottom_toBottomOf="@+id/user_image"
+                app:layout_constraintTop_toTopOf="@+id/user_image"
+                app:layout_constraintLeft_toLeftOf="@+id/user_image"
+                app:layout_constraintRight_toRightOf="@+id/user_image"
+                android:layout_width="108dp"
+                android:layout_height="108dp"/>
+            <de.hdodenhof.circleimageview.CircleImageView
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/toolbar"
