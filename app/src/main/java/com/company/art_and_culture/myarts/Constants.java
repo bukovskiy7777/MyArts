@@ -27,6 +27,8 @@ public class Constants {
     public static final String USER_ACCOUNT_PROVIDER = "userAccountProvider";
     public static final String USER_IMAGE_URL = "userImageUrl";
 
+    public static final String USER_IMAGE_PREVIOUS = "previous";
+
     public static final int PERMISSION_REQUEST_CODE = 1;
 
     public static final String ART_MAKER = "artMaker";
@@ -70,6 +72,7 @@ public class Constants {
     public static final String SIGN_IN_OPERATION = "signInUser";
     public static final String GET_POLICY_PAGES_OPERATION = "getPolicyPages";
     public static final String DELETE_ACCOUNT_OPERATION = "deleteUserAccount";
+    public static final String EDIT_USER_ACCOUNT_OPERATION = "editUserAccount";
 
 
 

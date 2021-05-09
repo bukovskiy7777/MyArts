@@ -96,7 +96,8 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
         if (activity != null) recommendationsEventListener = activity.getNavFragments();
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
 
-        if(preferences.getBoolean(Constants.IS_LOGGED_IN,false)) Picasso.get().load(preferences.getString(Constants.USER_IMAGE_URL,res.getString(R.string.http))).into(profile_img);
+        String imageUrl = preferences.getString(Constants.USER_IMAGE_URL,"");
+        if(preferences.getBoolean(Constants.IS_LOGGED_IN,false)) Picasso.get().load(imageUrl.isEmpty()? null : imageUrl).into(profile_img);
 
         if (activity != null) scrollPosition = activity.getNavFragments().getRecommendPosition();
         if (scrollPosition >= 0) recyclerView.scrollToPosition(scrollPosition);
@@ -256,7 +257,7 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
         activity.getIsUpdateUserData().observe(getViewLifecycleOwner(), aBoolean -> {
             if(aBoolean) {
                 if(preferences.getString(Constants.USER_IMAGE_URL,"").startsWith(res.getString(R.string.http))) {
-                    Picasso.get().load(preferences.getString(Constants.USER_IMAGE_URL,res.getString(R.string.http))).into(profile_img);
+                    Picasso.get().load(preferences.getString(Constants.USER_IMAGE_URL,"")).into(profile_img);
                 } else profile_img.setImageResource(R.drawable.ic_outline_account_circle_24);
 
                 final Handler handler = new Handler(Looper.getMainLooper());

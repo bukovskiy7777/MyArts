@@ -88,5 +88,11 @@
     <string name="saved_artworks_and_authors_will_not_be_deleted">Saved ArtWorks and Authors will not be deleted. But they won\'t be tied to your email. When you uninstall the application, the data cannot be recovered</string>
     <string name="want_to_delete_account">Are you sure you want to delete account?</string>
     <string name="create_a_new_folder_from_liked_artworks">Create a new folder from liked ArtWorks</string>
+    <string name="given_name">Given name</string>
+    <string name="family_name">Family name</string>
+    <string name="save">Save</string>
+    <string name="photo_will_be_inserted_without_cropping">The photo will be inserted without cropping</string>
+    <string name="application_does_not_have_permission_to_choose_the_photo">Sorry. The application does not have permission to choose the photo</string>
+    <string name="specify_given_name_please">Specify given name, please</string>
 
 </resources>

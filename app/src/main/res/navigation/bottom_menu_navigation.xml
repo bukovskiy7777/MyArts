@@ -376,5 +376,17 @@
     <fragment
         android:id="@+id/userFragment"
         android:name="com.company.art_and_culture.myarts.user_fragment.UserFragment"
-        android:label="UserFragment" />
+        android:label="UserFragment" >
+        <action
+            android:id="@+id/action_userFragment_to_userEditFragment"
+            app:destination="@id/userEditFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/userEditFragment"
+        android:name="com.company.art_and_culture.myarts.user_edit_fragment.UserEditFragment"
+        android:label="UserEditFragment" />
 </navigation>

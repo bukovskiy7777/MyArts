@@ -10,6 +10,7 @@ public class User {
     private String userImageUrl;
     private String userAccountProvider;
     private String userUniqueId;
+    private String userImageBase64;
 
     public User(String userDisplayName, String userGivenName, String userFamilyName, String userEmail,
                 String userProviderId, String userImageUrl, String userAccountProvider, String userUniqueId) {
@@ -21,6 +22,14 @@ public class User {
         this.userImageUrl = userImageUrl;
         this.userAccountProvider = userAccountProvider;
         this.userUniqueId = userUniqueId;
+    }
+
+    public User(String userImageBase64, String userGivenName, String userFamilyName, String userUniqueId, String userEmail) {
+        this.userImageBase64 = userImageBase64;
+        this.userGivenName = userGivenName;
+        this.userFamilyName = userFamilyName;
+        this.userUniqueId = userUniqueId;
+        this.userEmail = userEmail;
     }
 
     public String getUserDisplayName() {

@@ -29,6 +29,7 @@ import com.company.art_and_culture.myarts.pojo.Folder;
 import com.company.art_and_culture.myarts.pojo.Maker;
 import com.company.art_and_culture.myarts.show_folder_fragment.ShowFolderFragment;
 import com.company.art_and_culture.myarts.tags_fragment.TagsFragment;
+import com.company.art_and_culture.myarts.user_fragment.UserFragment;
 
 import java.util.Collection;
 import java.util.Timer;
@@ -40,7 +41,7 @@ public class NavFragments implements
         ArtistsFragment.ArtistsEventListener, ArtShowFragment.ArtShowEventListener, FilterMakerFragment.FilterMakerEventListener,
         AttributeFragment.AttributeEventListener, TagsFragment.TagsEventListener, BlankFragment.BlankEventListener,
         FoldersFragment.FoldersEventListener, ShowFolderFragment.ShowFolderEventListener, CreateFolderFragment.CreateFolderEventListener,
-        MuseumFragment.MuseumEventListener, RecommendationsFragment.RecommendationsEventListener{
+        MuseumFragment.MuseumEventListener, RecommendationsFragment.RecommendationsEventListener, UserFragment.UserEventListener {
 
     private NavController navController;
 
@@ -367,6 +368,15 @@ public class NavFragments implements
         else
             navController.navigate(R.id.action_navigation_recommend_to_signInFragment);
     }
+
+
+
+
+    @Override
+    public void userEditEvent() {
+        navController.navigate(R.id.action_userFragment_to_userEditFragment);
+    }
+
 
     public Collection<Art> getListArtsForArtShowFragment() {
         return listArtsForArtShowFragment;

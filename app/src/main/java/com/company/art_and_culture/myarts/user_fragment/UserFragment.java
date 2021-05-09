@@ -26,6 +26,8 @@ import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import retrofit2.Call;
@@ -38,10 +40,11 @@ public class UserFragment extends Fragment implements View.OnClickListener {
     private TextView tv_write_to_us, tv_share, tv_rate, tv_log_out, tv_delete;
     private ImageView ic_write_to_us, ic_share, ic_rate, ic_log_out, ic_delete;
     private AppCompatButton edit_account;
-    ProgressBar progress_bar;
+    private ProgressBar progress_bar;
     private MainActivity activity;
     private SharedPreferences preferences;
     private android.content.res.Resources res;
+    private UserEventListener userEventListener;
 
     @Nullable
     @Override
@@ -85,11 +88,16 @@ public class UserFragment extends Fragment implements View.OnClickListener {
 
         activity = (MainActivity) getActivity();
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
+        if (activity != null) userEventListener = activity.getNavFragments();
 
         user_given_name.setText(preferences.getString(Constants.USER_GIVEN_NAME, ""));
         user_family_name.setText(preferences.getString(Constants.USER_FAMILY_NAME, ""));
         tv_user_id_number.setText(preferences.getString(Constants.USER_UNIQUE_ID, ""));
-        Picasso.get().load(preferences.getString(Constants.USER_IMAGE_URL,res.getString(R.string.http))).into(user_image);
+        String imageUrl = preferences.getString(Constants.USER_IMAGE_URL,"");
+        if(imageUrl.isEmpty())
+            user_image.setImageDrawable(getResources().getDrawable(R.drawable.ic_outline_account_circle_24));
+        else
+            Picasso.get().load(imageUrl).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(user_image);
 
         return root;
     }
@@ -100,8 +108,7 @@ public class UserFragment extends Fragment implements View.OnClickListener {
             activity.getNavFragments().popBackStack();
 
         } else if(v.getId() == edit_account.getId()) {
-
-            //
+            userEventListener.userEditEvent();
 
         }  else if(v.getId() == tv_write_to_us.getId() || v.getId() == ic_write_to_us.getId()) {
             Intent intent = new Intent(Intent.ACTION_SENDTO);
@@ -172,7 +179,7 @@ public class UserFragment extends Fragment implements View.OnClickListener {
                     editor.putString(Constants.USER_PROVIDER_ID, "");
                     editor.putString(Constants.USER_ACCOUNT_PROVIDER, "");
                     //editor.putString(Constants.USER_UNIQUE_ID, "");
-                    editor.putString(Constants.USER_IMAGE_URL, Constants.USER_IMAGE_URL);
+                    editor.putString(Constants.USER_IMAGE_URL, "");
                     editor.apply();
 
                     activity.getNavFragments().popBackStack();
@@ -200,7 +207,7 @@ public class UserFragment extends Fragment implements View.OnClickListener {
             editor.putString(Constants.USER_PROVIDER_ID, "");
             editor.putString(Constants.USER_ACCOUNT_PROVIDER, "");
             editor.putString(Constants.USER_UNIQUE_ID, "");
-            editor.putString(Constants.USER_IMAGE_URL, Constants.USER_IMAGE_URL);
+            editor.putString(Constants.USER_IMAGE_URL, "");
             editor.apply();
 
             activity.getNavFragments().popBackStack();
@@ -208,6 +215,10 @@ public class UserFragment extends Fragment implements View.OnClickListener {
         builder.setNegativeButton(res.getString(R.string.no), (dialog, which) -> dialog.cancel());
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public interface UserEventListener {
+        void userEditEvent();
     }
 
 
