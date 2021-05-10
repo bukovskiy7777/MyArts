@@ -54,7 +54,7 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
     private SwipeRefreshLayout art_filter_swipeRefreshLayout;
     private android.content.res.Resources res;
     private MainActivity activity;
-    private String keyword = "", keywordType = "", makerFilter = "", centuryFilter = "";
+    private String keyword = null, keywordType = null, makerFilter = "", centuryFilter = "";
     private int spanCount = 2;
     private FloatingActionButton floatingActionButton;
     private FrameLayout black_layout;
@@ -80,14 +80,15 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
         activity = (MainActivity) getActivity();
-        if (activity != null) keyword = activity.getNavFragments().getKeywordForArtFilterFragment();
-        if (activity != null) keywordType = activity.getNavFragments().getKeywordTypeForArtFilterFragment();
+        if(keyword == null) {
+            if (activity != null) keyword = activity.getNavFragments().getKeywordForArtFilterFragment();
+            if (activity != null) keywordType = activity.getNavFragments().getKeywordTypeForArtFilterFragment();
+        }
         if (activity != null) artFilterEventListener = activity.getNavFragments();
 
         if(keyword == null) {
             activity.getNavFragments().popBackStack();
         } else {
-
             artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
             ArtFilterDataInMemory.getInstance().setArtObserver(activity);
             subscribeObservers();
