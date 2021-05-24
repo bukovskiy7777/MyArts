@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -66,6 +67,7 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
     private AppCompatEditText filter_artist_edit_text, filter_keyword_edit_text;
     private ArrayList<String> globalListArtists = new ArrayList<>();
     private ArrayList<FilterObject> globalListKeywords = new ArrayList<>();
+    private ConstraintLayout filters_container;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -122,6 +124,7 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         black_layout = root.findViewById(R.id.black_layout);
         black_layout.setOnClickListener(this);
         black_layout.setVisibility(View.GONE);
+        filters_container = root.findViewById(R.id.filters_container);
 
         clear_artist_tv = root.findViewById(R.id.clear_artist_tv);
         clear_artist_tv.setOnClickListener(this);
@@ -147,6 +150,32 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         filter_keyword_edit_text = root.findViewById(R.id.filter_keyword_edit_text);
         filter_artist_edit_text.setVisibility(View.GONE);
         filter_keyword_edit_text.setVisibility(View.GONE);
+        filter_artist_edit_text.setOnFocusChangeListener((v, hasFocus) -> {
+            int density = (int) (getResources().getDisplayMetrics().densityDpi/160f);
+            ConstraintLayout.MarginLayoutParams marginLayoutParams = (ConstraintLayout.MarginLayoutParams) filters_container.getLayoutParams();
+            if (hasFocus) {
+                marginLayoutParams.setMargins(30*density, 10*density, 30*density, 10*density);
+                filters_container.setLayoutParams(marginLayoutParams);
+                floatingActionButton.setVisibility(View.GONE);
+            } else {
+                marginLayoutParams.setMargins(30*density, 60*density, 30*density, 80*density);
+                filters_container.setLayoutParams(marginLayoutParams);
+                floatingActionButton.setVisibility(View.VISIBLE);
+            }
+        });
+        filter_keyword_edit_text.setOnFocusChangeListener((v, hasFocus) -> {
+            int density = (int) (getResources().getDisplayMetrics().densityDpi/160f);
+            ConstraintLayout.MarginLayoutParams marginLayoutParams = (ConstraintLayout.MarginLayoutParams) filters_container.getLayoutParams();
+            if (hasFocus) {
+                marginLayoutParams.setMargins(30*density, 10*density, 30*density, 10*density);
+                filters_container.setLayoutParams(marginLayoutParams);
+                floatingActionButton.setVisibility(View.GONE);
+            } else {
+                marginLayoutParams.setMargins(30*density, 60*density, 30*density, 80*density);
+                filters_container.setLayoutParams(marginLayoutParams);
+                floatingActionButton.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void initEditTexts() {

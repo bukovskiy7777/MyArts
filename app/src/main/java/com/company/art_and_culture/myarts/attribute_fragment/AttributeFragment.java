@@ -4,20 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.company.art_and_culture.myarts.Constants;
-import com.company.art_and_culture.myarts.MainActivity;
-import com.company.art_and_culture.myarts.R;
-import com.company.art_and_culture.myarts.pojo.Attribute;
-import com.company.art_and_culture.myarts.pojo.FilterObject;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +16,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.company.art_and_culture.myarts.Constants;
+import com.company.art_and_culture.myarts.MainActivity;
+import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.pojo.Attribute;
 
 public class AttributeFragment extends Fragment {
 
@@ -59,8 +53,12 @@ public class AttributeFragment extends Fragment {
         attributeViewModel = new ViewModelProvider(this).get(AttributeViewModel.class);
 
         MainActivity activity = (MainActivity) getActivity();
-        attributeType = activity.getNavFragments().getTypeForAttributeFragment();
-        attributeViewModel.setAttributeType(attributeType);
+        if (activity != null) {
+            attributeType = activity.getNavFragments().getTypeForAttributeFragment();
+            attributeViewModel.setAttributeType(attributeType);
+        } else {
+            activity.getNavFragments().popBackStack();
+        }
 
         attributeEventListener = activity.getNavFragments();
 

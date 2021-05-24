@@ -241,7 +241,7 @@
             <ImageView
                 android:id="@+id/ic_log_out"
                 android:src="@drawable/ic_baseline_logout_24"
-                android:layout_marginTop="22dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginLeft="10dp"
                 app:layout_constraintTop_toBottomOf="@+id/ic_rate"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -285,6 +285,16 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
+    <View
+        android:id="@+id/delim_bottom"
+        android:background="@color/colorSilver"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@id/footer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/footer_layout"

@@ -88,7 +88,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dataSource = new MainActivityDataSource (this);
 
         preferences = getSharedPreferences(Constants.TAG, 0);
-        dataSource.getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,""));
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(() -> dataSource.getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,"")), 1000);
 
         getUserUniqueId();
 
@@ -96,13 +97,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
         initFolderRecyclerView(displayWidth, displayHeight);
-        dataSource.getFoldersList(preferences.getString(Constants.USER_UNIQUE_ID,""));
+        handler.postDelayed(() -> dataSource.getFoldersList(preferences.getString(Constants.USER_UNIQUE_ID,"")), 1000);
 
         getUpdateFolders().observe(this, aBoolean -> {
             if(aBoolean) {
                 dataSource.getFoldersList(preferences.getString(Constants.USER_UNIQUE_ID,""));
 
-                final Handler handler = new Handler(Looper.getMainLooper());
                 handler.postDelayed(() -> updateFolders(false), 1000);
             }
         });
@@ -111,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 dataSource.getFoldersList(preferences.getString(Constants.USER_UNIQUE_ID,""));
                 dataSource.getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,""));
 
-                final Handler handler = new Handler(Looper.getMainLooper());
                 handler.postDelayed(() -> updateAllAppData(false), 1000);
             }
         });
