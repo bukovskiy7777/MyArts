@@ -65,6 +65,10 @@ public class MuseumViewModel extends AndroidViewModel {
         return museumRepository.refresh();
     }
 
+    public void restoreDataInMemory() {
+        museumRepository.restoreDataInMemory();
+    }
+
     public void setArtProviderId(String artProviderId) {
 
         if(museumRepository == null) {

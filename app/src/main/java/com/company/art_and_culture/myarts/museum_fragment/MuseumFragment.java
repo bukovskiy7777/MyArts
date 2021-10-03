@@ -1,5 +1,10 @@
 package com.company.art_and_culture.myarts.museum_fragment;
 
+import static com.company.art_and_culture.myarts.CommonAnimations.likeFadeIn;
+import static com.company.art_and_culture.myarts.CommonAnimations.likeScaleDown;
+import static com.company.art_and_culture.myarts.CommonAnimations.shareScaleDown;
+import static com.company.art_and_culture.myarts.CommonAnimations.shareScaleUp;
+
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
@@ -41,11 +46,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import static com.company.art_and_culture.myarts.CommonAnimations.likeFadeIn;
-import static com.company.art_and_culture.myarts.CommonAnimations.likeScaleDown;
-import static com.company.art_and_culture.myarts.CommonAnimations.shareScaleDown;
-import static com.company.art_and_culture.myarts.CommonAnimations.shareScaleUp;
 
 public class MuseumFragment extends Fragment implements View.OnClickListener, View.OnTouchListener {
 
@@ -176,7 +176,7 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, Vi
     @Override
     public void onDestroy() {
         artProviderId = "";
-        museumViewModel.setArtProviderId(artProviderId);
+        museumViewModel.restoreDataInMemory();
         super.onDestroy();
     }
 

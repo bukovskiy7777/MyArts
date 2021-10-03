@@ -2,10 +2,10 @@ package com.company.art_and_culture.myarts.museum_fragment;
 
 import android.app.Application;
 
-import com.company.art_and_culture.myarts.pojo.Art;
-
 import androidx.annotation.NonNull;
 import androidx.paging.DataSource;
+
+import com.company.art_and_culture.myarts.pojo.Art;
 
 public class ArtDataSourceFactory extends DataSource.Factory<Integer, Art> {
 
@@ -38,5 +38,10 @@ public class ArtDataSourceFactory extends DataSource.Factory<Integer, Art> {
         this.artProviderId = artProviderId;
 
         artDataSource.refresh();
+    }
+
+    public void restoreDataInMemory() {
+        artProviderId = "";
+        artDataSource.restoreDataInMemory();
     }
 }

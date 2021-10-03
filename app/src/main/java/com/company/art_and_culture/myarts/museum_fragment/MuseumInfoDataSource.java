@@ -2,6 +2,9 @@ package com.company.art_and_culture.myarts.museum_fragment;
 
 import android.app.Application;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.ArtProvider;
@@ -11,8 +14,6 @@ import com.company.art_and_culture.myarts.pojo.ServerResponse;
 
 import java.util.ArrayList;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -159,5 +160,10 @@ public class MuseumInfoDataSource {
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) { }
         });
+    }
+
+    public void restoreDataInMemory() {
+        updateArtProvider(null);
+        updateMakersList(null);
     }
 }

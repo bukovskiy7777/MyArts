@@ -157,4 +157,7 @@ public class ArtDataSource extends PageKeyedDataSource<Integer, Art> {
         });
     }
 
+    public void restoreDataInMemory() {
+        ArtDataInMemory.getInstance().refresh();
+    }
 }

@@ -90,4 +90,9 @@ public class MuseumRepository {
         }
         return isConnected;
     }
+
+    public void restoreDataInMemory() {
+        artDataSourceFactory.restoreDataInMemory();
+        museumInfoDataSource.restoreDataInMemory();
+    }
 }
