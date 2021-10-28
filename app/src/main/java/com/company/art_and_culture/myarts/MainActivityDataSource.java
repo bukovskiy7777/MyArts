@@ -2,6 +2,7 @@ package com.company.art_and_culture.myarts;
 
 import android.widget.Toast;
 
+import com.company.art_and_culture.myarts.network.CallbackWithRetry;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Folder;
@@ -26,7 +27,7 @@ public class MainActivityDataSource {
         request.setUserUniqueId(userUniqueId);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
-        response.enqueue(new Callback<ServerResponse>() {
+        response.enqueue(new CallbackWithRetry<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
                 if (response.isSuccessful()) {
@@ -106,7 +107,7 @@ public class MainActivityDataSource {
         request.setUserUniqueId(userUniqueId);
 
         Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
-        response.enqueue(new Callback<ServerResponse>() {
+        response.enqueue(new CallbackWithRetry<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
                 if (response.body() != null) {
