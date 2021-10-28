@@ -211,7 +211,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onResponse(Call<ServerResponse> call, retrofit2.Response<ServerResponse> response) {
                 ServerResponse resp = response.body();
-                if(resp.getResult().equals(Constants.SUCCESS)){
+                if (resp != null && resp.getResult().equals(Constants.SUCCESS)) {
                     privacyPolicyUrl = resp.getPrivacyPolicyUrl();
                     termsAndConditionsUrl = resp.getTermsAndConditionsUrl();
                 }
