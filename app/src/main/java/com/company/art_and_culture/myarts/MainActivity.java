@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         preferences = getSharedPreferences(Constants.TAG, 0);
         final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(() -> dataSource.getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,"")), 1000);
+        dataSource.getInitialSuggests(preferences.getString(Constants.USER_UNIQUE_ID,""));
 
         getUserUniqueId();
 
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
         initFolderRecyclerView(displayWidth, displayHeight);
-        handler.postDelayed(() -> dataSource.getFoldersList(preferences.getString(Constants.USER_UNIQUE_ID,"")), 1000);
+        dataSource.getFoldersList(preferences.getString(Constants.USER_UNIQUE_ID,""));
 
         getUpdateFolders().observe(this, aBoolean -> {
             if(aBoolean) {
