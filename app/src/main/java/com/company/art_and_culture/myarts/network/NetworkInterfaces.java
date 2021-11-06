@@ -7,7 +7,17 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 
-public interface RetrofitInterface {
+interface RetrofitInterface {
     @POST("indexMyArts.php")
+    Call<ServerResponse> operation(@Body ServerRequest request);
+}
+
+interface MuseumFragmentGetArtsInterface {
+    @POST("indexMuseumGetArts.php")
+    Call<ServerResponse> operation(@Body ServerRequest request);
+}
+
+interface HomeFragmentGetArtsInterface {
+    @POST("indexHomeGetArts.php")
     Call<ServerResponse> operation(@Body ServerRequest request);
 }

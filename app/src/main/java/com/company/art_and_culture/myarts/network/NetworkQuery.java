@@ -31,4 +31,26 @@ public class NetworkQuery {
         return response;
     }
 
+    public Call<ServerResponse> homeFragmentGetArts (String URL, ServerRequest request) {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        HomeFragmentGetArtsInterface retrofitInterface = retrofit.create(HomeFragmentGetArtsInterface.class);
+        Call<ServerResponse> response = retrofitInterface.operation(request);
+        return response;
+    }
+
+    public Call<ServerResponse> museumFragmentGetArts (String URL, ServerRequest request) {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        MuseumFragmentGetArtsInterface retrofitInterface = retrofit.create(MuseumFragmentGetArtsInterface.class);
+        Call<ServerResponse> response = retrofitInterface.operation(request);
+        return response;
+    }
+
 }
