@@ -50,7 +50,7 @@ public class ArtDataSource extends PageKeyedDataSource<Integer, Art> {
         request.setOldList(ArtDataInMemory.getInstance().getAllData());
         request.setOperation(Constants.GET_ARTS_LIST_MUSEUM_OPERATION);
 
-        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
+        Call<ServerResponse> response = NetworkQuery.getInstance().museumFragmentGetArts(Constants.BASE_URL, request);
         response.enqueue(new CallbackWithRetry<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
@@ -91,7 +91,7 @@ public class ArtDataSource extends PageKeyedDataSource<Integer, Art> {
         request.setOperation(Constants.GET_ARTS_LIST_MUSEUM_OPERATION);
 
 
-        Call<ServerResponse> response = NetworkQuery.getInstance().create(Constants.BASE_URL, request);
+        Call<ServerResponse> response = NetworkQuery.getInstance().museumFragmentGetArts(Constants.BASE_URL, request);
         response.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
