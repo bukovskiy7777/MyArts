@@ -8,7 +8,7 @@ import com.company.art_and_culture.myarts.network.MainHttpService
 import com.company.art_and_culture.myarts.pojo.*
 import kotlinx.coroutines.runBlocking
 
-class MuseumInfoDataSourceKt(
+class MuseumInfoDataSource(
     private val mainHttpService: MainHttpService,
     private var artProviderId: String,
     private val userUniqueId: String

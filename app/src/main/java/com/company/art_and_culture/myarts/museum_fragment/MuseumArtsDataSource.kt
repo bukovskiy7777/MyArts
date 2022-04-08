@@ -1,18 +1,21 @@
 package com.company.art_and_culture.myarts.museum_fragment
 
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.company.art_and_culture.myarts.Constants
-import com.company.art_and_culture.myarts.museum_fragment.MuseumArtsService.Companion.INITIAL_PAGE_NUMBER
-import com.company.art_and_culture.myarts.network.NetworkQuery
-import com.company.art_and_culture.myarts.network.NetworkQueryKt
+import com.company.art_and_culture.myarts.network.MuseumArtsService
+import com.company.art_and_culture.myarts.network.MuseumArtsService.Companion.INITIAL_PAGE_NUMBER
 import com.company.art_and_culture.myarts.pojo.Art
 import com.company.art_and_culture.myarts.pojo.ServerRequest
 import retrofit2.HttpException
+import java.io.IOException
 
-class MuseumArtsSource(
-    private val museumId: String,
-    private val userUniqueId: String): PagingSource<Int, Art>() {
+class MuseumArtsDataSource(
+    private val museumArtsService: MuseumArtsService,
+    private val artProviderId: String,
+    private val userUniqueId: String
+): PagingSource<Int, Art>() {
 
     override fun getRefreshKey(state: PagingState<Int, Art>): Int? {
         val anchorPosition = state.anchorPosition ?: return null
@@ -26,28 +29,33 @@ class MuseumArtsSource(
         val request = ServerRequest()
         request.setPageNumber(pageNumber)
         request.setUserUniqueId(userUniqueId)
-        request.setArtProviderId(museumId)
+        request.setArtProviderId(artProviderId)
         request.setOldList(ArtDataInMemory.getInstance().allData)
         request.setOperation(Constants.GET_ARTS_LIST_MUSEUM_OPERATION)
 
-        val response = NetworkQueryKt.instance.getMuseumArts(Constants.BASE_URL, request)
+        try {
+            val response = museumArtsService.getMuseumArts(request)
+            if (response.isSuccessful) {
 
-        if (response.isSuccessful) {
+                val serverResponse = response.body()
+                if (serverResponse?.result == Constants.SUCCESS) {
 
-            val serverResponse = response.body()
-            if (serverResponse?.result == Constants.SUCCESS) {
+                    val arts = serverResponse.listArts
+                    ArtDataInMemory.getInstance().addData(arts)
+                    val nextPageNumber = if (arts.isEmpty()) null else pageNumber + 1
+                    val prevPageNumber = if (pageNumber > 1) pageNumber - 1 else null
+                    return LoadResult.Page(ArtDataInMemory.getInstance().getPageData(pageNumber), prevPageNumber, nextPageNumber)
 
-                val arts = serverResponse.listArts
-                ArtDataInMemory.getInstance().addData(arts)
-                val nextPageNumber = if (arts.isEmpty()) null else pageNumber + 1
-                val prevPageNumber = if (pageNumber > 1) pageNumber - 1 else null
-
-                return LoadResult.Page(arts, prevPageNumber, nextPageNumber)
+                } else {
+                    return LoadResult.Error(Exception(serverResponse?.message ?: "server error"))
+                }
             } else {
-                return LoadResult.Error(HttpException(response))
+                return LoadResult.Error(Exception(response.message()))
             }
-        } else {
-            return LoadResult.Error(HttpException(response))
+        }catch (exception: IOException) {
+            return LoadResult.Error(Exception(exception.message))
+        } catch (exception: HttpException) {
+            return LoadResult.Error(Exception(exception.message))
         }
 
     }

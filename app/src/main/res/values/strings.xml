@@ -94,5 +94,6 @@
     <string name="photo_will_be_inserted_without_cropping">The photo will be inserted without cropping</string>
     <string name="application_does_not_have_permission_to_choose_the_photo">Sorry. The application does not have permission to choose the photo</string>
     <string name="specify_given_name_please">Specify given name, please</string>
+    <string name="google">https://google.com</string>
 
 </resources>

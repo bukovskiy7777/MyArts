@@ -28,26 +28,7 @@ public class ArtDataInMemory {
         listArts.addAll(data);
     }
 
-    public ArrayList<Art> getInitialData() {
-
-        ArrayList<Art> outputData = new ArrayList<>();
-
-        int lastPosition;
-        if (listArts.size() >= Constants.PAGE_SIZE) {
-            lastPosition = Constants.PAGE_SIZE;
-        } else if (listArts.size() > 0){
-            lastPosition = listArts.size();
-        } else {
-            lastPosition = 0;
-        }
-
-        for(int i = 0; i < lastPosition; i++) {
-            outputData.add(listArts.get(i));
-        }
-        return outputData;
-    }
-
-    public ArrayList<Art> getAfterData(Integer key) {
+    public ArrayList<Art> getPageData(Integer key) {
 
         int startPosition = (key - 1) * Constants.PAGE_SIZE;
         int lastPosition;

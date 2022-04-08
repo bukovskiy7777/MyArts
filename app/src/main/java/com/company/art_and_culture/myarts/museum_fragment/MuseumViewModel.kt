@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 
-class MuseumViewModelKt (
+class MuseumViewModel (
     private val repository: IMuseumRepository
     ) : ViewModel() {
 
@@ -59,7 +59,7 @@ class MuseumViewModelKt (
 class ViewModelFactory (
     private val repository: IMuseumRepository): ViewModelProvider.Factory {
 
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = MuseumViewModelKt(repository) as T
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = MuseumViewModel(repository) as T
     }
 
 

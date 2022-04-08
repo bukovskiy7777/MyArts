@@ -3,7 +3,6 @@ package com.company.art_and_culture.myarts.museum_fragment
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,13 +18,13 @@ import com.squareup.picasso.Picasso.LoadedFrom
 import com.squareup.picasso.Target
 import kotlinx.coroutines.launch
 
-class ArtMuseumAdapterKt(
+class ArtMuseumAdapter(
     private val displayWidth: Int,
     private val displayHeight: Int,
     private val spanCount: Int,
     private val onArtClickListener: OnArtClickListener,
-    private val museumViewModel: MuseumViewModelKt,
-    private val context: Context): PagingDataAdapter<Art, ArtMuseumAdapterKt.ArtMuseumViewHolder>(ART_COMPARATOR) {
+    private val museumViewModel: MuseumViewModel,
+    private val context: Context): PagingDataAdapter<Art, ArtMuseumAdapter.ArtMuseumViewHolder>(ART_COMPARATOR) {
 
 
     override fun onViewAttachedToWindow(holder: ArtMuseumViewHolder) {
@@ -74,7 +73,7 @@ class ArtMuseumAdapterKt(
         val displayWidth: Int,
         val displayHeight: Int,
         val spanCount: Int,
-        val museumViewModel: MuseumViewModelKt,
+        val museumViewModel: MuseumViewModel,
         val context: Context,
         val onArtClickListener: OnArtClickListener
     ) : LifecycleViewHolder(itemView), View.OnClickListener {

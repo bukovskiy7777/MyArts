@@ -1,6 +1,5 @@
 package com.company.art_and_culture.myarts.museum_fragment
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.*
@@ -14,13 +13,13 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
-class MuseumRepositoryKt(
+class MuseumRepository(
     private val artProviderId: String,
     private val userUniqueId: String,
     private val ioDispatcher: CoroutineDispatcher
 ) : IMuseumRepository {
 
-    private var museumInfoDataSource: MuseumInfoDataSourceKt = MuseumInfoDataSourceKt(MainHttpService.create(), artProviderId, userUniqueId)
+    private var museumInfoDataSource: MuseumInfoDataSource = MuseumInfoDataSource(MainHttpService.create(), artProviderId, userUniqueId)
     private var museumArtsDataSource: MuseumArtsDataSource = MuseumArtsDataSource(MuseumArtsService.create(), artProviderId, userUniqueId)
 
     override suspend fun getArtsFlow(artProviderId: String): Flow<PagingData<Art>>

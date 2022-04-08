@@ -35,11 +35,11 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 
-class MuseumFragmentKt : Fragment(), View.OnClickListener, View.OnTouchListener{
+class MuseumFragment : Fragment(), View.OnClickListener, View.OnTouchListener{
 
     private lateinit var fragmentMuseumBinding: FragmentMuseumBinding
     private lateinit var preferences: SharedPreferences
-    private lateinit var museumViewModel: MuseumViewModelKt
+    private lateinit var museumViewModel: MuseumViewModel
     enum class State { Collapsed, Expanded }
     private var appBarState: State = State.Expanded
     private var museum: ArtProvider? = null
@@ -69,7 +69,7 @@ class MuseumFragmentKt : Fragment(), View.OnClickListener, View.OnTouchListener{
         ArtDataInMemory.getInstance().setArtObserver(requireActivity() as MainActivity)
 
         Injection.init(artProviderId, preferences.getString(Constants.USER_UNIQUE_ID, ""))
-        museumViewModel = ViewModelProvider(this, Injection.viewModelFactory)[MuseumViewModelKt::class.java]
+        museumViewModel = ViewModelProvider(this, Injection.viewModelFactory)[MuseumViewModel::class.java]
         museumViewModel.setMuseumId(artProviderId)
 
         initViews()
