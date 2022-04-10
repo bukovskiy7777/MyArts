@@ -7,7 +7,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Rect;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -25,8 +25,8 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.company.art_and_culture.myarts.Constants;
@@ -56,6 +56,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
     private ProgressBar homeProgressBar, download_progress;
     private TextView textView;
     private int scrollPosition = 0;
+    private int displayWidth = 0;
+    private int displayHeight = 0;
     private HomeEventListener homeEventListener;
     private SharedPreferences preferences;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -85,8 +87,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         res = getResources();
-        int displayWidth = res.getDisplayMetrics().widthPixels;
-        int displayHeight = res.getDisplayMetrics().heightPixels;
+        displayWidth = res.getDisplayMetrics().widthPixels;
+        displayHeight = res.getDisplayMetrics().heightPixels;
 
         initRecyclerView(homeViewModel, displayWidth, displayHeight);
 
@@ -269,9 +271,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
         };
 
         homeAdapter = new HomeAdapter(homeViewModel,getContext(), onArtClickListener, displayWidth, displayHeight);
-        RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        homeRecyclerView.setLayoutManager(linearLayoutManager);
+        final int columns = getResources().getInteger(R.integer.home_fragment_column_count);
+        RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(columns, StaggeredGridLayoutManager.VERTICAL);
+        homeRecyclerView.setLayoutManager(layoutManager);
         homeRecyclerView.setAdapter(homeAdapter);
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        initRecyclerView(homeViewModel, displayWidth, displayHeight);
+        subscribeObservers();
     }
 
     private void startDownloading() {
@@ -401,37 +412,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
     }
 
     private int getTargetScrollPosition () {
-
-        final int firstPosition = ((LinearLayoutManager) homeRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-        final int lastPosition = ((LinearLayoutManager) homeRecyclerView.getLayoutManager()).findLastVisibleItemPosition();
-
-        Rect rvRect = new Rect();
-        homeRecyclerView.getGlobalVisibleRect(rvRect);
-
-        int targetPosition = firstPosition;
-        int targetPercent = 0;
-        for (int i = firstPosition; i <= lastPosition; i++) {
-
-            Rect rowRect = new Rect();
-            homeRecyclerView.getLayoutManager().findViewByPosition(i).getGlobalVisibleRect(rowRect);
-
-            int percent;
-            if (rowRect.bottom >= rvRect.bottom){
-                int visibleHeightFirst =rvRect.bottom - rowRect.top;
-                percent = (visibleHeightFirst * 100) / homeRecyclerView.getLayoutManager().findViewByPosition(i).getHeight();
-            }else {
-                int visibleHeightFirst = rowRect.bottom - rvRect.top;
-                percent = (visibleHeightFirst * 100) / homeRecyclerView.getLayoutManager().findViewByPosition(i).getHeight();
-            }
-
-            if (percent>100) percent = 100;
-
-            if (percent > targetPercent) {
-                targetPercent = percent;
-                targetPosition = i;
-            }
-        }
-        return targetPosition;
+        return ((StaggeredGridLayoutManager) homeRecyclerView.getLayoutManager()).findFirstVisibleItemPositions(null)[0];
     }
 
     @Override
