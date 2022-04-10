@@ -218,6 +218,7 @@
     <fragment
         android:id="@+id/makerFragment"
         android:name="com.company.art_and_culture.myarts.maker_fragment.MakerFragment"
+        tools:layout="@layout/fragment_art_maker"
         android:label="MakerFragment" >
         <action
             android:id="@+id/action_makerFragment_to_artShowFragment"
@@ -247,6 +248,7 @@
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.company.art_and_culture.myarts.art_search_fragment.SearchFragment"
+        tools:layout="@layout/fragment_art_search"
         android:label="SearchFragment" >
         <action
             android:id="@+id/action_searchFragment_to_artShowFragment"
@@ -280,6 +282,7 @@
     <fragment
         android:id="@+id/artFilterFragment"
         android:name="com.company.art_and_culture.myarts.art_filter_fragment.ArtFilterFragment"
+        tools:layout="@layout/fragment_art_filter"
         android:label="artFilterFragment" >
         <action
             android:id="@+id/action_artFilterFragment_to_artShowFragment"
@@ -292,6 +295,7 @@
     <fragment
         android:id="@+id/filterMakerFragment"
         android:name="com.company.art_and_culture.myarts.filter_maker_fragment.FilterMakerFragment"
+        tools:layout="@layout/fragment_filter_maker"
         android:label="FilterMakerFragment" >
         <action
             android:id="@+id/action_filterMakerFragment_to_makerFragment"
@@ -304,6 +308,7 @@
     <fragment
         android:id="@+id/tagsFragment"
         android:name="com.company.art_and_culture.myarts.tags_fragment.TagsFragment"
+        tools:layout="@layout/fragment_tags"
         android:label="TagsFragment" >
         <action
             android:id="@+id/action_tagsFragment_to_artFilterFragment"
@@ -316,6 +321,7 @@
     <fragment
         android:id="@+id/attributeFragment"
         android:name="com.company.art_and_culture.myarts.attribute_fragment.AttributeFragment"
+        tools:layout="@layout/fragment_attribute"
         android:label="AttributeFragment" >
         <action
             android:id="@+id/action_attributeFragment_to_artFilterFragment"
@@ -328,10 +334,12 @@
     <fragment
         android:id="@+id/createFolderFragment"
         android:name="com.company.art_and_culture.myarts.create_folder_fragment.CreateFolderFragment"
+        tools:layout="@layout/fragment_create_folder"
         android:label="CreateFolderFragment" />
     <fragment
         android:id="@+id/showFolderFragment"
         android:name="com.company.art_and_culture.myarts.show_folder_fragment.ShowFolderFragment"
+        tools:layout="@layout/fragment_show_folder"
         android:label="ShowFolderFragment" >
         <action
             android:id="@+id/action_showFolderFragment_to_artShowFragment"
@@ -353,6 +361,7 @@
     <fragment
         android:id="@+id/museumFragment"
         android:name="com.company.art_and_culture.myarts.museum_fragment.MuseumFragment"
+        tools:layout="@layout/fragment_museum"
         android:label="MuseumFragment" >
         <action
             android:id="@+id/action_museumFragment_to_artShowFragment"
@@ -372,10 +381,12 @@
     <fragment
         android:id="@+id/signInFragment"
         android:name="com.company.art_and_culture.myarts.sign_in_fragment.SignInFragment"
+        tools:layout="@layout/fragment_sign_in"
         android:label="SignInFragment" />
     <fragment
         android:id="@+id/userFragment"
         android:name="com.company.art_and_culture.myarts.user_fragment.UserFragment"
+        tools:layout="@layout/fragment_user"
         android:label="UserFragment" >
         <action
             android:id="@+id/action_userFragment_to_userEditFragment"
@@ -388,5 +399,6 @@
     <fragment
         android:id="@+id/userEditFragment"
         android:name="com.company.art_and_culture.myarts.user_edit_fragment.UserEditFragment"
+        tools:layout="@layout/fragment_user_edit"
         android:label="UserEditFragment" />
 </navigation>
