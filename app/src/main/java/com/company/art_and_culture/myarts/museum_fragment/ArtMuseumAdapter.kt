@@ -79,9 +79,9 @@ class ArtMuseumAdapter(
     ) : LifecycleViewHolder(itemView), View.OnClickListener {
         private var art: Art? = null
         private var itemPosition = 0
-        private lateinit var art_image: ImageView
+        private var art_image: ImageView
         private var artImgUrl: String? = null
-        private val target: Target?
+        private val target: Target
 
         init {
             itemView.layoutParams.width = displayWidth / spanCount
@@ -89,28 +89,24 @@ class ArtMuseumAdapter(
             art_image = itemView.findViewById(R.id.art_image)
             art_image.setOnClickListener(this)
 
-            target = try {
-                object : Target {
-                    override fun onBitmapLoaded(bitmap: Bitmap, from: LoadedFrom) {
-                        val imgWidth: Int = displayWidth / spanCount
-                        val imgHeight = bitmap.height * imgWidth / bitmap.width
-                        if (imgHeight <= art_image.maxHeight) { art_image.layoutParams.height  = imgHeight
-                        } else { art_image.layoutParams.height = art_image.maxHeight }
-                        art?.artWidth = bitmap.width
-                        art?.artHeight = bitmap.height
+            target = object : Target {
+                override fun onBitmapLoaded(bitmap: Bitmap, from: LoadedFrom) {
+                    val imgWidth: Int = displayWidth / spanCount
+                    val imgHeight = bitmap.height * imgWidth / bitmap.width
+                    if (imgHeight <= art_image.maxHeight) { art_image.layoutParams.height  = imgHeight
+                    } else { art_image.layoutParams.height = art_image.maxHeight }
+                    art?.artWidth = bitmap.width
+                    art?.artHeight = bitmap.height
 
-                        lifecycleScope.launch {
-                            museumViewModel.writeDimensionsOnServer(art)
-                        }
-
-                        Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(art_image)
+                    lifecycleScope.launch {
+                        museumViewModel.writeDimensionsOnServer(art)
                     }
 
-                    override fun onBitmapFailed(e: Exception, errorDrawable: Drawable) {}
-                    override fun onPrepareLoad(placeHolderDrawable: Drawable) {}
+                    Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(art_image)
                 }
-            } catch (e: Exception) {
-                null
+
+                override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {}
+                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
             }
         }
 
@@ -135,7 +131,7 @@ class ArtMuseumAdapter(
                 Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).resize(imgWidth, imgHeight).onlyScaleDown().into(art_image)
             } else {
                 art_image.layoutParams.height = displayWidth / spanCount
-                if (target != null) Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target)
+                Picasso.get().load(artImgUrl).placeholder(R.color.colorSilver).into(target)
             }
         }
 

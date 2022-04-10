@@ -31,7 +31,7 @@ class MuseumRepository(
             return@withContext Pager(
                 config = PagingConfig(
                     pageSize = Constants.PAGE_SIZE,
-                    enablePlaceholders = false
+                    enablePlaceholders = true
                 ),
                 pagingSourceFactory = { museumArtsDataSource }
             ).flow

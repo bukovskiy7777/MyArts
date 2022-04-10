@@ -35,15 +35,6 @@ class MuseumInfoDataSource(
         }
     }
 
-    fun refresh() {
-        isLoading.postValue(true)
-
-        runBlocking {
-            loadMuseumInfo()
-            loadMakersList()
-        }
-    }
-
     private suspend fun loadMuseumInfo() {
 
         val request = ServerRequest()
