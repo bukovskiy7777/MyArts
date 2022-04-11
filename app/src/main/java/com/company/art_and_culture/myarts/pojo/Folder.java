@@ -1,8 +1,9 @@
 package com.company.art_and_culture.myarts.pojo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Folder {
+public class Folder implements Serializable {
 
     private String artImageUrl;
     private int artWidth;

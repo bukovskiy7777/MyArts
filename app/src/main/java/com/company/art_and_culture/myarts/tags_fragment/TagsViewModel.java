@@ -16,6 +16,7 @@ public class TagsViewModel extends AndroidViewModel {
     private TagsRepository tagsRepository;
     private LiveData<PagedList<Attribute>> tagsList;
     private LiveData<Boolean> isLoading;
+    private int filterPosition = 0;
 
     public TagsViewModel(@NonNull Application application) {
         super(application);
@@ -36,5 +37,13 @@ public class TagsViewModel extends AndroidViewModel {
         tagsRepository = TagsRepository.getInstance(application, filter).setFilter(filter);
         tagsList = tagsRepository.getTagsList();
         isLoading = tagsRepository.getIsLoading();
+    }
+
+    public int getFilterPosition() {
+        return filterPosition;
+    }
+
+    public void setFilterPosition(int filterPosition) {
+        this.filterPosition = filterPosition;
     }
 }

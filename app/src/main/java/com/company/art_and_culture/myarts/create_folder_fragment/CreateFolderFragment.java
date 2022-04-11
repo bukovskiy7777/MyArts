@@ -31,6 +31,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,6 +39,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Folder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -45,6 +47,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 public class CreateFolderFragment extends Fragment implements View.OnClickListener {
+
+    public static final String FOLDER = "folder";
 
     private RecyclerView recycler_view_items;
     private ConstraintLayout blank_favorites;
@@ -58,7 +62,6 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
     private ArtsAdapter artsAdapter;
     private int spanCount = 2;
     private android.content.res.Resources res;
-    private CreateFolderEventListener createFolderEventListener;
     private FloatingActionButton floatingActionButton;
     private int countChosen = 0;
     private MainActivity activity;
@@ -123,8 +126,8 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
         createFolderViewModel = new ViewModelProvider(this).get(CreateFolderViewModel.class);
 
         activity = (MainActivity) getActivity();
-        createFolderEventListener = activity.getNavFragments();
-        Folder folderForEdit = activity.getNavFragments().getFolderForEditFolderFragment();
+        Folder folderForEdit = null;
+        if (getArguments() != null) { folderForEdit = (Folder) getArguments().getSerializable(FOLDER); }
         if(folderForEdit == null) {
             createFolderViewModel.getFolderForEdit(null);
             title.setText(res.getText(R.string.create_folder));
@@ -157,7 +160,7 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onDetach() {
-        createFolderEventListener.onCreateFolderFragmentClose();
+        //createFolderEventListener.onCreateFolderFragmentClose();
         super.onDetach();
     }
 
@@ -337,7 +340,7 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
             if(countChosen > 0) {
                 showDialog();
             } else {
-                activity.getNavFragments().popBackStack();
+                NavHostFragment.findNavController(CreateFolderFragment.this).popBackStack();
             }
         }
     }
@@ -351,7 +354,7 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
         builder.setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                activity.getNavFragments().popBackStack();
+                NavHostFragment.findNavController(CreateFolderFragment.this).popBackStack();
             }
         });
         builder.setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -371,10 +374,6 @@ public class CreateFolderFragment extends Fragment implements View.OnClickListen
             dialog = builder.create();
             dialog.show();
         }
-    }
-
-    public interface CreateFolderEventListener {
-        void onCreateFolderFragmentClose();
     }
 
 }

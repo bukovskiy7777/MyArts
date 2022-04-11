@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -22,7 +23,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
 import com.company.art_and_culture.myarts.pojo.Folder;
+import com.company.art_and_culture.myarts.show_folder_fragment.ShowFolderFragment;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class FoldersFragment extends Fragment implements View.OnClickListener {
@@ -35,7 +38,6 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView folderRecyclerView;
     private FoldersAdapter foldersAdapter;
-    private FoldersEventListener folderEventListener;
     private MainActivity activity;
 
     @Override
@@ -60,7 +62,6 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
         initRecyclerView(displayWidth, displayHeight);
 
         activity = (MainActivity) getActivity();
-        if (activity != null) folderEventListener = activity.getNavFragments();
 
         initSwipeRefreshLayout();
         subscribeObservers();
@@ -73,7 +74,10 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
         FoldersAdapter.OnFolderClickListener onFolderClickListener = new FoldersAdapter.OnFolderClickListener() {
             @Override
             public void onFolderImageClick(Folder folder, int position) {
-                folderEventListener.folderClick(folder);
+                Bundle args = new Bundle();
+                args.putSerializable(ShowFolderFragment.FOLDER, (Serializable) folder);
+                NavHostFragment.findNavController(FoldersFragment.this)
+                        .navigate(R.id.action_navigation_favorites_to_showFolderFragment, args);
             }
         };
         foldersAdapter = new FoldersAdapter(getContext(), onFolderClickListener, displayWidth, displayHeight, spanCount);
@@ -158,14 +162,9 @@ public class FoldersFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if (view.getId() == create_folder_button.getId()) {
-            folderEventListener.createFolderClick();
+            NavHostFragment.findNavController(FoldersFragment.this)
+                    .navigate(R.id.action_navigation_favorites_to_createFolderFragment);
         }
     }
-
-    public interface FoldersEventListener {
-        void folderClick(Folder folder);
-        void createFolderClick();
-    }
-
 
 }

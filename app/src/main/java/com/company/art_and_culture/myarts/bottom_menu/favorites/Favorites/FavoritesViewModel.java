@@ -17,6 +17,9 @@ public class FavoritesViewModel extends AndroidViewModel {
     private LiveData<Boolean> isLoading;
     private LiveData<Boolean> isListEmpty;
     private FavoritesRepository favoritesRepository;
+    private int scrollPosition = 0;
+    private FavoritesFragment.Sort sort_type = FavoritesFragment.Sort.by_date;
+
 
     public FavoritesViewModel(@NonNull Application application) {
         super(application);
@@ -46,5 +49,21 @@ public class FavoritesViewModel extends AndroidViewModel {
 
     public void setActivity(MainActivity activity) {
         favoritesRepository.setActivity(activity);
+    }
+
+    public int getScrollPosition() {
+        return scrollPosition;
+    }
+
+    public void setScrollPosition(int scrollPosition) {
+        this.scrollPosition = scrollPosition;
+    }
+
+    public FavoritesFragment.Sort getSort_type() {
+        return sort_type;
+    }
+
+    public void setSort_type(FavoritesFragment.Sort sort_type) {
+        this.sort_type = sort_type;
     }
 }

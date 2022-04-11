@@ -30,6 +30,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,6 +40,7 @@ import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.ImageDownloader;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.FilterObject;
 import com.company.art_and_culture.myarts.pojo.Maker;
@@ -46,8 +48,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -64,12 +66,13 @@ import static com.company.art_and_culture.myarts.bottom_menu.favorites.Favorites
 
 public class MakerFragment extends Fragment implements ImageDownloader.IDownLoadResult, View.OnClickListener, View.OnTouchListener {
 
+    public static final String MAKER = "maker";
+
     private MakerViewModel makerViewModel;
     private RecyclerView makerRecyclerView, recycler_view_keywords;
     private KeywordAdapter.OnFilterClickListener onKeywordClickListener;
     private KeywordAdapter keywordAdapter;
     private MakerAdapter makerAdapter;
-    private MakerEventListener makerEventListener;
     private CoordinatorLayout coordinator;
     private android.content.res.Resources res;
     private MainActivity activity;
@@ -105,12 +108,11 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
         displayHeight = res.getDisplayMetrics().heightPixels;
 
         activity = (MainActivity) getActivity();
-        if (activity != null) maker = activity.getNavFragments().getMakerForMakerFragment();
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
-        if (activity != null) makerEventListener = activity.getNavFragments();
 
+        maker = (Maker) getArguments().getSerializable(MAKER);
         if(maker == null) {
-            activity.getNavFragments().popBackStack();
+            NavHostFragment.findNavController(MakerFragment.this).popBackStack();
         } else {
             makerViewModel.setArtMaker(maker);
             makerViewModel.setActivity(activity);
@@ -462,7 +464,12 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
             @Override
             public void onArtImageClick(Art art, int position) {
                 ArrayList<Art> artInMemory = MakerDataInMemory.getInstance().getAllData();
-                makerEventListener.makerArtClickEvent(artInMemory, position);
+
+                Bundle args = new Bundle();
+                args.putSerializable(ArtShowFragment.ARTS, (Serializable) artInMemory);
+                args.putInt(ArtShowFragment.POSITION, position);
+                NavHostFragment.findNavController(MakerFragment.this)
+                        .navigate(R.id.action_makerFragment_to_artShowFragment, args);
             }
 
             @Override
@@ -562,10 +569,6 @@ public class MakerFragment extends Fragment implements ImageDownloader.IDownLoad
 
     private void hideText(){
         textView.setVisibility(View.GONE);
-    }
-
-    public interface MakerEventListener {
-        void makerArtClickEvent(Collection<Art> arts, int position);
     }
 
     private int getTargetScrollPosition () {

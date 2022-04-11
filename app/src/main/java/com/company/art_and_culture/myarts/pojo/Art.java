@@ -1,8 +1,9 @@
 package com.company.art_and_culture.myarts.pojo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Art {
+public class Art implements Serializable {
 
     private String artLink;
     private String artId;

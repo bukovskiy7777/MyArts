@@ -16,12 +16,14 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.maker_fragment.MakerFragment;
 import com.company.art_and_culture.myarts.pojo.Maker;
 
 import java.util.ArrayList;
@@ -38,7 +40,6 @@ public class ArtistsFragment extends Fragment implements View.OnClickListener {
     private int displayWidth, displayHeight;
     private MainActivity activity;
     private ArtistsAdapter artistsAdapter;
-    private ArtistsEventListener artistsEventListener;
     private ArrayList<Maker> globalListMakers = new ArrayList<>();
     private String filter = "";
 
@@ -61,7 +62,6 @@ public class ArtistsFragment extends Fragment implements View.OnClickListener {
         displayHeight = res.getDisplayMetrics().heightPixels;
 
         activity = (MainActivity) getActivity();
-        if (activity != null) artistsEventListener = activity.getNavFragments();
 
         initRecyclerView(displayWidth, displayHeight);
         initSwipeRefreshLayout();
@@ -169,7 +169,10 @@ public class ArtistsFragment extends Fragment implements View.OnClickListener {
         ArtistsAdapter.OnMakerClickListener onMakerClickListener = new ArtistsAdapter.OnMakerClickListener() {
             @Override
             public void onMakerImageClick(Maker maker, int position) {
-                artistsEventListener.artistsClickEvent(maker);
+                Bundle args = new Bundle();
+                args.putSerializable(MakerFragment.MAKER, maker);
+                NavHostFragment.findNavController(ArtistsFragment.this)
+                        .navigate(R.id.action_navigation_favorites_to_makerFragment, args);
             }
         };
         artistsAdapter = new ArtistsAdapter(getContext(), onMakerClickListener, displayWidth, displayHeight);
@@ -198,13 +201,9 @@ public class ArtistsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if(v.getId() == link_artists.getId()) {
-            artistsEventListener.showArtistsClick();
+            NavHostFragment.findNavController(ArtistsFragment.this)
+                    .navigate(R.id.action_navigation_favorites_to_filterMakerFragment);
         }
-    }
-
-    public interface ArtistsEventListener {
-        void artistsClickEvent(Maker maker);
-        void showArtistsClick();
     }
 
     private void showProgressBar(){

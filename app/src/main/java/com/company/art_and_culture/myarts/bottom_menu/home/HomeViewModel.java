@@ -17,7 +17,7 @@ public class HomeViewModel extends AndroidViewModel {
     private LiveData<Boolean> isLoading;
     private LiveData<Boolean> isListEmpty;
     private HomeRepository homeRepository;
-    private android.content.res.Resources res;
+    private int scrollPosition = 0;
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
@@ -54,5 +54,13 @@ public class HomeViewModel extends AndroidViewModel {
 
     public void setActivity(MainActivity activity) {
         homeRepository.setActivity(activity);
+    }
+
+    public int getScrollPosition() {
+        return scrollPosition;
+    }
+
+    public void setScrollPosition(int scrollPosition) {
+        this.scrollPosition = scrollPosition;
     }
 }

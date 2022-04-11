@@ -1,6 +1,8 @@
 package com.company.art_and_culture.myarts.pojo;
 
-public class Maker {
+import java.io.Serializable;
+
+public class Maker implements Serializable {
 
     private String artMaker;
     private String artistBio;

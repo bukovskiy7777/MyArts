@@ -18,11 +18,13 @@ import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
@@ -187,7 +189,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
                     editor.apply();
 
                     animationView.pauseAnimation();
-                    activity.getNavFragments().popBackStack();
+                    NavHostFragment.findNavController(SignInFragment.this).popBackStack();
                 }
                 progress.setVisibility(View.INVISIBLE);
                 btn_sign_in_google.setEnabled(true);

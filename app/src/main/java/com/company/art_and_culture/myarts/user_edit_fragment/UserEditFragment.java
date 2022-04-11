@@ -25,10 +25,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
@@ -107,7 +109,7 @@ public class UserEditFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if(v.getId() == account_back.getId()) {
-            activity.getNavFragments().popBackStack();
+            NavHostFragment.findNavController(UserEditFragment.this).popBackStack();
 
         } else if(v.getId() == ic_change_photo.getId()) {
             checkPermission();
@@ -171,7 +173,7 @@ public class UserEditFragment extends Fragment implements View.OnClickListener {
                     editor.putString(Constants.USER_IMAGE_URL,resp.getUser().getUserImageUrl());
                     editor.apply();
 
-                    activity.getNavFragments().popBackStack();
+                    NavHostFragment.findNavController(UserEditFragment.this).popBackStack();
                 }
                 progress_bar.setVisibility(View.GONE);
                 btn_save.setEnabled(true);

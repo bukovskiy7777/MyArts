@@ -35,6 +35,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,12 +45,18 @@ import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.ImageDownloader;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.art_filter_fragment.ArtFilterFragment;
+import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
+import com.company.art_and_culture.myarts.bottom_menu.home.HomeFragment;
+import com.company.art_and_culture.myarts.maker_fragment.MakerFragment;
+import com.company.art_and_culture.myarts.museum_fragment.MuseumFragment;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
 import com.company.art_and_culture.myarts.pojo.Suggest;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Timer;
@@ -70,7 +77,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
     private SearchAdapter searchAdapter;
     private ProgressBar searchProgressBar, download_progress;
     private TextView textView;
-    private SearchEventListener searchEventListener;
     private SharedPreferences preferences;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View download_view, done_view;
@@ -105,10 +111,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
         initRecyclerView(searchViewModel, displayWidth, displayHeight);
 
         activity = (MainActivity) getActivity();
-
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
-        if (activity != null) searchEventListener = activity.getNavFragments();
-
         searchViewModel.setActivity(activity);
 
         initSearchViews(root);
@@ -389,7 +392,12 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
                 Collection<Art> listArts = new ArrayList<>();
                 Art artInMemory = SearchDataInMemory.getInstance().getSingleItem(position);
                 listArts.add(artInMemory);
-                searchEventListener.searchArtClickEvent(listArts, 0);
+
+                Bundle args = new Bundle();
+                args.putSerializable(ArtShowFragment.ARTS, (Serializable) listArts);
+                args.putInt(ArtShowFragment.POSITION, 0);
+                NavHostFragment.findNavController(SearchFragment.this)
+                        .navigate(R.id.action_searchFragment_to_artShowFragment, args);
             }
 
             @Override
@@ -401,12 +409,20 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
                     artImgUrl= art.getArtImgUrl();
                 }
                 Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), artImgUrl, art.getArtWidth(), art.getArtHeight(), art.getArtId(), art.getArtProviderId());
-                searchEventListener.searchMakerClickEvent(maker);
+
+                Bundle args = new Bundle();
+                args.putSerializable(MakerFragment.MAKER, maker);
+                NavHostFragment.findNavController(SearchFragment.this)
+                        .navigate(R.id.action_searchFragment_to_makerFragment, args);
             }
 
             @Override
             public void onArtClassificationClick(Art art) {
-                searchEventListener.searchClassificationClickEvent(art.getArtClassification(), Constants.ART_CLASSIFICATION);
+                Bundle args = new Bundle();
+                args.putString(ArtFilterFragment.KEYWORD, art.getArtClassification());
+                args.putString(ArtFilterFragment.KEYWORD_TYPE, Constants.ART_CLASSIFICATION);
+                NavHostFragment.findNavController(SearchFragment.this)
+                        .navigate(R.id.action_searchFragment_to_artFilterFragment, args);
             }
 
             @Override
@@ -443,7 +459,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
 
             @Override
             public void onLogoClick(Art art) {
-                searchEventListener.searchMuseumClickEvent(art.getArtProviderId());
+                Bundle args = new Bundle();
+                args.putString(MuseumFragment.MUSEUM_ID, art.getArtProviderId());
+                NavHostFragment.findNavController(SearchFragment.this)
+                        .navigate(R.id.action_searchFragment_to_museumFragment, args);
             }
 
             @Override
@@ -483,7 +502,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
             hideSoftKeyboard(activity);
             //search_edit_text.setText("");
             searchViewModel.setSearchQuery ("");
-            activity.getNavFragments().popBackStack();//finishSearchFragment();
+            NavHostFragment.findNavController(SearchFragment.this).popBackStack();//finishSearchFragment();
 
         } else if (v.getId() == search_clear.getId()) {
             search_edit_text.setText("");
@@ -571,13 +590,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Im
 
     private void hideText(){
         //textView.setVisibility(View.GONE);
-    }
-
-    public interface SearchEventListener {
-        void searchArtClickEvent(Collection<Art> arts, int position);
-        void searchMakerClickEvent(Maker maker);
-        void searchClassificationClickEvent(String artClassification, String queryType);
-        void searchMuseumClickEvent(String artProviderId);
     }
 
     private int getTargetScrollPosition () {

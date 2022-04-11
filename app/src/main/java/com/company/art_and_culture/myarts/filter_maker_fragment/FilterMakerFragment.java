@@ -13,8 +13,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.maker_fragment.MakerFragment;
 import com.company.art_and_culture.myarts.pojo.Maker;
 
 import java.util.ArrayList;
@@ -26,6 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -51,7 +52,6 @@ public class FilterMakerFragment extends Fragment {
     private android.content.res.Resources res;
     private ArrayList<String> filterList = new ArrayList<>();
     private ArrayList<String> dateList = new ArrayList<>();
-    private FilterMakerEventListener filterMakerEventListener;
     private ProgressBar download_progress;
 
     @Nullable
@@ -88,14 +88,12 @@ public class FilterMakerFragment extends Fragment {
         dateList = getDateList();
         dateAdapter.setItems(dateList);
 
-        MainActivity activity = (MainActivity) getActivity();
-        filterPosition = activity.getNavFragments().getFilterMakerPosition();
-        datePosition = activity.getNavFragments().getDateMakerPosition();
+        filterPosition = filterMakerViewModel.getFilterPosition();
+        datePosition = filterMakerViewModel.getDatePosition();
+
         filterMakerViewModel.setFilter(filterList.get(filterPosition), dateList.get(datePosition));
         recycler_view_filter.scrollToPosition(filterPosition);
         recycler_view_date.scrollToPosition(datePosition);
-
-        filterMakerEventListener = activity.getNavFragments();
 
         subscribeObservers();
 
@@ -123,7 +121,10 @@ public class FilterMakerFragment extends Fragment {
         FilterMakerAdapter.OnMakerClickListener onMakerClickListener = new FilterMakerAdapter.OnMakerClickListener() {
             @Override
             public void onMakerClick(Maker maker, int position) {
-                filterMakerEventListener.filterMakerClickEvent(maker);
+                Bundle args = new Bundle();
+                args.putSerializable(MakerFragment.MAKER, maker);
+                NavHostFragment.findNavController(FilterMakerFragment.this)
+                        .navigate(R.id.action_filterMakerFragment_to_makerFragment, args);
             }
         };
         filterMakerAdapter = new FilterMakerAdapter(getContext(), onMakerClickListener, displayWidth, displayHeight, spanCount);
@@ -202,11 +203,6 @@ public class FilterMakerFragment extends Fragment {
                 title_layout.setVisibility(View.GONE);
             }
         };
-    }
-
-    public interface FilterMakerEventListener {
-        void filterMakerClickEvent(Maker maker);
-        void filterMakerOnPauseEvent(int filterPosition, int datePosition);
     }
 
     private ArrayList<String> getDateList() {
@@ -406,6 +402,7 @@ public class FilterMakerFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        filterMakerEventListener.filterMakerOnPauseEvent(getTargetFilterPosition(), getTargetDatePosition());
+        filterMakerViewModel.setFilterPosition(getTargetFilterPosition());
+        filterMakerViewModel.setDatePosition(getTargetDatePosition());
     }
 }

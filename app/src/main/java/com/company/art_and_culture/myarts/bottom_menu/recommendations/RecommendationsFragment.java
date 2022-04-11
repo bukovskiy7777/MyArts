@@ -27,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -35,11 +36,16 @@ import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.ImageDownloader;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.art_filter_fragment.ArtFilterFragment;
+import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
+import com.company.art_and_culture.myarts.bottom_menu.home.HomeFragment;
+import com.company.art_and_culture.myarts.maker_fragment.MakerFragment;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -59,7 +65,6 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
     private ProgressBar progressBar, download_progress;
     private SwipeRefreshLayout swipeRefreshLayout;
     private android.content.res.Resources res;
-    private RecommendationsEventListener recommendationsEventListener;
     private ImageView search_btn, profile_img;
     private MainActivity activity;
     private SharedPreferences preferences;
@@ -93,14 +98,14 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
         initRecyclerView(displayWidth, displayHeight);
 
         activity = (MainActivity) getActivity();
-        if (activity != null) recommendationsEventListener = activity.getNavFragments();
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
 
         String imageUrl = preferences.getString(Constants.USER_IMAGE_URL,"");
         if(preferences.getBoolean(Constants.IS_LOGGED_IN,false)) Picasso.get().load(imageUrl.isEmpty()? null : imageUrl).into(profile_img);
 
-        if (activity != null) scrollPosition = activity.getNavFragments().getRecommendPosition();
+        scrollPosition = recommendViewModel.getScrollPosition();
         if (scrollPosition >= 0) recyclerView.scrollToPosition(scrollPosition);
+
         recommendViewModel.setActivity(activity);
 
         initDownloadViews(root);
@@ -154,7 +159,11 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
 
             @Override
             public void onArtImageClick(Art art, int position) {
-                recommendationsEventListener.recommendationsArtClickEvent(recommendAdapter.getItems(), position);
+                Bundle args = new Bundle();
+                args.putSerializable(ArtShowFragment.ARTS, (Serializable) recommendAdapter.getItems());
+                args.putInt(ArtShowFragment.POSITION, position);
+                NavHostFragment.findNavController(RecommendationsFragment.this)
+                        .navigate(R.id.action_navigation_recommend_to_artShowFragment, args);
             }
 
             @Override
@@ -198,12 +207,19 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
                     artImgUrl= art.getArtImgUrl();
                 }
                 Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), artImgUrl, art.getArtWidth(), art.getArtHeight(), art.getArtId(), art.getArtProviderId());
-                recommendationsEventListener.recommendationsMakerClickEvent(maker);
+                Bundle args = new Bundle();
+                args.putSerializable(MakerFragment.MAKER, maker);
+                NavHostFragment.findNavController(RecommendationsFragment.this)
+                        .navigate(R.id.action_navigation_recommend_to_makerFragment, args);
             }
 
             @Override
             public void onArtClassificationClick(Art art) {
-                recommendationsEventListener.recommendationsClassificationClickEvent(art.getArtClassification(), Constants.ART_CLASSIFICATION);
+                Bundle args = new Bundle();
+                args.putString(ArtFilterFragment.KEYWORD, art.getArtClassification());
+                args.putString(ArtFilterFragment.KEYWORD_TYPE, Constants.ART_CLASSIFICATION);
+                NavHostFragment.findNavController(RecommendationsFragment.this)
+                        .navigate(R.id.action_navigation_recommend_to_artFilterFragment, args);
             }
 
             @Override
@@ -313,16 +329,20 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
     public void onPause() {
         super.onPause();
         if (recommendAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
-        recommendationsEventListener.recommendScrollEvent(scrollPosition);
+        recommendViewModel.setScrollPosition(scrollPosition);
     }
 
     @Override
     public void onClick(View v) {
         if (v.getId() == search_btn.getId()) {
-            recommendationsEventListener.recommendationsSearchClickEvent();
+            NavHostFragment.findNavController(RecommendationsFragment.this)
+                    .navigate(R.id.action_navigation_recommend_to_searchFragment);
 
         } else if (v.getId() == profile_img.getId()) {
-            recommendationsEventListener.recommendProfileClickEvent(preferences.getBoolean(Constants.IS_LOGGED_IN,false));
+            if(preferences.getBoolean(Constants.IS_LOGGED_IN,false))
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_recommend_to_userFragment);
+            else
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_recommend_to_signInFragment);
         }
     }
 
@@ -341,15 +361,6 @@ public class RecommendationsFragment extends Fragment implements View.OnClickLis
     public void onDownloadFailure() {
         Toast.makeText(getContext(), R.string.download_error, Toast.LENGTH_LONG).show();
         stopDownloadAnimation();
-    }
-
-    public interface RecommendationsEventListener {
-        void recommendationsArtClickEvent(Collection<Art> arts, int position);
-        void recommendationsMakerClickEvent(Maker maker);
-        void recommendationsSearchClickEvent();
-        void recommendationsClassificationClickEvent(String artClassification, String queryType);
-        void recommendScrollEvent(int scrollPosition);
-        void recommendProfileClickEvent(boolean isLoggedIn);
     }
 
     private void runDownLoadSuccessAnimation () {

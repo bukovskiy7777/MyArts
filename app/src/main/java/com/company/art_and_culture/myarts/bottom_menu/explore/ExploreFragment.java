@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -27,10 +28,16 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.art_filter_fragment.ArtFilterFragment;
+import com.company.art_and_culture.myarts.attribute_fragment.AttributeFragment;
+import com.company.art_and_culture.myarts.bottom_menu.home.HomeFragment;
+import com.company.art_and_culture.myarts.maker_fragment.MakerFragment;
 import com.company.art_and_culture.myarts.pojo.ExploreObject;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ExploreFragment extends Fragment implements View.OnClickListener, View.OnTouchListener {
 
@@ -42,7 +49,6 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
     private ProgressBar exploreProgressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
     private android.content.res.Resources res;
-    private ExploreEventListener exploreEventListener;
     private SharedPreferences preferences;
     private MainActivity activity;
     private ImageView search_btn, profile_img;
@@ -71,7 +77,6 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
         initRecyclerView(displayWidth, displayHeight);
 
         activity = (MainActivity) getActivity();
-        if (activity != null) exploreEventListener = activity.getNavFragments();
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
 
         String imageUrl = preferences.getString(Constants.USER_IMAGE_URL,"");
@@ -88,7 +93,34 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
         ExploreAdapter.OnExploreClickListener onExploreClickListener = new ExploreAdapter.OnExploreClickListener() {
             @Override
             public void onExploreImageClick(ExploreObject exploreObject, int position) {
-                exploreEventListener.exploreClick(exploreObject.getType());
+                Timer timer=new Timer();
+                final long DELAY = 500; // milliseconds
+                final Handler handler = new Handler();
+                timer.schedule( new TimerTask() {
+                    @Override
+                    public void run() {
+                        handler.post(() -> {
+                            switch (exploreObject.getType()) {
+                                case Constants.ART_MAKER:
+                                    NavHostFragment.findNavController(ExploreFragment.this)
+                                            .navigate(R.id.action_navigation_explore_to_filterMakerFragment);
+                                    break;
+                                case Constants.ART_CULTURE:
+                                case Constants.ART_MEDIUM:
+                                case Constants.ART_CLASSIFICATION:
+                                    Bundle args = new Bundle();
+                                    args.putString(AttributeFragment.ATTRIBUTE_TYPE, exploreObject.getType());
+                                    NavHostFragment.findNavController(ExploreFragment.this)
+                                            .navigate(R.id.action_navigation_explore_to_attributeFragment, args);
+                                    break;
+                                case Constants.ART_TAG:
+                                    NavHostFragment.findNavController(ExploreFragment.this)
+                                            .navigate(R.id.action_navigation_explore_to_tagsFragment);
+                                    break;
+                            }
+                        });
+                    }
+                }, DELAY);
             }
         };
         exploreAdapter = new ExploreAdapter(getContext(), onExploreClickListener, displayWidth, displayHeight, spanCount);
@@ -183,10 +215,13 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
     @Override
     public void onClick(View v) {
         if (v.getId() == search_btn.getId()) {
-            exploreEventListener.exploreSearchClickEvent();
+            NavHostFragment.findNavController(this).navigate(R.id.action_navigation_explore_to_searchFragment);
 
         } else if (v.getId() == profile_img.getId()) {
-            exploreEventListener.exploreProfileClickEvent(preferences.getBoolean(Constants.IS_LOGGED_IN,false));
+            if(preferences.getBoolean(Constants.IS_LOGGED_IN,false))
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_explore_to_userFragment);
+            else
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_explore_to_signInFragment);
         }
     }
 
@@ -196,10 +231,5 @@ public class ExploreFragment extends Fragment implements View.OnClickListener, V
         return false;
     }
 
-    public interface ExploreEventListener {
-        void exploreClick(String type);
-        void exploreSearchClickEvent();
-        void exploreProfileClickEvent(boolean isLoggedIn);
-    }
 
 }

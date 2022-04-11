@@ -15,8 +15,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -24,7 +26,9 @@ import com.company.art_and_culture.myarts.CommonAnimations
 import com.company.art_and_culture.myarts.Constants
 import com.company.art_and_culture.myarts.MainActivity
 import com.company.art_and_culture.myarts.R
+import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment
 import com.company.art_and_culture.myarts.databinding.FragmentMuseumBinding
+import com.company.art_and_culture.myarts.maker_fragment.MakerFragment
 import com.company.art_and_culture.myarts.pojo.Art
 import com.company.art_and_culture.myarts.pojo.ArtProvider
 import com.company.art_and_culture.myarts.pojo.Maker
@@ -32,10 +36,15 @@ import com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.io.Serializable
 import kotlin.math.abs
 
 
 class MuseumFragment : Fragment(), View.OnClickListener, View.OnTouchListener{
+
+    companion object {
+        const val MUSEUM_ID = "museumId"
+    }
 
     private lateinit var fragmentMuseumBinding: FragmentMuseumBinding
     private lateinit var preferences: SharedPreferences
@@ -46,16 +55,11 @@ class MuseumFragment : Fragment(), View.OnClickListener, View.OnTouchListener{
     private var artProviderId: String = ""
     private var artMuseumAdapter: ArtMuseumAdapter? = null
     private var artistsAdapter: ArtistsAdapter? = null
-    private var museumEventListener: MuseumEventListener? = null
     private var isLabelVisible = false
     private var displayWidth = 0
     private var displayHeight = 0
     private val spanCount = 2
 
-    interface MuseumEventListener {
-        fun onArtClickEvent(arts: MutableCollection<Art>, position: Int)
-        fun onArtistsClickEvent(maker: Maker)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
@@ -64,8 +68,7 @@ class MuseumFragment : Fragment(), View.OnClickListener, View.OnTouchListener{
         displayWidth = resources.displayMetrics.widthPixels
         displayHeight = resources.displayMetrics.heightPixels
         preferences = requireActivity().getSharedPreferences(Constants.TAG, 0)
-        artProviderId = (requireActivity() as MainActivity).navFragments.artProviderIdForMuseumFragment
-        museumEventListener = (requireActivity() as MainActivity).navFragments
+        artProviderId = requireArguments().getString(MUSEUM_ID,"")
         ArtDataInMemory.getInstance().setArtObserver(requireActivity() as MainActivity)
 
         Injection.init(artProviderId, preferences.getString(Constants.USER_UNIQUE_ID, ""))
@@ -203,7 +206,11 @@ class MuseumFragment : Fragment(), View.OnClickListener, View.OnTouchListener{
         val onArtClickListener = object : ArtMuseumAdapter.OnArtClickListener {
             override fun onArtImageClick(art: Art?, itemPosition: Int) {
                 val artInMemory = ArtDataInMemory.getInstance().allData
-                museumEventListener!!.onArtClickEvent(artInMemory, itemPosition)
+
+                val args = Bundle()
+                args.putSerializable(ArtShowFragment.ARTS, artInMemory as Serializable?)
+                args.putInt(ArtShowFragment.POSITION, itemPosition)
+                findNavController().navigate(R.id.action_museumFragment_to_artShowFragment, args)
             }
         }
 
@@ -216,7 +223,7 @@ class MuseumFragment : Fragment(), View.OnClickListener, View.OnTouchListener{
     private fun initArtistsRecyclerView() {
         val onMakerClickListener =
             ArtistsAdapter.OnMakerClickListener { maker: Maker, position: Int ->
-                museumEventListener?.onArtistsClickEvent(maker)
+                findNavController().navigate(R.id.action_museumFragment_to_makerFragment, bundleOf(MakerFragment.MAKER to maker))
             }
         artistsAdapter = ArtistsAdapter(context, onMakerClickListener, displayWidth, displayHeight)
         val layoutManager: RecyclerView.LayoutManager =
@@ -302,7 +309,7 @@ class MuseumFragment : Fragment(), View.OnClickListener, View.OnTouchListener{
                 customTabsIntent.launchUrl(requireContext(), Uri.parse(museum?.providerTicketsUrl ?: getString(R.string.google)))
 
             } else if (v.id == fragmentMuseumBinding.header.museumCloseBtn.id) {
-                (requireActivity() as MainActivity).navFragments.popBackStack()
+                findNavController().popBackStack()
 
             } else if (v.id == fragmentMuseumBinding.header.museumShare.id) {
                 val set = AnimatorSet()

@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -26,14 +27,19 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
+import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
+import com.company.art_and_culture.myarts.create_folder_fragment.CreateFolderFragment;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Folder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class ShowFolderFragment extends Fragment implements View.OnClickListener {
+
+    public static final String FOLDER = "folder";
 
     private RecyclerView recycler_view_items;
     private ShowFolderViewModel showFolderViewModel;
@@ -43,7 +49,6 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
     private ArtsAdapter artsAdapter;
     private int spanCount = 2;
     private android.content.res.Resources res;
-    private ShowFolderEventListener showFolderEventListener;
     private FloatingActionButton floatingActionButton;
     private SwipeRefreshLayout swipeRefreshLayout;
     private MainActivity activity;
@@ -72,10 +77,10 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
 
         showFolderViewModel = new ViewModelProvider(this).get(ShowFolderViewModel.class);
 
-        activity = (MainActivity) getActivity();
-        showFolderEventListener = activity.getNavFragments();
-        currentFolder = activity.getNavFragments().getFolderForShowFolderFragment();
+        currentFolder = (Folder) getArguments().getSerializable(FOLDER);
         showFolderViewModel.setFolder(currentFolder);
+
+        activity = (MainActivity) getActivity();
         showFolderViewModel.setActivity(activity);
 
         if(currentFolder.getUserUniqueId().equals(activity.getSharedPreferences(Constants.TAG, 0).getString(Constants.USER_UNIQUE_ID,""))){
@@ -173,7 +178,11 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
         ArtsAdapter.OnArtClickListener onArtClickListener = new ArtsAdapter.OnArtClickListener() {
             @Override
             public void onArtImageClick(Art art, int position) {
-                showFolderEventListener.artFolderClickEvent(artsAdapter.getItems(), position);
+                Bundle args = new Bundle();
+                args.putSerializable(ArtShowFragment.ARTS, (Serializable) artsAdapter.getItems());
+                args.putInt(ArtShowFragment.POSITION, position);
+                NavHostFragment.findNavController(ShowFolderFragment.this)
+                        .navigate(R.id.action_showFolderFragment_to_artShowFragment, args);
             }
         };
         artsAdapter = new ArtsAdapter(getContext(), onArtClickListener, displayWidth, displayHeight, spanCount);
@@ -193,9 +202,12 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if(view.getId() == floatingActionButton.getId()) {
-            showFolderEventListener.folderEditClickListener(currentFolder);
+            Bundle args = new Bundle();
+            args.putSerializable(CreateFolderFragment.FOLDER, (Serializable) currentFolder);
+            NavHostFragment.findNavController(ShowFolderFragment.this)
+                    .navigate(R.id.action_showFolderFragment_to_createFolderFragment, args);
         } else if (view.getId() == back_button.getId()) {
-            activity.getNavFragments().popBackStack();
+            NavHostFragment.findNavController(ShowFolderFragment.this).popBackStack();
         } else if (view.getId() == delete_btn.getId()) {
             showDialog();
         }
@@ -211,11 +223,6 @@ public class ShowFolderFragment extends Fragment implements View.OnClickListener
         builder.setNegativeButton(res.getString(R.string.no), (dialogInterface, which) -> dialogInterface.cancel());
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-
-    public interface ShowFolderEventListener {
-        void artFolderClickEvent(Collection<Art> arts, int position);
-        void folderEditClickListener(Folder folder);
     }
 
 }

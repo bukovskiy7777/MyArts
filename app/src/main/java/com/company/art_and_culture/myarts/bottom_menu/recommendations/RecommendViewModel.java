@@ -17,6 +17,7 @@ public class RecommendViewModel extends AndroidViewModel {
     private LiveData<Boolean> isLoading;
     private LiveData<Boolean> isListEmpty;
     private RecommendRepository recommendRepository;
+    private int scrollPosition = 0;
 
     public RecommendViewModel(@NonNull Application application) {
         super(application);
@@ -52,5 +53,13 @@ public class RecommendViewModel extends AndroidViewModel {
 
     public void setActivity(MainActivity activity) {
         recommendRepository.setActivity(activity);
+    }
+
+    public int getScrollPosition() {
+        return scrollPosition;
+    }
+
+    public void setScrollPosition(int scrollPosition) {
+        this.scrollPosition = scrollPosition;
     }
 }

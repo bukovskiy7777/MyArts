@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -33,11 +34,16 @@ import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.ImageDownloader;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.art_filter_fragment.ArtFilterFragment;
+import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
+import com.company.art_and_culture.myarts.maker_fragment.MakerFragment;
+import com.company.art_and_culture.myarts.museum_fragment.MuseumFragment;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -58,7 +64,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
     private int scrollPosition = 0;
     private int displayWidth = 0;
     private int displayHeight = 0;
-    private HomeEventListener homeEventListener;
     private SharedPreferences preferences;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View download_view, done_view;
@@ -92,11 +97,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
 
         initRecyclerView(homeViewModel, displayWidth, displayHeight);
 
-        activity = (MainActivity) getActivity();
-        if (activity != null) scrollPosition = activity.getNavFragments().getHomePosition();
+        scrollPosition = homeViewModel.getScrollPosition();
         if (scrollPosition >= 0) homeRecyclerView.scrollToPosition(scrollPosition);
 
-        if (activity != null) homeEventListener = activity.getNavFragments();
+        activity = (MainActivity) getActivity();
+
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
         homeViewModel.setActivity(activity);
 
@@ -114,9 +119,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
     @Override
     public void onClick(View v) {
         if (v.getId() == search_btn.getId()) {
-            homeEventListener.homeSearchClickEvent();
+            NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_searchFragment);
         } else if (v.getId() == profile_img.getId()) {
-            homeEventListener.homeProfileClickEvent(preferences.getBoolean(Constants.IS_LOGGED_IN,false));
+            if(preferences.getBoolean(Constants.IS_LOGGED_IN,false))
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_userFragment);
+            else
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_signInFragment);
         }
     }
 
@@ -207,7 +215,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
                 Collection<Art> listArts = new ArrayList<>();
                 Art artInMemory = HomeDataInMemory.getInstance().getSingleItem(position);
                 listArts.add(artInMemory);
-                homeEventListener.homeArtClickEvent(listArts, 0);
+
+                Bundle args = new Bundle();
+                args.putSerializable(ArtShowFragment.ARTS, (Serializable) listArts);
+                args.putInt(ArtShowFragment.POSITION, 0);
+                NavHostFragment.findNavController(HomeFragment.this)
+                        .navigate(R.id.action_navigation_home_to_artShowFragment, args);
             }
 
             @Override
@@ -219,12 +232,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
                     artImgUrl= art.getArtImgUrl();
                 }
                 Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), artImgUrl, art.getArtWidth(), art.getArtHeight(), art.getArtId(), art.getArtProviderId());
-                homeEventListener.homeMakerClickEvent(maker);
+
+                Bundle args = new Bundle();
+                args.putSerializable(MakerFragment.MAKER, maker);
+                NavHostFragment.findNavController(HomeFragment.this)
+                        .navigate(R.id.action_navigation_home_to_makerFragment, args);
             }
 
             @Override
             public void onArtClassificationClick(Art art) {
-                homeEventListener.homeClassificationClickEvent(art.getArtClassification(), Constants.ART_CLASSIFICATION);
+                Bundle args = new Bundle();
+                args.putString(ArtFilterFragment.KEYWORD, art.getArtClassification());
+                args.putString(ArtFilterFragment.KEYWORD_TYPE, Constants.ART_CLASSIFICATION);
+                NavHostFragment.findNavController(HomeFragment.this)
+                        .navigate(R.id.action_navigation_home_to_artFilterFragment, args);
             }
 
             @Override
@@ -261,7 +282,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
 
             @Override
             public void onLogoClick(Art art) {
-                homeEventListener.homeMuseumClickEvent(art.getArtProviderId());
+                Bundle args = new Bundle();
+                args.putString(MuseumFragment.MUSEUM_ID, art.getArtProviderId());
+                NavHostFragment.findNavController(HomeFragment.this)
+                        .navigate(R.id.action_navigation_home_to_museumFragment, args);
             }
 
             @Override
@@ -283,6 +307,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
 
         initRecyclerView(homeViewModel, displayWidth, displayHeight);
         subscribeObservers();
+
+        scrollPosition = homeViewModel.getScrollPosition();
+        if (scrollPosition >= 0) homeRecyclerView.scrollToPosition(scrollPosition);
     }
 
     private void startDownloading() {
@@ -394,21 +421,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Imag
         textView.setVisibility(View.GONE);
     }
 
-    public interface HomeEventListener {
-        void homeScrollEvent(int position);
-        void homeArtClickEvent(Collection<Art> arts, int position);
-        void homeMakerClickEvent(Maker maker);
-        void homeClassificationClickEvent(String artClassification, String queryType);
-        void homeSearchClickEvent();
-        void homeMuseumClickEvent(String artProviderId);
-        void homeProfileClickEvent(boolean isLoggedIn);
-    }
-
     @Override
     public void onPause() {
         super.onPause();
         if (homeAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
-        homeEventListener.homeScrollEvent(scrollPosition);
+        homeViewModel.setScrollPosition(scrollPosition);
     }
 
     private int getTargetScrollPosition () {

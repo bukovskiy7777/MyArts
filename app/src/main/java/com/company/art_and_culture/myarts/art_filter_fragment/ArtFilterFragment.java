@@ -24,6 +24,7 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -31,27 +32,29 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
-import com.company.art_and_culture.myarts.pojo.Art;
+import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
 import com.company.art_and_culture.myarts.pojo.FilterObject;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class ArtFilterFragment extends Fragment implements View.OnClickListener {
 
+    public static final String KEYWORD = "keyword";
+    public static final String KEYWORD_TYPE = "keywordType";
+
     private ArtFilterViewModel artFilterViewModel;
     private RecyclerView recycler_view_art_filter, recycler_view_artists, recycler_view_keywords, recycler_view_centuries;
     private ArtFilterAdapter artFilterAdapter;
     private ProgressBar progress_bar_art_filter, progress_bar_filter, progress_bar_artist, progress_bar_century, progress_bar_keywords;
     private TextView textView, appbar_art_filter, appbar_art_count;
-    private ArtFilterEventListener artFilterEventListener;
     private SwipeRefreshLayout art_filter_swipeRefreshLayout;
     private android.content.res.Resources res;
     private MainActivity activity;
@@ -81,15 +84,13 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
+        keyword = getArguments().getString(KEYWORD);
+        keywordType = getArguments().getString(KEYWORD_TYPE);
+
         activity = (MainActivity) getActivity();
-        if(keyword == null) {
-            if (activity != null) keyword = activity.getNavFragments().getKeywordForArtFilterFragment();
-            if (activity != null) keywordType = activity.getNavFragments().getKeywordTypeForArtFilterFragment();
-        }
-        if (activity != null) artFilterEventListener = activity.getNavFragments();
 
         if(keyword == null) {
-            activity.getNavFragments().popBackStack();
+            NavHostFragment.findNavController(ArtFilterFragment.this).popBackStack();
         } else {
             artFilterViewModel.setFilters(keyword, makerFilter, centuryFilter, keywordType);
             ArtFilterDataInMemory.getInstance().setArtObserver(activity);
@@ -473,7 +474,14 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
 
     private void initRecyclerView(final ArtFilterViewModel artFilterViewModel, int displayWidth, int displayHeight){
 
-        ArtFilterAdapter.OnArtClickListener onArtClickListener = (art, position) -> artFilterEventListener.artFilterArtClickEvent(ArtFilterDataInMemory.getInstance().getAllData(), position);
+        ArtFilterAdapter.OnArtClickListener onArtClickListener = (art, position) -> {
+            Bundle args = new Bundle();
+            args.putSerializable(ArtShowFragment.ARTS, (Serializable) ArtFilterDataInMemory.getInstance().getAllData());
+            args.putInt(ArtShowFragment.POSITION, position);
+            NavHostFragment.findNavController(ArtFilterFragment.this)
+                    .navigate(R.id.action_artFilterFragment_to_artShowFragment, args);
+        };
+
 
         artFilterAdapter = new ArtFilterAdapter(artFilterViewModel, getContext(), onArtClickListener, displayWidth, displayHeight, spanCount);
         RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
@@ -575,10 +583,6 @@ public class ArtFilterFragment extends Fragment implements View.OnClickListener 
         black_layout.setVisibility(View.GONE);
         Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.exit_fade_out);
         black_layout.startAnimation(animation);
-    }
-
-    public interface ArtFilterEventListener {
-        void artFilterArtClickEvent(Collection<Art> arts, int position);
     }
 
     private int getTargetScrollPosition () {

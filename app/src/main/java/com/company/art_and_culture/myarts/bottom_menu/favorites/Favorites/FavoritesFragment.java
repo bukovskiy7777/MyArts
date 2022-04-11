@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,8 +27,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.arts_show_fragment.ArtShowFragment;
+import com.company.art_and_culture.myarts.bottom_menu.home.HomeFragment;
 import com.company.art_and_culture.myarts.pojo.Art;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,7 +50,6 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
     private SwipeRefreshLayout swipeRefreshLayout;
     private android.content.res.Resources res;
     private FavoritesAdapter favoritesAdapter;
-    private FavoritesEventListener favoritesEventListener;
     private int spanCount = 3;
     private int displayWidth, displayHeight;
     private ArrayList<Art> globalListArts = new ArrayList<>();
@@ -85,16 +88,13 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
         activity = (MainActivity) getActivity();
         favoritesViewModel.setActivity(activity);
 
-        Sort sort_type = Sort.by_date;
-        if (activity != null) sort_type = activity.getNavFragments().getSort_type();
+        Sort sort_type = favoritesViewModel.getSort_type();
         if (!sort_type.equals(Sort.by_date)) spanCount = 1;
         initRecyclerView(displayWidth, displayHeight, sort_type, spanCount);
 
-        int scrollPosition = 0;
-        if (activity != null) scrollPosition = activity.getNavFragments().getFavoritesPosition();
+        int scrollPosition = favoritesViewModel.getScrollPosition();
         if (scrollPosition >= 0) favoritesRecyclerView.scrollToPosition(scrollPosition);
 
-        if (activity != null) favoritesEventListener = activity.getNavFragments();
 
         initSwipeRefreshLayout();
         subscribeObservers();
@@ -116,7 +116,12 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
         FavoritesAdapter.OnArtClickListener onArtClickListener = new FavoritesAdapter.OnArtClickListener() {
             @Override
             public void onArtImageClick(Art art, int position) {
-                favoritesEventListener.favoritesClickEvent(favoritesAdapter.getItems(), position);
+
+                Bundle args = new Bundle();
+                args.putSerializable(ArtShowFragment.ARTS, (Serializable) favoritesAdapter.getItems());
+                args.putInt(ArtShowFragment.POSITION, position);
+                NavHostFragment.findNavController(FavoritesFragment.this)
+                        .navigate(R.id.action_navigation_favorites_to_artShowFragment, args);
             }
         };
         favoritesAdapter = new FavoritesAdapter(getContext(), onArtClickListener, displayWidth, displayHeight, spanCount, sort_type);
@@ -360,11 +365,6 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
         }
     }
 
-    public interface FavoritesEventListener {
-        void favoritesScrollEvent(int position, Sort sort_type);
-        void favoritesClickEvent(Collection<Art> art, int position);
-    }
-
     public int getTargetScrollPosition () {
 
         if (favoritesRecyclerView.isShown() && favoritesRecyclerView.getAdapter().getItemCount() > 0) {
@@ -416,7 +416,8 @@ public class FavoritesFragment extends Fragment implements View.OnClickListener 
     public void postScrollDataToMainActivity () {
         int scrollPosition = 0;
         if (favoritesAdapter.getItemCount() > 0) scrollPosition = getTargetScrollPosition();
-        favoritesEventListener.favoritesScrollEvent(scrollPosition, favoritesAdapter.getSort_type());
+        favoritesViewModel.setScrollPosition(scrollPosition);
+        favoritesViewModel.setSort_type(favoritesAdapter.getSort_type());
     }
 
 }

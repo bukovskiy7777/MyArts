@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -39,7 +39,6 @@ public class BlankFragment extends Fragment implements View.OnClickListener {
     private BlankAdapter blankAdapter;
     private TabLayout tabLayout;
     private ImageView search_btn, profile_img;
-    private BlankEventListener blankEventListener;
     private FloatingActionButton fab_favorites, fab_artists, fab_folders;
     private AppCompatEditText search_favorites, search_artists;
     private SharedPreferences preferences;
@@ -65,7 +64,6 @@ public class BlankFragment extends Fragment implements View.OnClickListener {
 
         activity = (MainActivity) getActivity();
 
-        if (activity != null) blankEventListener = activity.getNavFragments();
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
 
         String imageUrl = preferences.getString(Constants.USER_IMAGE_URL,"");
@@ -236,7 +234,7 @@ public class BlankFragment extends Fragment implements View.OnClickListener {
         root.setOnKeyListener( new View.OnKeyListener() {
             @Override
             public boolean onKey( View v, int keyCode, KeyEvent event ) {
-                Log.i("BlankScrollEvent", "");
+
                 if( keyCode == KeyEvent.KEYCODE_BACK ) {
 
                     if(viewPager.getCurrentItem() == 0) {
@@ -280,13 +278,18 @@ public class BlankFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v.getId() == search_btn.getId()) {
-            blankEventListener.blankSearchClickEvent();
+            NavHostFragment.findNavController(BlankFragment.this)
+                    .navigate(R.id.action_navigation_favorites_to_searchFragment);
 
         } else if (v.getId() == profile_img.getId()) {
-            blankEventListener.blankProfileClickEvent(preferences.getBoolean(Constants.IS_LOGGED_IN,false));
+            if(preferences.getBoolean(Constants.IS_LOGGED_IN,false))
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_favorites_to_userFragment);
+            else
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_favorites_to_signInFragment);
 
         }else if (v.getId() == fab_folders.getId()) {
-            blankEventListener.createFolderClick();
+            NavHostFragment.findNavController(BlankFragment.this)
+                    .navigate(R.id.action_navigation_favorites_to_createFolderFragment);
 
         } else if (v.getId() == fab_favorites.getId()) {
             if (search_favorites.isShown()) search_favorites.setVisibility(View.GONE);
@@ -296,11 +299,5 @@ public class BlankFragment extends Fragment implements View.OnClickListener {
             if (search_artists.isShown()) search_artists.setVisibility(View.GONE);
             else search_artists.setVisibility(View.VISIBLE);
         }
-    }
-
-    public interface BlankEventListener {
-        void blankSearchClickEvent();
-        void blankProfileClickEvent(boolean isLoggedIn);
-        void createFolderClick();
     }
 }

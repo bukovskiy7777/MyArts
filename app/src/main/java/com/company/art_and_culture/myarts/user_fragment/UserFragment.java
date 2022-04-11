@@ -19,10 +19,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.art_search_fragment.SearchFragment;
 import com.company.art_and_culture.myarts.network.NetworkQuery;
 import com.company.art_and_culture.myarts.pojo.ServerRequest;
 import com.company.art_and_culture.myarts.pojo.ServerResponse;
@@ -44,7 +46,6 @@ public class UserFragment extends Fragment implements View.OnClickListener {
     private MainActivity activity;
     private SharedPreferences preferences;
     private android.content.res.Resources res;
-    private UserEventListener userEventListener;
 
     @Nullable
     @Override
@@ -88,7 +89,6 @@ public class UserFragment extends Fragment implements View.OnClickListener {
 
         activity = (MainActivity) getActivity();
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
-        if (activity != null) userEventListener = activity.getNavFragments();
 
         user_given_name.setText(preferences.getString(Constants.USER_GIVEN_NAME, ""));
         user_family_name.setText(preferences.getString(Constants.USER_FAMILY_NAME, ""));
@@ -105,10 +105,10 @@ public class UserFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if(v.getId() == account_back.getId()) {
-            activity.getNavFragments().popBackStack();
+            NavHostFragment.findNavController(UserFragment.this).popBackStack();
 
         } else if(v.getId() == edit_account.getId()) {
-            userEventListener.userEditEvent();
+            NavHostFragment.findNavController(this).navigate(R.id.action_userFragment_to_userEditFragment);
 
         }  else if(v.getId() == tv_write_to_us.getId() || v.getId() == ic_write_to_us.getId()) {
             Intent intent = new Intent(Intent.ACTION_SENDTO);
@@ -182,7 +182,7 @@ public class UserFragment extends Fragment implements View.OnClickListener {
                     editor.putString(Constants.USER_IMAGE_URL, "");
                     editor.apply();
 
-                    activity.getNavFragments().popBackStack();
+                    NavHostFragment.findNavController(UserFragment.this).popBackStack();
                 }
                 progress_bar.setVisibility(View.GONE);
             }
@@ -210,17 +210,12 @@ public class UserFragment extends Fragment implements View.OnClickListener {
             editor.putString(Constants.USER_IMAGE_URL, "");
             editor.apply();
 
-            activity.getNavFragments().popBackStack();
+            NavHostFragment.findNavController(UserFragment.this).popBackStack();
         });
         builder.setNegativeButton(res.getString(R.string.no), (dialog, which) -> dialog.cancel());
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
-    public interface UserEventListener {
-        void userEditEvent();
-    }
-
 
 
 }

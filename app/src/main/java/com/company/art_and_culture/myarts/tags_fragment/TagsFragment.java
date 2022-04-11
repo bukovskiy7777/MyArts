@@ -19,12 +19,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.art_filter_fragment.ArtFilterFragment;
+import com.company.art_and_culture.myarts.attribute_fragment.AttributeFragment;
 import com.company.art_and_culture.myarts.pojo.Attribute;
 import com.company.art_and_culture.myarts.pojo.FilterObject;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -41,7 +44,6 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
     private TagsAdapter tagsAdapter;
     private int spanCount = 3;
     private android.content.res.Resources res;
-    private TagsEventListener tagsEventListener;
 
     private int filterSpanCount = 5;
     private int filterPosition = 0;
@@ -49,7 +51,6 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
     private ArrayList<FilterObject> filterList = new ArrayList<>();
     private View background_view;
     private FloatingActionButton floatingActionButton;
-    private MainActivity activity;
 
     @Nullable
     @Override
@@ -71,13 +72,10 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
         int displayWidth = res.getDisplayMetrics().widthPixels;
         int displayHeight = res.getDisplayMetrics().heightPixels;
 
-        tagsViewModel = new ViewModelProvider(this).get(TagsViewModel.class);
-
-        activity = (MainActivity) getActivity();
-        tagsEventListener = activity.getNavFragments();
-
         initFilterRecyclerView(displayWidth, displayHeight);
-        filterPosition = activity.getNavFragments().getFilterPositionForTagsFragment();
+
+        tagsViewModel = new ViewModelProvider(this).get(TagsViewModel.class);
+        filterPosition = tagsViewModel.getFilterPosition();
         filterList = getFilterList(filterPosition);
         filterAdapter.setItems(filterList);
         setFilter (filterPosition);
@@ -173,7 +171,11 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
         TagsAdapter.OnTagsClickListener onTagsClickListener = new TagsAdapter.OnTagsClickListener() {
             @Override
             public void onTagsClick(Attribute attribute, int position) {
-                tagsEventListener.tagClickEvent(attribute);
+                Bundle args = new Bundle();
+                args.putString(ArtFilterFragment.KEYWORD, attribute.getText());
+                args.putString(ArtFilterFragment.KEYWORD_TYPE, attribute.getType());
+                NavHostFragment.findNavController(TagsFragment.this)
+                        .navigate(R.id.action_tagsFragment_to_artFilterFragment, args);
             }
         };
         tagsAdapter = new TagsAdapter(getContext(), onTagsClickListener, displayWidth, displayHeight, spanCount);
@@ -207,7 +209,7 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();
-        tagsEventListener.tagFilterPositionEvent(filterPosition);
+        tagsViewModel.setFilterPosition(filterPosition);
     }
 
     @Override
@@ -249,11 +251,6 @@ public class TagsFragment extends Fragment implements View.OnClickListener {
         Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.filter_layout_fade_out);
         recycler_view_filter.startAnimation(animation);
         background_view.startAnimation(animation);
-    }
-
-    public interface TagsEventListener {
-        void tagClickEvent(Attribute attribute);
-        void tagFilterPositionEvent(int position);
     }
 
 }

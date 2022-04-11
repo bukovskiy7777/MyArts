@@ -23,6 +23,7 @@ import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +33,8 @@ import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.ImageDownloader;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.bottom_menu.home.HomeFragment;
+import com.company.art_and_culture.myarts.maker_fragment.MakerFragment;
 import com.company.art_and_culture.myarts.pojo.Art;
 import com.company.art_and_culture.myarts.pojo.Maker;
 
@@ -48,6 +51,9 @@ import static com.company.art_and_culture.myarts.Constants.PERMISSION_REQUEST_CO
 
 public class ArtShowFragment extends Fragment implements ImageDownloader.IDownLoadResult {
 
+    public static final String ARTS = "arts";
+    public static final String POSITION = "position";
+
     private ArtShowViewModel artShowViewModel;
     private RecyclerView artRecyclerView;
     private ArtShowAdapter artShowAdapter;
@@ -57,7 +63,6 @@ public class ArtShowFragment extends Fragment implements ImageDownloader.IDownLo
     private ConstraintLayout download_linear;
     private ProgressBar download_progress;
     private MainActivity activity;
-    private ArtShowEventListener artShowEventListener;
     private android.content.res.Resources res;
     private ImageDownloader imageDownloader;
     private Art downloadArt;
@@ -78,30 +83,26 @@ public class ArtShowFragment extends Fragment implements ImageDownloader.IDownLo
 
         initRecyclerView(artShowViewModel, displayWidth, displayHeight);
 
+        Collection<Art> listArts = (Collection<Art>) getArguments().getSerializable(ARTS);
+        int artClickPosition = getArguments().getInt(POSITION);
+
         activity = (MainActivity) getActivity();
         if (activity != null) preferences = activity.getSharedPreferences(Constants.TAG, 0);
 
-        if (activity != null) {
-            artShowEventListener = activity.getNavFragments();
-
-            Collection<Art> listArts = activity.getNavFragments().getListArtsForArtShowFragment();
-            int artClickPosition = activity.getNavFragments().getClickPositionForArtShowFragment();
-
-            if (listArts == null) {
-                artShowAdapter.clearItems();
-            } else {
-                ArtShowDataInMemory.getInstance().addData((ArrayList<Art>) listArts);
-                artShowAdapter.clearItems();
-                artShowAdapter.setItems(listArts);
-                artRecyclerView.scrollToPosition(artClickPosition);
-            }
+        if (listArts == null) {
+            artShowAdapter.clearItems();
+        } else {
+            ArtShowDataInMemory.getInstance().addData((ArrayList<Art>) listArts);
+            artShowAdapter.clearItems();
+            artShowAdapter.setItems(listArts);
+            artRecyclerView.scrollToPosition(artClickPosition);
         }
 
         artShowViewModel.setActivity(activity);
 
         initDownloadViews(root);
 
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        //activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 
         return root;
     }
@@ -109,7 +110,7 @@ public class ArtShowFragment extends Fragment implements ImageDownloader.IDownLo
     @Override
     public void onDestroy() {
         super.onDestroy();
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         artShowViewModel.finish ();
     }
 
@@ -182,8 +183,11 @@ public class ArtShowFragment extends Fragment implements ImageDownloader.IDownLo
                     artImgUrl= art.getArtImgUrl();
                 }
                 Maker maker = new Maker(art.getArtMaker(), art.getArtistBio(), artImgUrl, art.getArtWidth(), art.getArtHeight(), art.getArtId(), art.getArtProviderId());
-                artShowEventListener.makerClickEvent(maker);
-                //showPopupMenu(art, view);
+
+                Bundle args = new Bundle();
+                args.putSerializable(MakerFragment.MAKER, maker);
+                NavHostFragment.findNavController(ArtShowFragment.this)
+                        .navigate(R.id.action_artShowFragment_to_makerFragment, args);
             }
 
             @Override
@@ -289,10 +293,6 @@ public class ArtShowFragment extends Fragment implements ImageDownloader.IDownLo
                 Toast.makeText(getContext(), R.string.application_does_not_have_permission_to_download_the_file, Toast.LENGTH_LONG).show();
             }
         }
-    }
-
-    public interface ArtShowEventListener {
-        void makerClickEvent(Maker maker);
     }
 
 }

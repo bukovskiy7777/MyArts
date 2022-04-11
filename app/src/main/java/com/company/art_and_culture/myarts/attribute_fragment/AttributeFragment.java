@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,9 +21,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.company.art_and_culture.myarts.Constants;
 import com.company.art_and_culture.myarts.MainActivity;
 import com.company.art_and_culture.myarts.R;
+import com.company.art_and_culture.myarts.art_filter_fragment.ArtFilterFragment;
+import com.company.art_and_culture.myarts.bottom_menu.home.HomeFragment;
 import com.company.art_and_culture.myarts.pojo.Attribute;
 
 public class AttributeFragment extends Fragment {
+
+    public static final String ATTRIBUTE_TYPE = "attributeType";
 
     private RecyclerView recycler_view_attribute;
     private AttributeViewModel attributeViewModel;
@@ -31,8 +36,6 @@ public class AttributeFragment extends Fragment {
     private ProgressBar download_progress;
     private AttributeAdapter attributeAdapter;
     private int spanCount = 3;
-    private android.content.res.Resources res;
-    private AttributeEventListener attributeEventListener;
     private String attributeType;
 
     @Nullable
@@ -46,28 +49,21 @@ public class AttributeFragment extends Fragment {
         recycler_view_attribute = root.findViewById(R.id.recycler_view_attribute);
         download_progress = root.findViewById(R.id.download_progress);
 
-        res = getResources();
-        int displayWidth = res.getDisplayMetrics().widthPixels;
-        int displayHeight = res.getDisplayMetrics().heightPixels;
+        int displayWidth = getResources().getDisplayMetrics().widthPixels;
+        int displayHeight = getResources().getDisplayMetrics().heightPixels;
 
         attributeViewModel = new ViewModelProvider(this).get(AttributeViewModel.class);
 
-        MainActivity activity = (MainActivity) getActivity();
-        if (activity != null) {
-            attributeType = activity.getNavFragments().getTypeForAttributeFragment();
-            attributeViewModel.setAttributeType(attributeType);
-        } else {
-            activity.getNavFragments().popBackStack();
-        }
+        attributeType = getArguments().getString(ATTRIBUTE_TYPE);
 
-        attributeEventListener = activity.getNavFragments();
+        attributeViewModel.setAttributeType(attributeType);
 
         if(attributeType.equals(Constants.ART_CULTURE)) {
-            title_tv.setText(res.getString(R.string.artist_culture));
+            title_tv.setText(getResources().getString(R.string.artist_culture));
         } else if (attributeType.equals(Constants.ART_MEDIUM)) {
-            title_tv.setText(res.getString(R.string.art_mediums));
+            title_tv.setText(getResources().getString(R.string.art_mediums));
         } else if (attributeType.equals(Constants.ART_CLASSIFICATION)) {
-            title_tv.setText(res.getString(R.string.art_classifications));
+            title_tv.setText(getResources().getString(R.string.art_classifications));
         }
 
         if(attributeType.equals(Constants.ART_CLASSIFICATION)) {
@@ -104,17 +100,17 @@ public class AttributeFragment extends Fragment {
         AttributeAdapter.OnAttributeClickListener onAttributeClickListener = new AttributeAdapter.OnAttributeClickListener() {
             @Override
             public void onAttributeClick(Attribute attribute, int position) {
-                attributeEventListener.attributeClickEvent(attribute);
+                Bundle args = new Bundle();
+                args.putString(ArtFilterFragment.KEYWORD, attribute.getText());
+                args.putString(ArtFilterFragment.KEYWORD_TYPE, attribute.getType());
+                NavHostFragment.findNavController(AttributeFragment.this)
+                        .navigate(R.id.action_attributeFragment_to_artFilterFragment, args);
             }
         };
         attributeAdapter = new AttributeAdapter(getContext(), onAttributeClickListener, displayWidth, displayHeight, spanCount);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
         recycler_view_attribute.setLayoutManager(layoutManager);
         recycler_view_attribute.setAdapter(attributeAdapter);
-    }
-
-    public interface AttributeEventListener {
-        void attributeClickEvent(Attribute attribute);
     }
 
 }

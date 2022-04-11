@@ -16,6 +16,8 @@ public class FilterMakerViewModel extends AndroidViewModel {
     private FilterMakerRepository filterMakerRepository;
     private LiveData<PagedList<Maker>> makerList;
     private LiveData<Boolean> isLoading;
+    private int filterPosition = 0;
+    private int datePosition = 0;
 
     public FilterMakerViewModel(@NonNull Application application) {
         super(application);
@@ -38,4 +40,19 @@ public class FilterMakerViewModel extends AndroidViewModel {
         isLoading = filterMakerRepository.getIsLoading();
     }
 
+    public int getFilterPosition() {
+        return filterPosition;
+    }
+
+    public void setFilterPosition(int filterPosition) {
+        this.filterPosition = filterPosition;
+    }
+
+    public int getDatePosition() {
+        return datePosition;
+    }
+
+    public void setDatePosition(int datePosition) {
+        this.datePosition = datePosition;
+    }
 }
